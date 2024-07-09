@@ -5,4 +5,7 @@ export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
+  getOrigins(): any {
+    return ['http://localhost:3000', 'http://localhost:3001'];
+  }
 }
