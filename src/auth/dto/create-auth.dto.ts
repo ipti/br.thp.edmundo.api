@@ -9,9 +9,9 @@ export class CreateAuthDto {
     minLength: 4,
 
     required: true,
-    description: "User's username",
+    description: "User's email",
   })
-  email: string;
+  username: string;
 
   @IsNotEmpty()
   @IsString()

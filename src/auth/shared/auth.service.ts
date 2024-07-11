@@ -10,16 +10,17 @@ export class AuthService {
     private jwtStrategy: JwtStrategy,
   ) {}
 
-  async validateUser(userEmail: string, userPassword: string) {
-    const user = await this.usersService.findOneByEmail(userEmail);
+  async validateUser(userUsername: string, userPassword: string) {
+    const user = await this.usersService.findOneByEmail(userUsername);
 
     if (!user) {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
     }
 
+
     if (
       user &&
-      this.usersService.validatePassword(userPassword, user.password)
+      await this.usersService.validatePassword(userPassword, user.password)
     ) {
       const { name, email, id } = user;
 
@@ -29,23 +30,16 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id };
+    const payload = { username: user.username, sub: user.id };
 
     const userRegistered = await this.usersService.findOneByEmail(
-      user.email,
+      user.username,
     );
+
 
     return {
       access_token: this.jwtStrategy.generateSignToken(payload),
       userRegistered,
-    };
-  }
-
-  async refreshToken(user) {
-    const payload = { email: user.email, sub: user.id };
-
-    return {
-      access_token: this.jwtStrategy.generateSignToken(payload),
     };
   }
 }

@@ -20,11 +20,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   @Length(5, 32)
   @ApiProperty()
-  username: string;
-
-  @IsNotEmpty()
-  @Length(5, 32)
-  @ApiProperty()
   email: string;
 
   @IsNotEmpty()

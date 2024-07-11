@@ -9,10 +9,6 @@ export class QueryUserDto {
   name?: string;
 
   @IsOptional()
-  @ApiProperty({ required: false })
-  username?: string;
-
-  @IsOptional()
   @Transform(({ value }) => {
     return Number.parseInt(value, 10);
   })

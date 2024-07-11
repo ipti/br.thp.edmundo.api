@@ -16,10 +16,6 @@ export class UserResponse {
 
   @IsNotEmpty()
   @ApiProperty()
-  username: string;
-
-  @IsNotEmpty()
-  @ApiProperty()
   email: string;
 
   @IsOptional()

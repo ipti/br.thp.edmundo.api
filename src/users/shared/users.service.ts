@@ -8,22 +8,20 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createUserDto: CreateUserDto) {
     const userRegistered = await this.prisma.users.findMany({
-      where: { username: createUserDto.username },
+      where: { email: createUserDto.email },
     });
 
     if (userRegistered.length > 0) {
       throw new HttpException(
-        'Username already exists',
+        'Email already exists',
         HttpStatus.BAD_REQUEST,
       );
     }
     const hashedPassword = await this.hashPassword(createUserDto.password);
-
-    console.log(hashedPassword)
 
     try {
       const createdUser = await this.prisma.users.create({
@@ -32,7 +30,6 @@ export class UsersService {
 
       return createdUser;
     } catch (err) {
-      console.log(err)
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
@@ -41,7 +38,6 @@ export class UsersService {
     const selectInfo = {
       id: true,
       name: true,
-      username: true,
       active: true,
       password: false,
     };
@@ -59,7 +55,6 @@ export class UsersService {
       select: {
         id: true,
         name: true,
-        username: true,
         active: true,
         password: false,
         role: true,
@@ -73,7 +68,7 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto, username: string) {
+  async update(id: number, updateUserDto: UpdateUserDto, email: string) {
     try {
       const user = await this.findOne(id);
       const updatedUser = await this.prisma.users.update({
@@ -91,7 +86,7 @@ export class UsersService {
 
   async findOneByEmail(email: string) {
     const user = await this.prisma.users.findFirst({
-      where: { email },
+      where: { email: email },
     });
 
     return user;
