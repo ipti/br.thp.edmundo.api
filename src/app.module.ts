@@ -7,11 +7,17 @@ import { AuthModule } from './auth/auth.module';
 import { JwtMiddleware } from './utils/middleware/jwt.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { ClassroomModule } from './classroom/classroom.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ cache: true }),
-    PrometheusModule.register(), PrismaModule, UsersModule, AuthModule],
+    PrometheusModule.register(),
+    PrismaModule,
+    UsersModule,
+    AuthModule,
+    ClassroomModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

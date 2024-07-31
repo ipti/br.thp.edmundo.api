@@ -9,18 +9,77 @@ datasource db {
 }
 
 model users {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  role      Role     @default(STUDENT)
-  name      String   @db.VarChar(150)
-  password  String   @db.VarChar(60)
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int          @id @default(autoincrement())
+  email          String       @unique
+  role           Role         @default(STUDENT)
+  name           String       @db.VarChar(150)
+  password       String       @db.VarChar(60)
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  classroom      classroom[]
+
+  registration registration[]
+}
+
+model registration {
+  id                     Int      @id @default(autoincrement())
+  avatar_url             String?
+  name                   String   @db.VarChar(100)
+  birthday               String   @db.VarChar(10)
+  cpf                    String?  @db.VarChar(11)
+  sex                    Int      @db.SmallInt
+  color_race             Int      @db.SmallInt
+  deficiency             Boolean
+  deficiency_description String?  @db.Text
+  responsable_name       String?  @db.VarChar(90)
+  responsable_cpf        String?  @db.VarChar(11)
+  responsable_telephone  String?  @db.VarChar(11)
+  zone                   Int      @db.SmallInt
+  kinship                Kinship? @default(NAO_DEFINIDO)
+  kinship_description    String?  @db.Text
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  user_fk                Int
+  user                   users    @relation(fields: [user_fk], references: [id])
+}
+
+model reapplication {
+  id         Int         @id @default(autoincrement())
+  name       String      @db.VarChar(150)
+  active     Boolean     @default(true)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  classrooms classroom[]
+}
+
+model classroom {
+  id              Int            @id @default(autoincrement())
+  name            String
+  year            Int            @db.SmallInt
+  edcenso_uf_fk   Int
+  owner_user_fk   Int
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  user            users[]
+  reapplication   reapplication? @relation(fields: [reapplicationId], references: [id])
+  reapplicationId Int?
 }
 
 enum Role {
   ADMIN
   STUDENT
   TEACHER
+}
+
+enum Kinship {
+  PAI
+  MAE
+  AVO_A
+  TIO_A
+  IRMAO_A
+  PRIMO_A
+  OUTRO
+  NAO_PARENTE
+  NAO_DEFINIDO
 }
