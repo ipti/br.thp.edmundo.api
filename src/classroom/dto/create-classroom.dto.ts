@@ -12,7 +12,12 @@ export class CreateClassroomDto {
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
-  project: number;
+  user_owner: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  reapplication: number;
 
   @IsNotEmpty()
   @IsString()

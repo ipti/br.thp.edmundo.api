@@ -8,10 +8,6 @@ import {
 } from 'class-validator';
 
 export class UpdateClassroomDto {
-    @IsOptional()
-    @IsNumber()
-    @IsPositive()
-    project: number;
 
     @IsOptional()
     @IsString()

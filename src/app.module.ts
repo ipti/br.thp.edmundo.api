@@ -8,6 +8,7 @@ import { JwtMiddleware } from './utils/middleware/jwt.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { ClassroomModule } from './classroom/classroom.module';
+import { ReapplicationModule } from './reapplication/reapplication.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ClassroomModule } from './classroom/classroom.module';
     UsersModule,
     AuthModule,
     ClassroomModule,
+    ReapplicationModule
   ],
   controllers: [AppController],
   providers: [AppService],

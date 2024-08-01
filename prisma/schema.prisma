@@ -9,15 +9,15 @@ datasource db {
 }
 
 model users {
-  id             Int          @id @default(autoincrement())
-  email          String       @unique
-  role           Role         @default(STUDENT)
-  name           String       @db.VarChar(150)
-  password       String       @db.VarChar(60)
-  active         Boolean      @default(true)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  classroom      classroom[]
+  id        Int         @id @default(autoincrement())
+  email     String      @unique
+  role      Role        @default(STUDENT)
+  name      String      @db.VarChar(150)
+  password  String      @db.VarChar(60)
+  active    Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  classroom classroom[]
 
   registration registration[]
 }
@@ -54,16 +54,16 @@ model reapplication {
 }
 
 model classroom {
-  id              Int            @id @default(autoincrement())
-  name            String
-  year            Int            @db.SmallInt
-  edcenso_uf_fk   Int
-  owner_user_fk   Int
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  user            users[]
-  reapplication   reapplication? @relation(fields: [reapplicationId], references: [id])
-  reapplicationId Int?
+  id               Int            @id @default(autoincrement())
+  name             String
+  year             Int            @db.SmallInt
+  owner_user_fk    Int
+  reapplication_fk Int
+  active           Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  user             users[]
+  reapplication    reapplication? @relation(fields: [reapplication_fk], references: [id])
 }
 
 enum Role {
