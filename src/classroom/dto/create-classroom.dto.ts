@@ -9,10 +9,6 @@ import {
 } from 'class-validator';
 
 export class CreateClassroomDto {
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
-  user_owner: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -23,11 +19,6 @@ export class CreateClassroomDto {
   @IsString()
   @MaxLength(150)
   name: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
-  year: number;
 
   @IsOptional()
   @IsBoolean()

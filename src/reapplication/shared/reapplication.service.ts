@@ -29,6 +29,14 @@ export class ReapplicationService {
         },
       });
 
+      await this.prisma.user_reapplication.create({
+        data: {
+          reapplication: { connect: { id: createdReapplication.id } },
+          users: { connect: { id: user.id } }
+        }
+      })
+
+
       return createdReapplication;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);

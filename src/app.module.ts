@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { ClassroomModule } from './classroom/classroom.module';
 import { ReapplicationModule } from './reapplication/reapplication.module';
+import { BFFModule } from './bff/bff.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ReapplicationModule } from './reapplication/reapplication.module';
     UsersModule,
     AuthModule,
     ClassroomModule,
-    ReapplicationModule
+    ReapplicationModule,
+    BFFModule
   ],
   controllers: [AppController],
   providers: [AppService],

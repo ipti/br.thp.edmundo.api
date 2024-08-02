@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -19,6 +20,8 @@ import { ClassroomResponse } from './doc/classroom.response';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
 import { ClassroomService } from './shared/classroom.service';
+import { Request } from 'express';
+
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -29,8 +32,8 @@ export class ClassroomController {
 
   @Post()
   @ApiCreatedResponse({ type: ClassroomResponse })
-  async create(@Body() classroom: CreateClassroomDto) {
-    return this.ClassroomService.create(classroom);
+  async create(@Req() req: Request, @Body() classroom: CreateClassroomDto) {
+    return this.ClassroomService.create(req.user.id, classroom);
   }
 
   @Get()

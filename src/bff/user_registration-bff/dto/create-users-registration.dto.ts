@@ -78,6 +78,6 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsEnum(Role)
-  @ApiProperty({ required: false, default: Role.USER })
+  @ApiProperty({ required: false, default: Role.STUDENT })
   role?: Role;
 }

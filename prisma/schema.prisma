@@ -9,24 +9,23 @@ datasource db {
 }
 
 model users {
-  id        Int         @id @default(autoincrement())
-  email     String      @unique
-  role      Role        @default(STUDENT)
-  name      String      @db.VarChar(150)
-  password  String      @db.VarChar(60)
-  active    Boolean     @default(true)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  classroom classroom[]
-
-  registration registration[]
+  id                 Int                  @id @default(autoincrement())
+  email              String               @unique
+  role               Role                 @default(STUDENT)
+  name               String               @db.VarChar(150)
+  password           String               @db.VarChar(60)
+  active             Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  classroom          classroom[]
+  registration       registration[]
+  user_reapplication user_reapplication[]
 }
 
 model registration {
   id                     Int      @id @default(autoincrement())
   avatar_url             String?
-  name                   String   @db.VarChar(100)
-  birthday               String   @db.VarChar(10)
+  birthday               DateTime
   cpf                    String?  @db.VarChar(11)
   sex                    Int      @db.SmallInt
   color_race             Int      @db.SmallInt
@@ -44,19 +43,29 @@ model registration {
   user                   users    @relation(fields: [user_fk], references: [id])
 }
 
+model user_reapplication {
+  id               Int            @id @default(autoincrement())
+  user_fk          Int?
+  reapplication    reapplication? @relation(fields: [reapplication_fk], references: [id])
+  reapplication_fk Int?
+  users            users?         @relation(fields: [user_fk], references: [id])
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
 model reapplication {
-  id         Int         @id @default(autoincrement())
-  name       String      @db.VarChar(150)
-  active     Boolean     @default(true)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  classrooms classroom[]
+  id                 Int                  @id @default(autoincrement())
+  name               String               @db.VarChar(150)
+  active             Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  classrooms         classroom[]
+  user_reapplication user_reapplication[]
 }
 
 model classroom {
   id               Int            @id @default(autoincrement())
   name             String
-  year             Int            @db.SmallInt
   owner_user_fk    Int
   reapplication_fk Int
   active           Boolean        @default(true)

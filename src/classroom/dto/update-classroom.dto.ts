@@ -14,10 +14,7 @@ export class UpdateClassroomDto {
     @MaxLength(150)
     name: string;
 
-    @IsOptional()
-    @IsNumber()
-    @IsPositive()
-    year: number;
+   
 
     @IsOptional()
     @IsBoolean()

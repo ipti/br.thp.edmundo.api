@@ -7,7 +7,7 @@ import { UpdateClassroomDto } from '../dto/update-classroom.dto';
 export class ClassroomService {
   constructor(private readonly prisma: PrismaService) { }
 
-  async create(CreateClassroomDto: CreateClassroomDto) {
+  async create(id: number, CreateClassroomDto: CreateClassroomDto) {
     const classroomRegistered = await this.prisma.classroom.findMany({
       where: { name: CreateClassroomDto.name },
     });
@@ -20,9 +20,9 @@ export class ClassroomService {
       const createdClassroom = await this.prisma.classroom.create({
         data: {
           name: CreateClassroomDto.name,
-          year: CreateClassroomDto.year,
-          owner_user_fk: CreateClassroomDto.user_owner,
+          owner_user_fk: id,
           reapplication: { connect: { id: CreateClassroomDto.reapplication } },
+          user: { connect: { id: id } }
         },
       });
 
