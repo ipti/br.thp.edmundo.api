@@ -1,4 +1,4 @@
-import { Body, Controller, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UserResponse } from './doc/users-registration.response';
@@ -23,4 +23,10 @@ export class UserRegistrationBffController {
   }
 
 
+
+  @Get(':id')
+  @ApiCreatedResponse({ type: UserResponse })
+  async getById(@Param('id') id: string) {
+    return this.UserService.findOne(+id);
+  }
 }

@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { JwtPayload } from 'src/utils/jwt.interface';
 
 @Injectable()
 export class ReapplicationnBffService {
@@ -9,14 +10,23 @@ export class ReapplicationnBffService {
 
 
 
-  async findReapplicationUser(id: number) {
+  async findReapplicationUser(user: JwtPayload) {
     try {
+      const isAdmin = await this.prismaService.users.findMany({
+        where: { id: user.id },
+      });
+
+      const whereCondition =
+        isAdmin[0].role === 'ADMIN'
+          ? {}
+          : {
+              user_reapplication: {
+                some: { user_fk: user.id },
+              },
+        };
+
       const reaplication = await this.prismaService.reapplication.findMany({
-        where: {
-          user_reapplication: {
-            some: { user_fk: id }
-          }
-        },
+        where: whereCondition,
         include: {
           _count: {
             select: {
@@ -27,14 +37,16 @@ export class ReapplicationnBffService {
       });
 
       if (!reaplication) {
-        throw new HttpException('reaplication not found', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'Reapplication not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       return reaplication;
     } catch (err) {
-      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
-
-
   }
+
 }

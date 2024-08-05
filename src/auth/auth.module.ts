@@ -7,10 +7,12 @@ import { AuthService } from './shared/auth.service';
 import { jwtConstants } from './shared/constants';
 import { JwtStrategy } from './strategies/jwt-strategy';
 import { LocalStrategy } from './strategies/local.strategy';
+import { ReapplicationBffModule } from 'src/bff/reapplication-bff/reapplication-bff.module';
 
 @Module({
   imports: [
     UsersModule,
+    ReapplicationBffModule,
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,

@@ -89,6 +89,8 @@ export class UsersService {
       where: { email: email },
     });
 
+    console.log(user, email)
+
     return user;
   }
 

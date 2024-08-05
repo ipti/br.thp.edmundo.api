@@ -17,8 +17,7 @@ CREATE TABLE `users` (
 CREATE TABLE `registration` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `avatar_url` VARCHAR(191) NULL,
-    `name` VARCHAR(100) NOT NULL,
-    `birthday` VARCHAR(10) NOT NULL,
+    `birthday` DATETIME(3) NOT NULL,
     `cpf` VARCHAR(11) NULL,
     `sex` SMALLINT NOT NULL,
     `color_race` SMALLINT NOT NULL,
@@ -38,6 +37,17 @@ CREATE TABLE `registration` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `user_reapplication` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_fk` INTEGER NULL,
+    `reapplication_fk` INTEGER NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `reapplication` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(150) NOT NULL,
@@ -52,7 +62,6 @@ CREATE TABLE `reapplication` (
 CREATE TABLE `classroom` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
-    `year` SMALLINT NOT NULL,
     `owner_user_fk` INTEGER NOT NULL,
     `reapplication_fk` INTEGER NOT NULL,
     `active` BOOLEAN NOT NULL DEFAULT true,
@@ -73,6 +82,12 @@ CREATE TABLE `_classroomTousers` (
 
 -- AddForeignKey
 ALTER TABLE `registration` ADD CONSTRAINT `registration_user_fk_fkey` FOREIGN KEY (`user_fk`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `user_reapplication` ADD CONSTRAINT `user_reapplication_reapplication_fk_fkey` FOREIGN KEY (`reapplication_fk`) REFERENCES `reapplication`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `user_reapplication` ADD CONSTRAINT `user_reapplication_user_fk_fkey` FOREIGN KEY (`user_fk`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `classroom` ADD CONSTRAINT `classroom_reapplication_fk_fkey` FOREIGN KEY (`reapplication_fk`) REFERENCES `reapplication`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

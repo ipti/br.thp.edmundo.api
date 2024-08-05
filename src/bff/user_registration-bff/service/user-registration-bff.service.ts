@@ -54,7 +54,11 @@ export class UserRegistrationBffService {
               sex: CreateUserDto.sex,
               zone: CreateUserDto.zone,
               deficiency: CreateUserDto.deficiency,
-
+              cpf: CreateUserDto.cpf,
+              responsable_telephone: CreateUserDto.responsable_telephone,
+              responsable_name: CreateUserDto.responsable_name,
+              responsable_cpf: CreateUserDto.responsable_cpf,
+              kinship: CreateUserDto.kinship
             }
           })
         } else {
@@ -65,12 +69,17 @@ export class UserRegistrationBffService {
               sex: CreateUserDto.sex,
               zone: CreateUserDto.zone,
               deficiency: CreateUserDto.deficiency,
+              cpf: CreateUserDto.cpf,
+              responsable_telephone: CreateUserDto.responsable_telephone,
+              responsable_name: CreateUserDto.responsable_name,
+              responsable_cpf: CreateUserDto.responsable_cpf,
+              kinship: CreateUserDto.kinship,
               user: { connect: { id: +id } }
             }
           })
         }
 
-        return { message: 'User created successfully' };
+        return { message: 'Perfil atualizado com sucesso!' };
       });
       return transactionResult;
     } catch (err) {
