@@ -89,7 +89,6 @@ export class UsersService {
       where: { email: email },
     });
 
-    console.log(user, email)
 
     return user;
   }
@@ -117,7 +116,10 @@ export class UsersService {
     return bcrypt.hash(password, saltRounds);
   }
 
-  async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
+  async validatePassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
     return bcrypt.compare(password, hashedPassword);
   }
 }

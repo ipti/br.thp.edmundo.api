@@ -6,6 +6,10 @@ export class AppService {
     return 'Hello World!';
   }
   getOrigins(): any {
-    return ['http://localhost:3000', 'http://localhost:3001'];
+    return [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://coded-edmundo.thp.org.br',
+    ];
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ClassroomBffService } from './service/classroom-bff.service';
@@ -22,5 +22,12 @@ export class ClassroomBffController {
     );
   }
 
+  @Put('join-the-classroom')
+  async update(
+    @Query('idUser') idUser: number,
+    @Query('idClassroom') idClassroom: number,
+  ) {
+    return this.ClassroomBffService.jointheClassroom(idUser, idClassroom);
+  }
 
 }

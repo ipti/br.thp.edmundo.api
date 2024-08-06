@@ -9,16 +9,25 @@ export class ClassroomBffService {
 
 
 
-  async findClassroomReapplication(idUser: number, idReapplication: number) {
+  async findClassroomReapplication(idUser: number, idReapplication?: number) {
     try {
-      const reaplication = await this.prismaService.classroom.findMany({
-        where: {
-          reapplication_fk: idReapplication,
-          user: {
-            some: { id: +idUser }
+      // Condição para verificar se idReapplication foi fornecido
+      
+      const whereCondition = idReapplication
+        ? {
+            reapplication_fk: idReapplication,
+            user: {
+              some: { usersId: +idUser },
           }
-        },
+        }
+        : {
+          user: {
+              some: { usersId: +idUser },
+          }
+        };
 
+      const reapplication = await this.prismaService.classroom.findMany({
+        where: whereCondition,
         include: {
           _count: {
             select: {
@@ -28,11 +37,47 @@ export class ClassroomBffService {
         }
       });
 
-      if (!reaplication) {
-        throw new HttpException('reaplication not found', HttpStatus.NOT_FOUND);
+      if (!reapplication) {
+        throw new HttpException(
+          'reapplication not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
-      return reaplication;
+      return reapplication;
+    } catch (err) {
+      throw new HttpException(err.message || err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+
+  async jointheClassroom(idUser: number, idClassroom: number) {
+    try {
+
+
+      const user_classroom = await this.prismaService.user_classroom.findMany({
+        where: {
+          classroomId: idClassroom,
+          usersId: idUser
+        }
+      })
+
+      if (user_classroom.length > 0) {
+        throw new HttpException(
+          'Usuário já pertence a turma',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      await this.prismaService.user_classroom.create({
+        data: {
+          classroom: { connect: { id: idClassroom } },
+          users: { connect: { id: idUser } }
+        }
+      })
+
+
+      return { message: 'Usuário adicionado com sucesso!' };
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }

@@ -22,9 +22,15 @@ export class ClassroomService {
           name: CreateClassroomDto.name,
           owner_user_fk: id,
           reapplication: { connect: { id: CreateClassroomDto.reapplication } },
-          user: { connect: { id: id } }
         },
       });
+
+      await this.prisma.user_classroom.create({
+        data: {
+          classroom: { connect: { id: createdClassroom.id } },
+          users: { connect: { id: id } }
+        }
+      })
 
       return createdClassroom;
     } catch (err) {

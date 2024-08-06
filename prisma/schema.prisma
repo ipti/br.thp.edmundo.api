@@ -17,7 +17,7 @@ model users {
   active             Boolean              @default(true)
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  classroom          classroom[]
+  user_classroom     user_classroom[]
   registration       registration[]
   user_reapplication user_reapplication[]
 }
@@ -64,15 +64,26 @@ model reapplication {
 }
 
 model classroom {
-  id               Int            @id @default(autoincrement())
+  id               Int              @id @default(autoincrement())
   name             String
   owner_user_fk    Int
   reapplication_fk Int
-  active           Boolean        @default(true)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  user             users[]
-  reapplication    reapplication? @relation(fields: [reapplication_fk], references: [id])
+  active           Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  user             user_classroom[]
+  reapplication    reapplication?   @relation(fields: [reapplication_fk], references: [id])
+}
+
+model user_classroom {
+  id Int @id @default(autoincrement())
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  classroom   classroom? @relation(fields: [classroomId], references: [id])
+  classroomId Int?
+  users       users?     @relation(fields: [usersId], references: [id])
+  usersId     Int?
 }
 
 enum Role {
