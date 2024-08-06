@@ -43,7 +43,7 @@ WORKDIR /home/api
 
 COPY --from=builder /home/api ./
 
-RUN chown -R www-data:www-data ./archives \
+RUN mkdir -p ./archives && chown -R www-data:www-data ./archives \
 && chown -R www-data:www-data ./archives/ 
 
 EXPOSE 80
