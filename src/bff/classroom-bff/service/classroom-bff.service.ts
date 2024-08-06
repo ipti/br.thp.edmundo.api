@@ -12,17 +12,17 @@ export class ClassroomBffService {
   async findClassroomReapplication(idUser: number, idReapplication?: number) {
     try {
       // Condição para verificar se idReapplication foi fornecido
-      
+
       const whereCondition = idReapplication
         ? {
-            reapplication_fk: idReapplication,
-            user: {
-              some: { usersId: +idUser },
+          reapplication_fk: idReapplication,
+          user: {
+            some: { usersId: +idUser },
           }
         }
         : {
           user: {
-              some: { usersId: +idUser },
+            some: { usersId: +idUser },
           }
         };
 
@@ -83,5 +83,35 @@ export class ClassroomBffService {
     }
 
 
+  }
+
+
+  async findOne(id: string) {
+    try {
+      const classroom = await this.prismaService.classroom.findUnique({
+        where: { id: +id },
+        include: {
+          _count: {
+            select: {
+              user: true
+            }
+          }
+        }
+      });
+
+
+      const owner = await this.prismaService.users.findUnique({
+        where: { id: classroom.owner_user_fk },
+        select: { id: true, name: true, email: true }
+      })
+
+      if (!classroom) {
+        throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
+      }
+
+      return { classroom: classroom, owner: owner };
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
   }
 }

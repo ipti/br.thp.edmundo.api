@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ClassroomBffService } from './service/classroom-bff.service';
@@ -12,7 +12,7 @@ export class ClassroomBffController {
   constructor(private ClassroomBffService: ClassroomBffService) { }
 
   @Get('')
-  async getById(
+  async getAll(
     @Req() req: Request,
     @Query('idReapplication') idReapplication: number,
   ) {
@@ -20,6 +20,11 @@ export class ClassroomBffController {
       req.user.id,
       idReapplication,
     );
+  }
+
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    return this.ClassroomBffService.findOne(id);
   }
 
   @Put('join-the-classroom')
