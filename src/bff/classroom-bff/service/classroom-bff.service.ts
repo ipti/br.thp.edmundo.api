@@ -114,4 +114,38 @@ export class ClassroomBffService {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
+
+  async findOneMembers(id: string) {
+    try {
+      const classroom = await this.prismaService.classroom.findUnique({
+        where: { id: +id },
+        include: {
+          user: {
+            include: {
+              users: {
+                select: {
+                  name: true,
+                  role: true
+                }
+              }
+            }
+          }
+        }
+      });
+
+
+      const owner = await this.prismaService.users.findUnique({
+        where: { id: classroom.owner_user_fk },
+        select: { id: true, name: true, email: true }
+      })
+
+      if (!classroom) {
+        throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
+      }
+
+      return { classroom: classroom, owner: owner };
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

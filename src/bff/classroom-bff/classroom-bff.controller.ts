@@ -11,7 +11,7 @@ import { Request } from 'express';
 export class ClassroomBffController {
   constructor(private ClassroomBffService: ClassroomBffService) { }
 
-  @Get('')
+  @Get('reapplications')
   async getAll(
     @Req() req: Request,
     @Query('idReapplication') idReapplication: number,
@@ -27,6 +27,11 @@ export class ClassroomBffController {
     return this.ClassroomBffService.findOne(id);
   }
 
+  @Get(':id/members')
+  async getByAll(@Query('id') id: string) {
+    return this.ClassroomBffService.findOneMembers(id);
+  }
+
   @Put('join-the-classroom')
   async update(
     @Query('idUser') idUser: number,
@@ -34,5 +39,4 @@ export class ClassroomBffController {
   ) {
     return this.ClassroomBffService.jointheClassroom(idUser, idClassroom);
   }
-
 }
