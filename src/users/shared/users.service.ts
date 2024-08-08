@@ -38,6 +38,7 @@ export class UsersService {
     const selectInfo = {
       id: true,
       name: true,
+      email: true,
       active: true,
       password: false,
     };
