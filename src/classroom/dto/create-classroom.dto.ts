@@ -23,4 +23,8 @@ export class CreateClassroomDto {
   @IsOptional()
   @IsBoolean()
   active?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isOpen?: boolean;
 }

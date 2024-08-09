@@ -19,4 +19,8 @@ export class UpdateClassroomDto {
     @IsOptional()
     @IsBoolean()
     active?: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    isOpen?: boolean;
 }
