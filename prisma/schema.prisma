@@ -18,8 +18,11 @@ model users {
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   user_classroom     user_classroom[]
+  user_activities    user_activities[]
   registration       registration[]
   user_reapplication user_reapplication[]
+  activities         activities?          @relation(fields: [activitiesId], references: [id])
+  activitiesId       Int?
 }
 
 model registration {
@@ -76,6 +79,40 @@ model classroom {
   reapplication    reapplication?   @relation(fields: [reapplication_fk], references: [id])
 }
 
+model classes {
+  id           Int      @id @default(autoincrement())
+  name         String
+  classes_date DateTime @db.Date
+  active       Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model activities {
+  id                Int               @id @default(autoincrement())
+  name              String
+  description       String?
+  type_activities   Type_Activities
+  points_activities Int
+  difficult         Difficulties
+  time_activities   Int
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  user_activities   user_activities[]
+  users             users[]
+}
+
+model user_activities {
+  id           Int               @id @default(autoincrement())
+  status       Status_Activities @default(PENDING)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  users        users?            @relation(fields: [usersId], references: [id])
+  usersId      Int?
+  activities   activities?       @relation(fields: [activitiesId], references: [id])
+  activitiesId Int?
+}
+
 model user_classroom {
   id Int @id @default(autoincrement())
 
@@ -103,4 +140,21 @@ enum Kinship {
   OUTRO
   NAO_PARENTE
   NAO_DEFINIDO
+}
+
+enum Difficulties {
+  BAIXO
+  MEDIO
+  ALTO
+  MUITO_ALTO
+}
+
+enum Type_Activities {
+  QUIZ
+  CODE
+}
+
+enum Status_Activities {
+  PENDING
+  COMPLETED
 }
