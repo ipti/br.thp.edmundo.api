@@ -21,8 +21,8 @@ model users {
   user_activities    user_activities[]
   registration       registration[]
   user_reapplication user_reapplication[]
-  activities         activities?          @relation(fields: [activitiesId], references: [id])
-  activitiesId       Int?
+  activities         activities?          @relation(fields: [activities_fk], references: [id])
+  activities_fk      Int?
 }
 
 model registration {
@@ -67,50 +67,92 @@ model reapplication {
 }
 
 model classroom {
-  id               Int              @id @default(autoincrement())
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  owner_user_fk        Int
+  reapplication_fk     Int
+  isOpen               Boolean                @default(false)
+  active               Boolean                @default(true)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  classroom_activities classroom_activities[]
+  classroom_classes    classroom_classes[]
+  classroom_module     classroom_module[]
+  user                 user_classroom[]
+  reapplication        reapplication?         @relation(fields: [reapplication_fk], references: [id])
+}
+
+model module {
+  id               Int                @id @default(autoincrement())
   name             String
-  owner_user_fk    Int
-  reapplication_fk Int
-  isOpen           Boolean          @default(false)
-  active           Boolean          @default(true)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  user             user_classroom[]
-  reapplication    reapplication?   @relation(fields: [reapplication_fk], references: [id])
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  classroom_module classroom_module[]
+}
+
+model classroom_module {
+  id           Int        @id @default(autoincrement())
+  active       Boolean
+  module       module?    @relation(fields: [module_fk], references: [id])
+  module_fk    Int?
+  classroom    classroom? @relation(fields: [classroom_fk], references: [id])
+  classroom_fk Int?
 }
 
 model classes {
-  id           Int      @id @default(autoincrement())
-  name         String
-  classes_date DateTime @db.Date
-  active       Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  necessary_material String?
+  objective          String?
+  duration           Float?
+  active             Boolean             @default(false)
+  classroom_classes  classroom_classes[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model classroom_classes {
+  id           Int        @id @default(autoincrement())
+  active       Boolean
+  classes      classes?   @relation(fields: [classes_fk], references: [id])
+  classes_fk   Int?
+  classroom    classroom? @relation(fields: [classroom_fk], references: [id])
+  classroom_fk Int?
 }
 
 model activities {
-  id                Int               @id @default(autoincrement())
-  name              String
-  description       String?
-  type_activities   Type_Activities
-  points_activities Int
-  difficult         Difficulties
-  time_activities   Int
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  user_activities   user_activities[]
-  users             users[]
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  description          String?
+  type_activities      Type_Activities
+  points_activities    Int
+  difficult            Difficulties
+  time_activities      Int
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  classroom_activities classroom_activities[]
+  user_activities      user_activities[]
+  users                users[]
+}
+
+model classroom_activities {
+  id            Int         @id @default(autoincrement())
+  active        Boolean
+  activities    activities? @relation(fields: [activities_fk], references: [id])
+  activities_fk Int?
+  classroom     classroom?  @relation(fields: [classroom_fk], references: [id])
+  classroom_fk  Int?
 }
 
 model user_activities {
-  id           Int               @id @default(autoincrement())
-  status       Status_Activities @default(PENDING)
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-  users        users?            @relation(fields: [usersId], references: [id])
-  usersId      Int?
-  activities   activities?       @relation(fields: [activitiesId], references: [id])
-  activitiesId Int?
+  id            Int               @id @default(autoincrement())
+  status        Status_Activities @default(PENDING)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  users         users?            @relation(fields: [users_fk], references: [id])
+  users_fk      Int?
+  activities    activities?       @relation(fields: [activities_fk], references: [id])
+  activities_fk Int?
 }
 
 model user_classroom {
