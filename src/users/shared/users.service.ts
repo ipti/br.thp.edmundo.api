@@ -16,10 +16,7 @@ export class UsersService {
     });
 
     if (userRegistered.length > 0) {
-      throw new HttpException(
-        'Email already exists',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
     }
     const hashedPassword = await this.hashPassword(createUserDto.password);
 
