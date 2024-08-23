@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class ModulesResponse {
   @ApiProperty({ description: "Modules's id" })
@@ -9,4 +9,9 @@ export class ModulesResponse {
   @MaxLength(150)
   @ApiProperty()
   name: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  description: string;
 }

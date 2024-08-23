@@ -15,12 +15,15 @@ export class ModulesService {
     try {
       const createdmodule = await this.prisma.module.create({
         data: {
-          name: CreateModulesDto.name
+          name: CreateModulesDto.name,
+          description: CreateModulesDto.description
         },
       });
 
       return createdmodule;
     } catch (err) {
+
+      console.log(err)
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }

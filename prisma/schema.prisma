@@ -85,8 +85,10 @@ model classroom {
 model module {
   id               Int                @id @default(autoincrement())
   name             String
+  description      String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+  classes          classes[]
   classroom_module classroom_module[]
 }
 
@@ -107,8 +109,11 @@ model classes {
   duration           Float?
   active             Boolean             @default(false)
   classroom_classes  classroom_classes[]
+  activities         activities[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+  module             module?             @relation(fields: [moduleId], references: [id])
+  moduleId           Int?
 }
 
 model classroom_classes {
@@ -133,6 +138,8 @@ model activities {
   classroom_activities classroom_activities[]
   user_activities      user_activities[]
   users                users[]
+  classes              classes?               @relation(fields: [classesId], references: [id])
+  classesId            Int?
 }
 
 model classroom_activities {
