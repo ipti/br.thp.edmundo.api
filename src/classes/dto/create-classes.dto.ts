@@ -24,4 +24,8 @@ export class CreateClassesDto {
   @IsOptional()
   @ApiProperty()
   duration: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  module_id: number;
 }

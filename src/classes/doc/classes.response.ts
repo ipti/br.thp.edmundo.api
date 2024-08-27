@@ -10,6 +10,10 @@ export class ClassesResponse {
   @ApiProperty()
   name: string;
 
+  @IsNotEmpty()
+  @ApiProperty()
+  module_id: number;
+
   @IsOptional()
   @ApiProperty()
   necessary_material: string;
