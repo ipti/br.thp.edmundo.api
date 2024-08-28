@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { JwtPayload } from 'src/utils/jwt.interface';
 
 @Injectable()
 export class ModuleBffService {
@@ -10,40 +9,20 @@ export class ModuleBffService {
 
 
 
-  async findModuleUser(user: JwtPayload) {
+  async findModule(id: number) {
     try {
-      const isAdmin = await this.prismaService.users.findMany({
-        where: { id: user.id },
-      });
-
-      const whereCondition =
-        isAdmin[0].role === 'ADMIN'
-          ? {}
-          : {
-              user_Module: {
-                some: { user_fk: user.id },
-              },
-        };
-
-      const reaplication = await this.prismaService.module.findMany({
-        where: whereCondition,
+      const module = await this.prismaService.module.findUnique({
+        where: { id: +id },
         include: {
-          _count: {
-            select: {
-              classrooms: true
-            }
-          }
+          classes: true
         }
       });
 
-      if (!reaplication) {
-        throw new HttpException(
-          'Module not found',
-          HttpStatus.NOT_FOUND,
-        );
+      if (!module) {
+        throw new HttpException('module not found', HttpStatus.NOT_FOUND);
       }
 
-      return reaplication;
+      return module;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

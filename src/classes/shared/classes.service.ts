@@ -16,7 +16,10 @@ export class ClassesService {
       const createdclasses = await this.prisma.classes.create({
         data: {
           name: CreateClassesDto.name,
-          module: { connect: { id: 1 } }
+          objective: CreateClassesDto.objective,
+          duration: CreateClassesDto.duration,
+          necessary_material: CreateClassesDto.necessary_material,
+          module: { connect: { id: CreateClassesDto.module_id } }
         },
       });
 

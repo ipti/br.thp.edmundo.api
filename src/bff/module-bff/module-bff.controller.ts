@@ -1,19 +1,18 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ReapplicationnBffService } from './service/module-bff.service';
-import { Request } from 'express';
+import { ModuleBffService } from './service/module-bff.service';
 
-@ApiTags('Reapplication-bff')
-@Controller('reapplication-bff')
+@ApiTags('Module-bff')
+@Controller('module-bff')
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
-export class ReapplicationBffController {
-  constructor(private ReapplicationnBffService: ReapplicationnBffService) { }
+export class ModuleBffController {
+  constructor(private ModuleBffService: ModuleBffService) { }
 
   @Get('')
-  async getById(@Req() req: Request) {
-    return this.ReapplicationnBffService.findReapplicationUser(req.user);
+  async getById(@Query('id') id: number) {
+    return this.ModuleBffService.findModule(id);
   }
 
 
