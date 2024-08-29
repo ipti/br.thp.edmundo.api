@@ -30,4 +30,8 @@ export class ActivitiesResponse {
   @IsNotEmpty()
   @ApiProperty()
   time_activities: number;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  id_classes: number;
 }

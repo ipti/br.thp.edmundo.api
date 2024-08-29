@@ -9,4 +9,4 @@ import { ActivitiesService } from './shared/activities.service';
   providers: [ActivitiesService],
   exports: [ActivitiesService],
 })
-export class ClassesModule { }
+export class ActivitiesModule { }

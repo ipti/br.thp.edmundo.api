@@ -14,7 +14,11 @@ export class ModuleBffService {
       const module = await this.prismaService.module.findUnique({
         where: { id: +id },
         include: {
-          classes: true
+          classes: {
+            include: {
+              activities: true,
+            }
+          }
         }
       });
 

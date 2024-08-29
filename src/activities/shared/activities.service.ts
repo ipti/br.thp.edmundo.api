@@ -15,12 +15,18 @@ export class ActivitiesService {
     try {
       const createdactivities = await this.prisma.activities.create({
         data: {
-          ...CreateActivitiesDto
+          points_activities: 0,
+          name: CreateActivitiesDto.name,
+          difficult: CreateActivitiesDto.difficult,
+          time_activities: CreateActivitiesDto.time_activities,
+          type_activities: CreateActivitiesDto.type_activities,
+          classes: { connect: { id: CreateActivitiesDto.id_classes } },
         },
       });
 
       return createdactivities;
     } catch (err) {
+      console.log(err)
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }

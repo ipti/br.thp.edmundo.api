@@ -12,6 +12,7 @@ import { ReapplicationModule } from './reapplication/reapplication.module';
 import { BFFModule } from './bff/bff.module';
 import { ModulesModule } from './modules/modules.module';
 import { ClassesModule } from './classes/classes.module';
+import { ActivitiesModule } from './activities/activities.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ClassesModule } from './classes/classes.module';
     ReapplicationModule,
     ModulesModule,
     ClassesModule,
+    ActivitiesModule,
     BFFModule
   ],
   controllers: [AppController],
