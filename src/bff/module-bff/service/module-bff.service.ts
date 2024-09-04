@@ -112,9 +112,10 @@ export class ModuleBffService {
         where: { id: +idModule },
       });
 
-      const classroom = await this.prismaService.classes.findFirst({
+      const classroom = await this.prismaService.classroom.findFirst({
         where: { id: +idClassroom },
       });
+
 
       if (!module) {
         throw new HttpException('module not found', HttpStatus.NOT_FOUND);

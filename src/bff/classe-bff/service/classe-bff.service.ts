@@ -11,37 +11,19 @@ export class ClasseBffService {
         where: { classroom_fk: id },
         include: {
           module: {
-            select:{
-              name: true
-            }
-          },
-          classroom: {
             select: {
-              classroom_classes: {
-                select: {
-                  classes: {
-                    select: {
-                      active: true,
-                      name: true,
+              name: true,
+              classes: {
+                where: {
+                  classroom_classes: {
+                    some: {
+                      classroom_fk: id,
                     }
                   }
                 }
-              },
+              }
             },
-            // include: {
-            //   classroom_classes: {
-            //     include: {
-            //       classes: {
-            //         select: {
-            //           name: true,
-            //           active: true,
-            //         }
-            //       },
-
-            //     }
-            //   }
-            // }
-          }
+          },
         }
       });
 
