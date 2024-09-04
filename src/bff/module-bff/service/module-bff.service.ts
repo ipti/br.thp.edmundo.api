@@ -31,11 +31,41 @@ export class ModuleBffService {
 
   async findModuleClassroom(id: number) {
     try {
-      const module = await this.prismaService.classroom_module.findMany({
-        where: { classroom_fk: +id },
+      const module = await this.prismaService.module.findMany({
+        where: {
+          classroom_module: {
+            some: {
+              classroom_fk: +id,
+            },
+          },
+        },
         include: {
-          module: true,
+          classroom_module: {
+            where: {
+              classroom_fk: +id,
+            }
+          },
+          classes: {
+            include: {
+              classroom_classes: {
+                where: {
+                  classroom_fk: +id,
+                }
+              },
+              activities: {
+                include: {
+                  classroom_activities: {
+                    where: {
+                      classroom_fk: +id
+                    }
+                  }
+                }
+              }
+            }
+          }
+
         }
+
       });
 
       if (!module) {
