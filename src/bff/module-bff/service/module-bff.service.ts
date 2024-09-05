@@ -29,6 +29,28 @@ export class ModuleBffService {
     }
   }
 
+  async findModuleAll(id: number) {
+    try {
+      const module = await this.prismaService.module.findMany({
+        include: {
+          classroom_module: {
+            where: {
+              classroom_fk: id
+            }
+          }
+        }
+      });
+
+      if (!module) {
+        throw new HttpException('module not found', HttpStatus.NOT_FOUND);
+      }
+
+      return module;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async findModuleClassroom(id: number) {
     try {
       const module = await this.prismaService.module.findMany({
@@ -141,12 +163,41 @@ export class ModuleBffService {
         data: {
           classroom: { connect: { id: idClassroom } },
           module: { connect: { id: idModule } },
-          active: false
+          active: true
         },
 
       })
 
       return { message: 'Módulo adicionado com sucesso' };
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async RemoveModule(idModule: number, idClassroom: number) {
+    try {
+      const classroom_module =
+        await this.prismaService.classroom_module.findFirst({
+          where: {
+            classroom_fk: idClassroom,
+            module_fk: idModule,
+          }
+        });
+
+      if (!classroom_module) {
+        throw new HttpException(
+          'Módulo não pertence a turma',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      await this.prismaService.classroom_module.delete({
+        where: {
+          id: classroom_module.id
+        }
+      })
+
+      return { message: 'Módulo removido com sucesso' };
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

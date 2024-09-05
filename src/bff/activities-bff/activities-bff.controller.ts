@@ -25,7 +25,7 @@ export class ActivitiesBffController {
   }
 
 
-  @Put('add-cctivities-classroom')
+  @Put('edit-activities-classroom')
   async update(
     @Query('id') id: number,
     @Body() update: UpdateClassroomActivitiesDto,

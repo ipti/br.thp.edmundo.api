@@ -100,7 +100,7 @@ export class ClasseBffService {
         data: {
           classroom: { connect: { id: idClassroom } },
           classes: { connect: { id: idClasse } },
-          active: false
+          active: true
         },
 
       })

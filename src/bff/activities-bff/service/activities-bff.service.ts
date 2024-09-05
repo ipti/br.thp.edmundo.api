@@ -59,12 +59,14 @@ export class ActivitiesBffService {
 
 
   async addActivities(idActivities: number, idClassroom: number) {
+
+    console.log(idActivities, idClassroom)
     try {
-      const activities = await this.prismaService.activities.findUnique({
+      const activities = await this.prismaService.activities.findFirst({
         where: { id: +idActivities },
       });
 
-      const classroom = await this.prismaService.classes.findUnique({
+      const classroom = await this.prismaService.classes.findFirst({
         where: { id: +idClassroom },
       });
 
@@ -95,13 +97,14 @@ export class ActivitiesBffService {
         data: {
           classroom: { connect: { id: idClassroom } },
           activities: { connect: { id: idActivities } },
-          active: false
+          active: true
         },
 
       })
 
       return { message: 'Atividade adicionada com sucesso' };
     } catch (err) {
+      console.log(err)
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }

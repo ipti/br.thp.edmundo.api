@@ -16,6 +16,11 @@ export class ModuleBffController {
     return this.ModuleBffService.findModule(id);
   }
 
+  @Get('all')
+  async getAll(@Query('id') id: number) {
+    return this.ModuleBffService.findModuleAll(id);
+  }
+
   @Get('classroom')
   async getByIdClassroom(@Query('id') id: number) {
     return this.ModuleBffService.findModuleClassroom(id);
@@ -38,4 +43,12 @@ export class ModuleBffController {
     return this.ModuleBffService.updateClassroomModule(id, update);
   }
 
+
+  @Put('remove-module-classroom')
+  async remove(
+    @Query('idClassroom') idClassroom: number,
+    @Query('idModule') idModule: number,
+  ) {
+    return this.ModuleBffService.RemoveModule(idModule, idClassroom);
+  }
 }
