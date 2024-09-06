@@ -16,10 +16,7 @@ export class UsersService {
     });
 
     if (userRegistered.length > 0) {
-      throw new HttpException(
-        'Email already exists',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
     }
     const hashedPassword = await this.hashPassword(createUserDto.password);
 
@@ -99,6 +96,53 @@ export class UsersService {
       const user = await this.findOne(+id);
       if (!user) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      const registration = await this.prisma.registration.findMany({
+        where: { user_fk: user.id },
+      })
+
+
+
+      if (registration.length > 0) {
+
+        for (const i of registration) {
+
+          await this.prisma.registration.delete({
+            where: { id: i.id },
+          })
+        }
+      }
+
+      const user_classroom = await this.prisma.user_classroom.findMany({
+        where: { usersId: user.id },
+      })
+
+
+      if (user_classroom.length > 0) {
+
+        for (const i of user_classroom) {
+
+          await this.prisma.user_classroom.delete({
+            where: { id: i.id },
+          })
+        }
+      }
+
+
+      const user_reapplication = await this.prisma.user_reapplication.findMany({
+        where: { user_fk: user.id },
+      })
+
+
+      if (user_reapplication.length > 0) {
+
+        for (const i of user_reapplication) {
+
+          await this.prisma.user_reapplication.delete({
+            where: { id: i.id },
+          })
+        }
       }
 
       await this.prisma.users.delete({

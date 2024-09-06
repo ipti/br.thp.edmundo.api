@@ -90,9 +90,33 @@ export class ReapplicationService {
 
   async remove(user: JwtPayload, id: string) {
     try {
-      verifyAdmin(user);
+      // verifyAdmin(user);
 
       await this.findOne(id);
+
+      const user_reapplication = await this.prisma.user_reapplication.findMany({
+        where: { user_fk: user.id },
+      })
+
+      const classroom = await this.prisma.classroom.findMany({
+        where: {
+          reapplication_fk: +id
+        }
+      })
+
+      if (classroom.length > 0) {
+        throw new HttpException(
+          'Não foi possivel exclui replicação por ter turmas vinculadas a ela',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      if (user_reapplication.length > 0) {
+        for (const i of user_reapplication) {
+          await this.prisma.user_reapplication.delete({
+            where: { id: i.id },
+          })
+        }
+      }
 
       await this.prisma.reapplication.delete({
         where: { id: +id },

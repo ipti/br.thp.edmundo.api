@@ -91,6 +91,22 @@ export class ClassroomService {
     try {
       await this.findOne(id);
 
+      const user_classroom = await this.prisma.user_classroom.findMany({
+        where: { usersId: +id },
+      })
+
+
+      if (user_classroom.length > 0) {
+
+        for (const i of user_classroom) {
+
+          await this.prisma.user_classroom.delete({
+            where: { id: i.id },
+          })
+        }
+      }
+
+
 
       await this.prisma.classroom.delete({
         where: { id: +id },

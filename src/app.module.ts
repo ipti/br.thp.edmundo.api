@@ -10,6 +10,9 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { ClassroomModule } from './classroom/classroom.module';
 import { ReapplicationModule } from './reapplication/reapplication.module';
 import { BFFModule } from './bff/bff.module';
+import { ModulesModule } from './modules/modules.module';
+import { ClassesModule } from './classes/classes.module';
+import { ActivitiesModule } from './activities/activities.module';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { BFFModule } from './bff/bff.module';
     AuthModule,
     ClassroomModule,
     ReapplicationModule,
+    ModulesModule,
+    ClassesModule,
+    ActivitiesModule,
     BFFModule
   ],
   controllers: [AppController],
