@@ -66,7 +66,7 @@ export class ActivitiesBffService {
         where: { id: +idActivities },
       });
 
-      const classroom = await this.prismaService.classes.findFirst({
+      const classroom = await this.prismaService.classroom.findFirst({
         where: { id: +idClassroom },
       });
 

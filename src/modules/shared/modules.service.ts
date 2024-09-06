@@ -72,10 +72,8 @@ export class ModulesService {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
-
   async remove(user: JwtPayload, id: string) {
     try {
-      verifyAdmin(user);
 
       await this.findOne(id);
 
@@ -111,6 +109,10 @@ export class ModulesService {
 
       await this.prisma.module.delete({
         where: { id: +id },
+        include: {
+          classroom_module: true,
+          classes: true
+        }
       });
 
       return { message: 'reaplication deleted successfully' };

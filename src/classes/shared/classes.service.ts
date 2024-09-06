@@ -76,12 +76,17 @@ export class ClassesService {
 
   async remove(user: JwtPayload, id: string) {
     try {
-      verifyAdmin(user);
+      // verifyAdmin(user);
 
       await this.findOne(id);
 
       await this.prisma.classes.delete({
         where: { id: +id },
+        include: {
+          activities: true,
+          classroom_classes: true,
+          module: true
+        }
       });
 
       return { message: 'reaplication deleted successfully' };

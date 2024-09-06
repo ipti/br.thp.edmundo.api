@@ -72,7 +72,7 @@ export class ClasseBffService {
         where: { id: +idClasse },
       });
 
-      const classroom = await this.prismaService.classes.findUnique({
+      const classroom = await this.prismaService.classroom.findUnique({
         where: { id: +idClassroom },
       });
 
