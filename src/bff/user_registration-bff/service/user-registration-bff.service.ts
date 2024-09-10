@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ChangePasswordUserDto } from '../dto/password-user-registration.dto';
 import { UpdateUserRegistrationDto } from '../dto/update-user-registration.dto';
+import { CreateUserRegistrationDto } from '../dto/create-users-registration.dto';
 
 @Injectable()
 export class UserRegistrationBffService {
@@ -13,6 +14,44 @@ export class UserRegistrationBffService {
     return hashedPassword;
   }
 
+  async create(createUserDto: CreateUserRegistrationDto) {
+    const userRegistered = await this.prismaService.users.findMany({
+      where: { email: createUserDto.email },
+    });
+
+    if (userRegistered.length > 0) {
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+    }
+    const hashedPassword = await this.hashPassword(createUserDto.password);
+
+    try {
+      const createdUser = await this.prismaService.users.create({
+        data: {
+          email: createUserDto.email,
+          name: createUserDto.name,
+          role: createUserDto.role,
+          password: hashedPassword,
+        },
+      });
+
+      await this.prismaService.registration.create({
+        data: {
+          birthday: createUserDto.birthday,
+          color_race: createUserDto.color_race,
+          sex: createUserDto.sex,
+          cpf: createUserDto.cpf,
+          deficiency: createUserDto.deficiency,
+          zone: createUserDto.zone,
+          kinship: createUserDto.kinship,
+          user: { connect: { id: createdUser.id } },
+
+        }
+      })
+      return createdUser;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   async updateUser(CreateUserDto: UpdateUserRegistrationDto, id: string) {
     const userRegistered = await this.prismaService.users.findMany({
@@ -144,5 +183,10 @@ export class UserRegistrationBffService {
     }
 
     return user;
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    const saltRounds = 10;
+    return bcrypt.hash(password, saltRounds);
   }
 }
