@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ChangePasswordUserDto } from '../dto/password-user-registration.dto';
 import { UpdateUserRegistrationDto } from '../dto/update-user-registration.dto';
+import { CreateUserRegistrationDto } from '../dto/create-users-registration.dto';
 
 @Injectable()
 export class UserRegistrationBffService {
@@ -13,6 +14,45 @@ export class UserRegistrationBffService {
     return hashedPassword;
   }
 
+  async create(createUserDto: CreateUserRegistrationDto) {
+    const userRegistered = await this.prismaService.users.findMany({
+      where: { email: createUserDto.email },
+    });
+
+    if (userRegistered.length > 0) {
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+    }
+    const hashedPassword = await this.hashPassword(createUserDto.password);
+
+    try {
+      const createdUser = await this.prismaService.users.create({
+        data: {
+          email: createUserDto.email,
+          name: createUserDto.name,
+          role: createUserDto.role,
+          password: hashedPassword,
+        },
+      });
+
+
+      await this.prismaService.registration.create({
+        data: {
+          birthday: createUserDto.birthday,
+          color_race: createUserDto.color_race,
+          sex: createUserDto.sex,
+          cpf: createUserDto.cpf,
+          deficiency: createUserDto.deficiency,
+          zone: createUserDto.zone,
+          kinship: createUserDto.kinship,
+          user: { connect: { id: createdUser.id } },
+
+        }
+      })
+      return createdUser;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   async updateUser(CreateUserDto: UpdateUserRegistrationDto, id: string) {
     const userRegistered = await this.prismaService.users.findMany({
@@ -30,8 +70,10 @@ export class UserRegistrationBffService {
     }
 
     try {
+
+
       const transactionResult = this.prismaService.$transaction(async (tx) => {
-        const user = await tx.users.update({
+        await tx.users.update({
           where: { id: +id },
           data: {
             name: CreateUserDto.name,
@@ -45,39 +87,17 @@ export class UserRegistrationBffService {
           }
         })
 
+
+        console.log(register)
         if (register) {
           await tx.registration.update({
             where: { id: register.id },
             data: {
               birthday: CreateUserDto.birthday,
-              color_race: CreateUserDto.color_race,
-              sex: CreateUserDto.sex,
-              zone: CreateUserDto.zone,
-              deficiency: CreateUserDto.deficiency,
-              cpf: CreateUserDto.cpf,
               responsable_telephone: CreateUserDto.responsable_telephone,
-              responsable_name: CreateUserDto.responsable_name,
-              responsable_cpf: CreateUserDto.responsable_cpf,
-              kinship: CreateUserDto.kinship
             }
           })
-        } else {
-          await tx.registration.create({
-            data: {
-              birthday: CreateUserDto.birthday,
-              color_race: CreateUserDto.color_race,
-              sex: CreateUserDto.sex,
-              zone: CreateUserDto.zone,
-              deficiency: CreateUserDto.deficiency,
-              cpf: CreateUserDto.cpf,
-              responsable_telephone: CreateUserDto.responsable_telephone,
-              responsable_name: CreateUserDto.responsable_name,
-              responsable_cpf: CreateUserDto.responsable_cpf,
-              kinship: CreateUserDto.kinship,
-              user: { connect: { id: +id } }
-            }
-          })
-        }
+        } 
 
         return { message: 'Perfil atualizado com sucesso!' };
       });
@@ -144,5 +164,10 @@ export class UserRegistrationBffService {
     }
 
     return user;
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    const saltRounds = 10;
+    return bcrypt.hash(password, saltRounds);
   }
 }

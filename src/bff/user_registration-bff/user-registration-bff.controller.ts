@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UserResponse } from './doc/users-registration.response';
 import { UpdateUserRegistrationDto } from './dto/update-user-registration.dto';
 import { UserRegistrationBffService } from './service/user-registration-bff.service';
+import { CreateUserRegistrationDto } from './dto/create-users-registration.dto';
 
 
 @ApiTags('User-Registration-bff')
@@ -12,6 +13,13 @@ import { UserRegistrationBffService } from './service/user-registration-bff.serv
 @UseGuards(JwtAuthGuard)
 export class UserRegistrationBffController {
   constructor(private UserService: UserRegistrationBffService) { }
+
+  @Post()
+  @ApiCreatedResponse({ type: UserResponse })
+  async create(@Body() user: CreateUserRegistrationDto) {
+    return this.UserService.create(user);
+  }
+
 
   @Put()
   @ApiCreatedResponse({ type: UserResponse })

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
+import { Kinship, Role } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import {
   IsArray,
@@ -14,12 +14,18 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateUserRegistrationDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(150)
   @ApiProperty()
   name: string;
+
+  @IsNotEmpty()
+  @MaxLength(60)
+  @IsString()
+  @ApiProperty()
+  password: string;
 
   @Transform(({ value }) => {
     const date = new Date(value);
@@ -35,10 +41,6 @@ export class CreateUserDto {
   email: string;
 
   @IsNotEmpty()
-  @IsString()
-  phone: string;
-
-  @IsNotEmpty()
   @IsNumber()
   sex: number;
 
@@ -46,35 +48,37 @@ export class CreateUserDto {
   @IsNumber()
   color_race: number;
 
-  @Transform(({ value }) => {
-    const date = new Date(value);
-    return date;
-  })
-  @IsOptional()
-  @IsDate()
-  @ApiProperty({ type: Date, required: false })
-  initial_date: Date;
-
   @IsNotEmpty()
-  @Length(5, 32)
-  @ApiProperty()
-  username: string;
-
-  @IsNotEmpty()
-  @MaxLength(60)
-  @IsString()
-  @ApiProperty()
-  password: string;
-
-  @IsOptional()
   @IsBoolean()
-  @ApiProperty({ required: false, default: 1 })
-  active?: boolean;
+  deficiency: boolean;
+
+  @IsOptional()
+  @IsString()
+  deficiency_description?: string;
+
+  @IsOptional()
+  @IsString()
+  responsable_name?: string;
+
+  @IsOptional()
+  @IsString()
+  responsable_cpf?: string;
+
+  @IsOptional()
+  @IsString()
+  responsable_telephone?: string;
+
+  @IsOptional()
+  @IsString()
+  kinship?: Kinship;
 
   @IsNotEmpty()
-  @IsArray()
-  @ApiProperty()
-  project?: Array<number>;
+  @IsNumber()
+  zone: number;
+
+  @IsOptional()
+  @IsString()
+  cpf?: string;
 
   @IsOptional()
   @IsEnum(Role)

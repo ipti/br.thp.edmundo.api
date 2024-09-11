@@ -4,16 +4,15 @@ import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsDate,
-  IsNotEmpty,
-  IsNumber,
   IsOptional,
+  IsNumber,
   IsString,
   Length,
   MaxLength
 } from 'class-validator';
 
 export class UpdateUserRegistrationDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MaxLength(150)
   @ApiProperty()
@@ -28,7 +27,7 @@ export class UpdateUserRegistrationDto {
   @ApiProperty({ type: Date, required: false })
   birthday: Date;
 
-  @IsNotEmpty()
+  @IsOptional()
   @Length(5, 64)
   @ApiProperty()
   email: string;
@@ -37,15 +36,15 @@ export class UpdateUserRegistrationDto {
   @IsString()
   cpf?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   sex: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   color_race: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
   deficiency: boolean;
 
@@ -69,7 +68,7 @@ export class UpdateUserRegistrationDto {
   @IsString()
   kinship?: Kinship;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   zone: number;
 }
