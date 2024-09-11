@@ -41,10 +41,6 @@ export class CreateUserRegistrationDto {
   email: string;
 
   @IsNotEmpty()
-  @IsString()
-  phone: string;
-
-  @IsNotEmpty()
   @IsNumber()
   sex: number;
 
