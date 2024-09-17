@@ -20,6 +20,7 @@ export class ActivitiesService {
           difficult: CreateActivitiesDto.difficult,
           time_activities: CreateActivitiesDto.time_activities,
           type_activities: CreateActivitiesDto.type_activities,
+          description: CreateActivitiesDto.description,
           classes: { connect: { id: CreateActivitiesDto.id_classes } },
         },
       });

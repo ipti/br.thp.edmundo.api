@@ -7,6 +7,40 @@ export class ClassroomBffService {
 
 
 
+  async findClassroomUser(idUser: number) {
+    try {
+    
+
+      const classroom = await this.prismaService.classroom.findMany({
+        where: {
+          user: {
+            some: {
+              usersId: idUser
+            }
+          }
+        },
+        include: {
+          classroom_module: {
+            select: {
+              module: true,
+              active: true
+            }
+          }
+        }
+      });
+
+      if (!classroom) {
+        throw new HttpException(
+          'Classroom not found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      return classroom;
+    } catch (err) {
+      throw new HttpException(err.message || err, HttpStatus.BAD_REQUEST);
+    }
+  }
 
 
   async findClassroomReapplication(idUser: number, idReapplication?: number) {
@@ -106,7 +140,7 @@ export class ClassroomBffService {
       })
 
       if (!classroom) {
-        throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
+        throw new HttpException('Turma não encontrada', HttpStatus.NOT_FOUND);
       }
 
       return { classroom: classroom, owner: owner };
