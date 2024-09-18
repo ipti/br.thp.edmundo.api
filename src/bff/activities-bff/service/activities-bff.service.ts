@@ -37,7 +37,7 @@ export class ActivitiesBffService {
       const activities =
         await this.prismaService.classroom_activities.findUnique({
           where: { id: +id },
-      });
+        });
 
       if (!activities) {
         throw new HttpException('.activities not found', HttpStatus.NOT_FOUND);
@@ -103,6 +103,35 @@ export class ActivitiesBffService {
       })
 
       return { message: 'Atividade adicionada com sucesso' };
+    } catch (err) {
+      console.log(err)
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async addUserActivities(
+    idActivities: number,
+    idClassroom: number,
+    user: number,
+  ) {
+    try {
+
+      const user_classroom = await this.prismaService.user_classroom.findFirst({
+        where: {
+          classroomId: idClassroom,
+          usersId: user
+        }
+      })
+
+      const activities = await this.prismaService.user_activities.create({
+        data: {
+          user_classroom: { connect: { id: user_classroom.id } },
+          activities: { connect: { id: idActivities } }
+        }
+      });
+
+
+      return activities;
     } catch (err) {
       console.log(err)
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);

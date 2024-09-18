@@ -156,21 +156,23 @@ model user_activities {
   status        Status_Activities @default(PENDING)
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
-  users         users?            @relation(fields: [users_fk], references: [id])
-  users_fk      Int?
   activities    activities?       @relation(fields: [activities_fk], references: [id])
   activities_fk Int?
+  users            users?          @relation(fields: [usersId], references: [id])
+  usersId          Int?
+  user_classroom   user_classroom? @relation(fields: [user_classroomId], references: [id])
+  user_classroomId Int?
 }
 
 model user_classroom {
-  id Int @id @default(autoincrement())
-
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  classroom   classroom? @relation(fields: [classroomId], references: [id])
-  classroomId Int?
-  users       users?     @relation(fields: [usersId], references: [id])
-  usersId     Int?
+  id              Int               @id @default(autoincrement())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  classroom       classroom?        @relation(fields: [classroomId], references: [id])
+  classroomId     Int?
+  users           users?            @relation(fields: [usersId], references: [id])
+  usersId         Int?
+  user_activities user_activities[]
 }
 
 enum Role {

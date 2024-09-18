@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ActivitiesBffService } from './service/activities-bff.service';
 import { UpdateClassroomActivitiesDto } from './dto/update-classrom-activities.dto';
+import { Request } from 'express';
 
 @ApiTags('Activities-bff')
 @Controller('activities-bff')
@@ -22,6 +23,19 @@ export class ActivitiesBffController {
     @Query('idActivities') idActivities: number,
   ) {
     return this.ActivitiesBffService.addActivities(idActivities, idClassroom);
+  }
+
+  @Post('add-activities-classroom-user')
+  async createuseractivities(
+    @Query('idClassroom') idClassroom: number,
+    @Query('idActivities') idActivities: number,
+    @Req() req: Request
+  ) {
+    return this.ActivitiesBffService.addUserActivities(
+      idActivities,
+      idClassroom,
+      req.user.id,
+    );
   }
 
 
