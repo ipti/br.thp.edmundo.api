@@ -13,8 +13,9 @@ export class ActivitiesBffController {
   constructor(private ActivitiesBffService: ActivitiesBffService) { }
 
   @Get('')
-  async getById(@Query('id') id: number) {
-    return this.ActivitiesBffService.findActivities(id);
+  async getById(@Query('id') id: number, @Req() req: Request
+  ) {
+    return this.ActivitiesBffService.findActivities(id, req.user);
   }
 
   @Post('add-activities-classroom')

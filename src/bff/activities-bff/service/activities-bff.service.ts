@@ -1,19 +1,24 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateClassroomActivitiesDto } from '../dto/update-classrom-activities.dto';
+import { JwtPayload } from 'src/utils/jwt.interface';
 
 @Injectable()
 export class ActivitiesBffService {
   constructor(private readonly prismaService: PrismaService) { }
 
-  async findActivities(id: number) {
+  async findActivities(id: number, user: JwtPayload) {
     try {
       const activities = await this.prismaService.activities.findUnique({
-        where: { id: +id },
+        where: {
+          id: +id,
+        },
         include: {
-          classes: {
-            include: {
-              activities: true,
+          user_activities: {
+            where: {
+              user_classroom: {
+                usersId: user.id
+              }
             }
           }
         }
