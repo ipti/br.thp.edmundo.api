@@ -143,6 +143,51 @@ export class ActivitiesBffService {
     }
   }
 
+  async FinishUserActivities(id: number, file: any) {
+    try {
+
+      const transactionResult = this.prismaService.$transaction(async (tx) => {
+
+
+        const user_classroom = await this.prismaService.user_activities.update({
+          where: {
+            id: id,
+          },
+          data: {
+            status: 'COMPLETED',
+          },
+        });
+
+        if (file) {
+          const fileAzure = await this.azureService.uploadFile(
+            file,
+            'activities',
+          ); //Azure
+
+          const activities =
+            await this.prismaService.user_activities_archives.create({
+              data: {
+                original_name: file.originalname,
+                size: file.size,
+                archive_url: fileAzure,
+              }
+            });
+        }
+
+
+      })
+
+
+
+
+      return transactionResult;
+    } catch (err) {
+      console.log(err)
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+
 }
 
 
