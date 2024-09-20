@@ -9,7 +9,7 @@ export class ClassroomBffService {
 
   async findClassroomUser(idUser: number) {
     try {
-    
+
 
       const classroom = await this.prismaService.classroom.findMany({
         where: {
@@ -42,6 +42,49 @@ export class ClassroomBffService {
     }
   }
 
+  async findClassroomActivitiesUser(id: number) {
+    try {
+
+
+      const classroom = await this.prismaService.classroom.findUnique({
+        where: {
+          id: id,
+        },
+        include: {
+          classroom_activities: {
+            include: {
+              activities: {
+                include: {
+                  user_activities: {
+                    include: {
+                      user_classroom: {
+                        select: {
+                          users: {
+                            select: {
+                              name: true,
+                              id: true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      if (!classroom) {
+        throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
+      }
+
+      return classroom;
+    } catch (err) {
+      throw new HttpException(err.message || err, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   async findClassroomReapplication(idUser: number, idReapplication?: number) {
     try {
