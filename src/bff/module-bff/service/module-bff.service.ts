@@ -12,8 +12,25 @@ export class ModuleBffService {
         where: { id: +id },
         include: {
           classes: {
-            include: {
-              activities: true,
+            select: {
+              id: true,
+              name: true,
+              activities: {
+                include: {
+                  classroom_activities: {
+                    where: {
+                      classroom_fk: 1
+                    }
+                  },
+                  user_activities: {
+                    where: {
+                      user_classroom: {
+                        usersId: 7
+                      }
+                    }
+                  }
+                }
+              },
             }
           }
         }
