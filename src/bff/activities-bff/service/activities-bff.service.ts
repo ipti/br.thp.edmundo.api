@@ -2,10 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateClassroomActivitiesDto } from '../dto/update-classrom-activities.dto';
 import { JwtPayload } from 'src/utils/jwt.interface';
+import { AzureProviderService } from 'src/utils/middleware/azure.provider';
 
 @Injectable()
 export class ActivitiesBffService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(
+    readonly prismaService: PrismaService,
+    readonly azureService: AzureProviderService
+  ) { }
 
   async findActivities(id: number, user: JwtPayload) {
     try {
@@ -143,13 +147,34 @@ export class ActivitiesBffService {
     }
   }
 
-  async FinishUserActivities(id: number, file: any) {
+  async FinishUserActivities(id: number, file: any[]) {
     try {
 
       const transactionResult = this.prismaService.$transaction(async (tx) => {
 
 
-        const user_classroom = await this.prismaService.user_activities.update({
+        if (file) {
+          for (const i of file) {
+
+            const fileAzure = await this.azureService.uploadFile(
+              i,
+              'activities',
+            );
+
+            await tx.user_activities_archives.create({
+              data: {
+                original_name: i.originalname,
+                size: i.size,
+                archive_url: fileAzure,
+                user_activities: { connect: { id: id } },
+              }
+            });
+          }
+        }
+
+
+
+        await tx.user_activities.update({
           where: {
             id: id,
           },
@@ -158,23 +183,7 @@ export class ActivitiesBffService {
           },
         });
 
-        if (file) {
-          const fileAzure = await this.azureService.uploadFile(
-            file,
-            'activities',
-          ); //Azure
-
-          const activities =
-            await this.prismaService.user_activities_archives.create({
-              data: {
-                original_name: file.originalname,
-                size: file.size,
-                archive_url: fileAzure,
-              }
-            });
-        }
-
-
+        return { message: 'Atividade concluída!' };
       })
 
 

@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ActivitiesBffService } from './service/activities-bff.service';
-import { UpdateClassroomActivitiesDto } from './dto/update-classrom-activities.dto';
 import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UpdateClassroomActivitiesDto } from './dto/update-classrom-activities.dto';
+import { ActivitiesBffService } from './service/activities-bff.service';
 
 @ApiTags('Activities-bff')
 @Controller('activities-bff')
@@ -37,6 +38,15 @@ export class ActivitiesBffController {
       idClassroom,
       req.user.id,
     );
+  }
+
+  @Put('finish-activities-classroom-user')
+  @UseInterceptors(FilesInterceptor('files', 10)) 
+  async finishuseractivities(
+    @Query('id') id: number,
+    @UploadedFile('files') files: any, 
+  ) {
+    return this.ActivitiesBffService.FinishUserActivities(id, files);
   }
 
 
