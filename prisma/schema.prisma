@@ -163,7 +163,9 @@ model user_activities {
 }
 
 model user_activities_archives {
-  id                 Int              @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   size               Int
   original_name      String           @db.Text()
   archive_url        String?
