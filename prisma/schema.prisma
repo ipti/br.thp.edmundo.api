@@ -18,7 +18,6 @@ model users {
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   user_classroom     user_classroom[]
-  user_activities    user_activities[]
   registration       registration[]
   user_reapplication user_reapplication[]
   activities         activities?          @relation(fields: [activities_fk], references: [id])
@@ -128,7 +127,7 @@ model classroom_classes {
 model activities {
   id                   Int                    @id @default(autoincrement())
   name                 String
-  description          String?
+  description          String?                @db.Text
   type_activities      Type_Activities
   points_activities    Int
   difficult            Difficulties
@@ -152,25 +151,37 @@ model classroom_activities {
 }
 
 model user_activities {
-  id            Int               @id @default(autoincrement())
-  status        Status_Activities @default(PENDING)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  users         users?            @relation(fields: [users_fk], references: [id])
-  users_fk      Int?
-  activities    activities?       @relation(fields: [activities_fk], references: [id])
-  activities_fk Int?
+  id                       Int                        @id @default(autoincrement())
+  status                   Status_Activities          @default(PENDING)
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  activities               activities?                @relation(fields: [activities_fk], references: [id])
+  activities_fk            Int?
+  user_classroom           user_classroom?            @relation(fields: [user_classroomId], references: [id])
+  user_classroomId         Int?
+  user_activities_archives user_activities_archives[]
+}
+
+model user_activities_archives {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  size               Int
+  original_name      String           @db.Text()
+  archive_url        String?
+  user_activities_fk Int
+  user_activities    user_activities? @relation(fields: [user_activities_fk], references: [id])
 }
 
 model user_classroom {
-  id Int @id @default(autoincrement())
-
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  classroom   classroom? @relation(fields: [classroomId], references: [id])
-  classroomId Int?
-  users       users?     @relation(fields: [usersId], references: [id])
-  usersId     Int?
+  id              Int               @id @default(autoincrement())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  classroom       classroom?        @relation(fields: [classroomId], references: [id])
+  classroomId     Int?
+  users           users?            @relation(fields: [usersId], references: [id])
+  usersId         Int?
+  user_activities user_activities[]
 }
 
 enum Role {

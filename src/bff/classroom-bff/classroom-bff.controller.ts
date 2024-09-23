@@ -22,6 +22,18 @@ export class ClassroomBffController {
     );
   }
 
+
+  @Get('user')
+  async getUserStudent(@Req() req: Request) {
+    return this.ClassroomBffService.findClassroomUser(req.user.id);
+  }
+
+  @Get('activities')
+  async getUserStudentActivities(@Query('id') id: string) {
+    return this.ClassroomBffService.findClassroomActivitiesUser(+id);
+  }
+
+
   @Get(':id')
   async getById(@Param('id') id: string) {
     return this.ClassroomBffService.findOne(id);

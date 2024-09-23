@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ModuleBffService } from './service/module-bff.service';
 import { UpdateClassroomModuleDto } from './dto/update-classrom-module.dto';
+import { Request } from 'express';
 
 @ApiTags('Module-bff')
 @Controller('module-bff')
@@ -13,8 +14,25 @@ export class ModuleBffController {
 
   @Get('')
   async getById(@Query('id') id: number) {
-    return this.ModuleBffService.findModule(id);
+    return this.ModuleBffService.findModule(
+      id
+    );
   }
+
+  @Get('classroom-student')
+  async getClassroom(
+    @Query('id') id: number,
+    @Query('idClassroom') idClassroom: number,
+    @Req() req: Request
+
+  ) {
+    return this.ModuleBffService.findModuleClassroomStudent(
+      id,
+      idClassroom,
+      req.user.id,
+    );
+  }
+
 
   @Get('all')
   async getAll(@Query('id') id: number) {

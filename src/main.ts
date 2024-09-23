@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as session from 'express-session';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PrismaService } from './prisma/prisma.service';
+import * as bodyParser from 'body-parser';
 
 declare const module: any;
 
@@ -32,6 +33,9 @@ async function bootstrap() {
       saveUninitialized: false,
     }),
   );
+
+  app.use(bodyParser.json({ limit: '10mb' }));
+  app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
   const options = new DocumentBuilder()
     .setTitle('Tecnologia Edmundo')
