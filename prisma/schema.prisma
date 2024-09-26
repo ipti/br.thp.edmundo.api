@@ -139,6 +139,44 @@ model activities {
   users                users[]
   classes              classes?               @relation(fields: [classesId], references: [id])
   classesId            Int?
+  form                 form?
+}
+
+model form {
+  id           Int        @id @default(autoincrement())
+  activities   activities @relation(fields: [activitiesId], references: [id])
+  activitiesId Int        @unique
+  question     question[]
+}
+
+model question {
+  id                   Int                    @id @default(autoincrement())
+  content              String                 @db.Text
+  type                 Type_Question
+  response             String
+  form                 form                   @relation(fields: [formId], references: [id])
+  formId               Int
+  options              options[]
+  user_activities_form user_activities_form[]
+}
+
+model options {
+  id                   Int                    @id @default(autoincrement())
+  content              String                 @db.Text
+  value                Int?
+  user_activities_form user_activities_form[]
+  question             question?              @relation(fields: [questionId], references: [id])
+  questionId           Int?
+}
+
+model user_activities_form {
+  id                Int            @id @default(autoincrement())
+  user_classroom    user_classroom @relation(fields: [user_classroom_fk], references: [id])
+  user_classroom_fk Int
+  options           options        @relation(fields: [options_fk], references: [id])
+  options_fk        Int
+  question          question       @relation(fields: [question_fk], references: [id])
+  question_fk       Int
 }
 
 model classroom_activities {
@@ -163,9 +201,9 @@ model user_activities {
 }
 
 model user_activities_archives {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 Int              @id @default(autoincrement())
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
   size               Int
   original_name      String           @db.Text()
   archive_url        String?
@@ -174,14 +212,15 @@ model user_activities_archives {
 }
 
 model user_classroom {
-  id              Int               @id @default(autoincrement())
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  classroom       classroom?        @relation(fields: [classroomId], references: [id])
-  classroomId     Int?
-  users           users?            @relation(fields: [usersId], references: [id])
-  usersId         Int?
-  user_activities user_activities[]
+  id                   Int                    @id @default(autoincrement())
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  classroom            classroom?             @relation(fields: [classroomId], references: [id])
+  classroomId          Int?
+  users                users?                 @relation(fields: [usersId], references: [id])
+  usersId              Int?
+  user_activities      user_activities[]
+  user_activities_form user_activities_form[]
 }
 
 enum Role {
@@ -212,6 +251,11 @@ enum Difficulties {
 enum Type_Activities {
   QUIZ
   CODE
+}
+
+enum Type_Question {
+  MULTIPLE_CHOICE
+  SELECTION_BOX
 }
 
 enum Status_Activities {
