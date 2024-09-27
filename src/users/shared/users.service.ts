@@ -22,7 +22,8 @@ export class UsersService {
 
     try {
       const createdUser = await this.prisma.users.create({
-        data: { ...createUserDto, password: hashedPassword },
+        data: { ...createUserDto, password: hashedPassword,
+         },
       });
 
       return createdUser;
@@ -38,6 +39,7 @@ export class UsersService {
       email: true,
       active: true,
       password: false,
+      username: true
     };
     const filters = isEmpty(query) ? {} : { ...query };
 
@@ -56,6 +58,8 @@ export class UsersService {
         active: true,
         password: false,
         role: true,
+        username: true,
+        email: true
       },
     });
 
@@ -82,9 +86,9 @@ export class UsersService {
     }
   }
 
-  async findOneByEmail(email: string) {
+  async findOneByUsername(username: string) {
     const user = await this.prisma.users.findFirst({
-      where: { email: email },
+      where: { username: username },
     });
 
 

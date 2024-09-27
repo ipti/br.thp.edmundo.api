@@ -18,6 +18,12 @@ export class UpdateUserRegistrationDto {
   @ApiProperty()
   name: string;
 
+  @IsOptional()
+  @IsString()
+  @MaxLength(150)
+  @ApiProperty()
+  username: string;
+
   @Transform(({ value }) => {
     const date = new Date(value);
     return date;
@@ -28,7 +34,6 @@ export class UpdateUserRegistrationDto {
   birthday: Date;
 
   @IsOptional()
-  @Length(5, 64)
   @ApiProperty()
   email: string;
 
