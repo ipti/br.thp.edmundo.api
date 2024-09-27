@@ -10,7 +10,8 @@ datasource db {
 
 model users {
   id                 Int                  @id @default(autoincrement())
-  email              String               @unique
+  email              String?              @unique
+  username           String               @unique
   role               Role                 @default(STUDENT)
   name               String               @db.VarChar(150)
   password           String               @db.VarChar(60)
@@ -153,11 +154,19 @@ model question {
   id                   Int                    @id @default(autoincrement())
   content              String                 @db.Text
   type                 Type_Question
-  response             String
+  response_question    response_question[]
   form                 form                   @relation(fields: [formId], references: [id])
   formId               Int
   options              options[]
   user_activities_form user_activities_form[]
+}
+
+model response_question {
+  id          Int       @id @default(autoincrement())
+  options     options   @relation(fields: [option_fk], references: [id])
+  option_fk   Int       @unique
+  question    question? @relation(fields: [question_fk], references: [id])
+  question_fk Int?
 }
 
 model options {
@@ -167,6 +176,7 @@ model options {
   user_activities_form user_activities_form[]
   question             question?              @relation(fields: [questionId], references: [id])
   questionId           Int?
+  response_question    response_question?
 }
 
 model user_activities_form {
