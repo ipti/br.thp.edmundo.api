@@ -4,10 +4,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ChangePasswordUserDto } from '../dto/password-user-registration.dto';
 import { UpdateUserRegistrationDto } from '../dto/update-user-registration.dto';
 import { CreateUserRegistrationDto } from '../dto/create-users-registration.dto';
+import { AzureProviderService } from 'src/utils/middleware/azure.provider';
 
 @Injectable()
 export class UserRegistrationBffService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly azureService: AzureProviderService,
+  ) { }
 
   async encryptedPassword(password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -27,6 +31,7 @@ export class UserRegistrationBffService {
     try {
       const createdUser = await this.prismaService.users.create({
         data: {
+          username: createUserDto.username,
           email: createUserDto.email,
           name: createUserDto.name,
           role: createUserDto.role,
@@ -57,6 +62,39 @@ export class UserRegistrationBffService {
     }
   }
 
+  async updateAvatar(id: string, file: any) {
+    try {
+      const registrationObject = {};
+
+      const registration = await this.prismaService.registration.findFirst({
+        where: { user_fk: +id },
+      });
+      if (file) {
+
+        if (registration.avatar_url !== null) {
+          await this.azureService.deleteFileByUrl(registration.avatar_url);
+        }
+
+        const fileAzure = await this.azureService.uploadFile(
+          file,
+          'avatar-registration',
+        );
+
+        registrationObject['avatar_url'] = fileAzure;
+      }
+
+
+      await this.prismaService.registration.update({
+        where: { id: registration.id },
+        data: registrationObject,
+      });
+
+      return { message: 'avatar alterado com sucesso' };
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async updateUser(CreateUserDto: UpdateUserRegistrationDto, id: string) {
     const userRegistered = await this.prismaService.users.findMany({
       where: { email: CreateUserDto.email },
@@ -81,6 +119,7 @@ export class UserRegistrationBffService {
           data: {
             name: CreateUserDto.name,
             email: CreateUserDto.email,
+            username: CreateUserDto.username
           },
         });
 
@@ -91,7 +130,6 @@ export class UserRegistrationBffService {
         })
 
 
-        console.log(register)
         if (register) {
           await tx.registration.update({
             where: { id: register.id },
@@ -100,7 +138,7 @@ export class UserRegistrationBffService {
               responsable_telephone: CreateUserDto.responsable_telephone,
             }
           })
-        } 
+        }
 
         return { message: 'Perfil atualizado com sucesso!' };
       });
@@ -155,6 +193,7 @@ export class UserRegistrationBffService {
         email: true,
         active: true,
         password: false,
+        username: true,
         role: true,
         registration: {
           where: { user_fk: id }

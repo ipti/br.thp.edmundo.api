@@ -13,19 +13,38 @@ export class ActivitiesService {
 
 
     try {
-      const createdactivities = await this.prisma.activities.create({
-        data: {
-          points_activities: 0,
-          name: CreateActivitiesDto.name,
-          difficult: CreateActivitiesDto.difficult,
-          time_activities: CreateActivitiesDto.time_activities,
-          type_activities: CreateActivitiesDto.type_activities,
-          description: CreateActivitiesDto.description,
-          classes: { connect: { id: CreateActivitiesDto.id_classes } },
-        },
-      });
 
-      return createdactivities;
+      const transactionResult = this.prisma.$transaction(async (tx) => {
+        const createdactivities = await tx.activities.create({
+          data: {
+            points_activities: 10,
+            name: CreateActivitiesDto.name,
+            difficult: CreateActivitiesDto.difficult,
+            time_activities: CreateActivitiesDto.time_activities,
+            type_activities: CreateActivitiesDto.type_activities,
+            description: CreateActivitiesDto.description,
+            classes: { connect: { id: CreateActivitiesDto.id_classes } },
+          },
+        });
+
+        if (createdactivities.type_activities === 'QUIZ') {
+          await tx.form.create({
+            data: {
+              activities: { connect: { id: createdactivities.id } }
+            }
+          })
+        }
+
+
+
+        return {
+          message: 'Atividade criada com sucesso!',
+          id: createdactivities.id,
+        };
+      })
+
+
+      return transactionResult;
     } catch (err) {
       console.log(err)
       throw new HttpException(err, HttpStatus.BAD_REQUEST);

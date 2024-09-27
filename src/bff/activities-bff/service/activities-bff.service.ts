@@ -69,7 +69,6 @@ export class ActivitiesBffService {
 
   async addActivities(idActivities: number, idClassroom: number) {
 
-    console.log(idActivities, idClassroom)
     try {
       const activities = await this.prismaService.activities.findFirst({
         where: { id: +idActivities },
