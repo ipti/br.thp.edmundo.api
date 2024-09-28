@@ -6,7 +6,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `users` ADD COLUMN `username` VARCHAR(191) NOT NULL,
+ALTER TABLE `users` ADD COLUMN `username` VARCHAR(191) NULL,
     MODIFY `email` VARCHAR(191) NULL;
 
 -- CreateTable
