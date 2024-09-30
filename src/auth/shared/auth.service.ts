@@ -13,7 +13,7 @@ export class AuthService {
   ) { }
 
   async validateUser(userUsername: string, userPassword: string) {
-    const user = await this.usersService.findOneByUsername(userUsername);
+    const user = await this.usersService.findOneByEmail(userUsername);
 
     if (!user) {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
@@ -24,19 +24,17 @@ export class AuthService {
       user &&
       (await this.usersService.validatePassword(userPassword, user.password))
     ) {
-      const { name, username, id } = user;
+      const { name, email, id } = user;
 
-      return { name, username, id };
+      return { name, email, id };
     }
     return null;
   }
 
   async login(user: any) {
-    const payload = { username: user.username ?? user.email, sub: user.id };
+    const payload = { email: user.email, sub: user.id };
 
-    const userRegistered = await this.usersService.findOneByUsername(
-      user.username,
-    );
+    const userRegistered = await this.usersService.findOneByEmail(user.email);
 
     const reapplication = await this.reapplication.findReapplicationUser(
       user.id,

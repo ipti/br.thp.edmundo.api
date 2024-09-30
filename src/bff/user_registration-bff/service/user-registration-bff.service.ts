@@ -31,7 +31,6 @@ export class UserRegistrationBffService {
     try {
       const createdUser = await this.prismaService.users.create({
         data: {
-          username: createUserDto.username,
           email: createUserDto.email,
           name: createUserDto.name,
           role: createUserDto.role,
@@ -119,7 +118,6 @@ export class UserRegistrationBffService {
           data: {
             name: CreateUserDto.name,
             email: CreateUserDto.email,
-            username: CreateUserDto.username
           },
         });
 
@@ -193,7 +191,6 @@ export class UserRegistrationBffService {
         email: true,
         active: true,
         password: false,
-        username: true,
         role: true,
         registration: {
           where: { user_fk: id }

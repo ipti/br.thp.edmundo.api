@@ -58,7 +58,6 @@ export class UsersService {
         active: true,
         password: false,
         role: true,
-        username: true,
         email: true
       },
     });
@@ -86,9 +85,9 @@ export class UsersService {
     }
   }
 
-  async findOneByUsername(username: string) {
+  async findOneByEmail(email: string) {
     const user = await this.prisma.users.findFirst({
-      where: { username: username },
+      where: { email: email },
     });
 
 

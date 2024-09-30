@@ -14,12 +14,20 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  generateSignToken(payload: { sub: any; username: any }) {
-    return this.jwtService.sign(payload, { secret: jwtConstants.secret, expiresIn: '7200s' });
+  generateSignToken(payload: { sub: any; email: any }) {
+    return this.jwtService.sign(payload, {
+      secret: jwtConstants.secret,
+      expiresIn: '7200s',
+    });
   }
 
   async validate(payload: any) {
-    return { id: payload.sub, username: payload.username, type: payload.type, role: payload.role };
+    return {
+      id: payload.sub,
+      email: payload.email,
+      type: payload.type,
+      role: payload.role,
+    };
   }
 
 }
