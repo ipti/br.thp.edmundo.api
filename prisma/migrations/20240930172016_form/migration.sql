@@ -1,14 +1,3 @@
-/*
-  Warnings:
-
-  - A unique constraint covering the columns `[username]` on the table `users` will be added. If there are existing duplicate values, this will fail.
-  - Added the required column `username` to the `users` table without a default value. This is not possible if the table is not empty.
-
-*/
--- AlterTable
-ALTER TABLE `users` ADD COLUMN `username` VARCHAR(191) NOT NULL,
-    MODIFY `email` VARCHAR(191) NULL;
-
 -- CreateTable
 CREATE TABLE `form` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -57,9 +46,6 @@ CREATE TABLE `user_activities_form` (
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateIndex
-CREATE UNIQUE INDEX `users_username_key` ON `users`(`username`);
 
 -- AddForeignKey
 ALTER TABLE `form` ADD CONSTRAINT `form_activitiesId_fkey` FOREIGN KEY (`activitiesId`) REFERENCES `activities`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
