@@ -6,6 +6,7 @@ import { ModuleBffModule } from './module-bff/module-bff.module';
 import { ReapplicationBffModule } from './reapplication-bff/reapplication-bff.module';
 import { UserRegistrationBffModule } from './user_registration-bff/user-registration-bff.module';
 import { UserActivitiesBffModule } from './user_activities-bff/user_activities-bff.module';
+import { FormBffModule } from './form-bff/form-bff.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { UserActivitiesBffModule } from './user_activities-bff/user_activities-b
     ModuleBffModule,
     ActivitiesBffModule,
     ClasseBffModule,
-    UserActivitiesBffModule
+    UserActivitiesBffModule,
+    FormBffModule
   ],
 })
 export class BFFModule { }
