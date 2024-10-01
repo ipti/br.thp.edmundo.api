@@ -39,7 +39,6 @@ export class UsersService {
       email: true,
       active: true,
       password: false,
-      username: true
     };
     const filters = isEmpty(query) ? {} : { ...query };
 

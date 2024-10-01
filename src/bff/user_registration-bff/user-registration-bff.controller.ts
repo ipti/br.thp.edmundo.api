@@ -10,8 +10,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User-Registration-bff')
 @Controller('user-registration-bff')
-@ApiBearerAuth('access-token')
-@UseGuards(JwtAuthGuard)
+// @ApiBearerAuth('access-token')
+// @UseGuards(JwtAuthGuard)
 export class UserRegistrationBffController {
   constructor(private UserService: UserRegistrationBffService) { }
 

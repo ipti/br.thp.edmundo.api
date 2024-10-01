@@ -1,29 +1,79 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
-import { IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
+import { Kinship, Role } from '@prisma/client';
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UserResponse {
   @ApiProperty({ description: "User's id" })
   id: string;
-
   @IsNotEmpty()
+  @IsString()
   @MaxLength(150)
   @ApiProperty()
   name: string;
 
   @IsNotEmpty()
+  @MaxLength(60)
+  @IsString()
   @ApiProperty()
-  username: string;
+  password: string;
+
+  @Transform(({ value }) => {
+    const date = new Date(value);
+    return date;
+  })
+  @IsOptional()
+  @IsDate()
+  @ApiProperty({ type: Date, required: false })
+  birthday: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  email: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  sex: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  color_race: number;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  deficiency: boolean;
 
   @IsOptional()
-  @ApiProperty()
-  project: Array<number>;
+  @IsString()
+  deficiency_description?: string;
 
   @IsOptional()
-  @ApiProperty()
-  role: Role;
+  @IsString()
+  responsable_name?: string;
 
   @IsOptional()
-  @ApiProperty({ required: false, default: true })
-  active?: boolean;
+  @IsString()
+  responsable_cpf?: string;
+
+  @IsOptional()
+  @IsString()
+  responsable_telephone?: string;
+
+  @IsOptional()
+  @IsString()
+  kinship?: Kinship;
+
+  @IsNotEmpty()
+  @IsNumber()
+  zone: number;
+
+  @IsOptional()
+  @IsString()
+  cpf?: string;
+
+  @IsOptional()
+  @IsEnum(Role)
+  @ApiProperty({ required: false, default: Role.STUDENT })
+  role?: Role;
+
 }
