@@ -40,16 +40,18 @@ export class ActivitiesBffService {
 
   async findActivitiesUser(id: number) {
     try {
-      const activities = await this.prismaService.classroom_activities.findMany(
+      const activities = await this.prismaService.classroom_activities.findUnique(
         {
           where: {
             id: id,
           },
           select: {
+            id: true,
             activities: {
               select: {
                 user_activities: {
                   select: {
+                    id: true,
                     createdAt: true,
                     status: true,
                     user_activities_archives: true,
