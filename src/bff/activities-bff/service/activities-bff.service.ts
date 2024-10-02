@@ -8,8 +8,8 @@ import { AzureProviderService } from 'src/utils/middleware/azure.provider';
 export class ActivitiesBffService {
   constructor(
     readonly prismaService: PrismaService,
-    readonly azureService: AzureProviderService
-  ) { }
+    readonly azureService: AzureProviderService,
+  ) {}
 
   async findActivities(id: number, user: JwtPayload) {
     try {
@@ -21,11 +21,11 @@ export class ActivitiesBffService {
           user_activities: {
             where: {
               user_classroom: {
-                usersId: user.id
-              }
-            }
-          }
-        }
+                usersId: user.id,
+              },
+            },
+          },
+        },
       });
 
       if (!activities) {
@@ -34,6 +34,49 @@ export class ActivitiesBffService {
 
       return activities;
     } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findActivitiesUser(id: number) {
+    try {
+      const activities = await this.prismaService.classroom_activities.findMany(
+        {
+          where: {
+            id: id,
+          },
+          select: {
+            activities: {
+              select: {
+                user_activities: {
+                  select: {
+                    createdAt: true,
+                    status: true,
+                    user_activities_archives: true,
+                    user_classroom: {
+                      select: {
+                        users: {
+                          select: {
+                            name: true
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                name: true,
+              },
+            },
+          },
+        });
+
+      if (!activities) {
+        throw new HttpException('activities not found', HttpStatus.NOT_FOUND);
+      }
+
+      return activities;
+    } catch (err) {
+      console.log(err)
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -57,8 +100,7 @@ export class ActivitiesBffService {
           active: UpdateClassroomActivitiesDto.active,
         },
         where: { id: +id },
-
-      })
+      });
 
       return { message: 'Aleração feita com sucesso!' };
     } catch (err) {
@@ -66,9 +108,7 @@ export class ActivitiesBffService {
     }
   }
 
-
   async addActivities(idActivities: number, idClassroom: number) {
-
     try {
       const activities = await this.prismaService.activities.findFirst({
         where: { id: +idActivities },
@@ -91,7 +131,7 @@ export class ActivitiesBffService {
           where: {
             classroom_fk: idClassroom,
             activities_fk: idActivities,
-          }
+          },
         });
 
       if (classroom_activities) {
@@ -105,14 +145,13 @@ export class ActivitiesBffService {
         data: {
           classroom: { connect: { id: idClassroom } },
           activities: { connect: { id: idActivities } },
-          active: true
+          active: true,
         },
-
-      })
+      });
 
       return { message: 'Atividade adicionada com sucesso' };
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -123,38 +162,32 @@ export class ActivitiesBffService {
     user: number,
   ) {
     try {
-
       const user_classroom = await this.prismaService.user_classroom.findFirst({
         where: {
           classroomId: idClassroom,
-          usersId: user
-        }
-      })
+          usersId: user,
+        },
+      });
 
       const activities = await this.prismaService.user_activities.create({
         data: {
           user_classroom: { connect: { id: user_classroom.id } },
-          activities: { connect: { id: idActivities } }
-        }
+          activities: { connect: { id: idActivities } },
+        },
       });
-
 
       return activities;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   async FinishUserActivities(id: number, file: any[]) {
     try {
-
       const transactionResult = this.prismaService.$transaction(async (tx) => {
-
-
         if (file) {
           for (const i of file) {
-
             const fileAzure = await this.azureService.uploadFile(
               i,
               'activities',
@@ -166,12 +199,10 @@ export class ActivitiesBffService {
                 size: i.size,
                 archive_url: fileAzure,
                 user_activities: { connect: { id: id } },
-              }
+              },
             });
           }
         }
-
-
 
         await tx.user_activities.update({
           where: {
@@ -183,19 +214,12 @@ export class ActivitiesBffService {
         });
 
         return { message: 'Atividade concluída!' };
-      })
-
-
-
+      });
 
       return transactionResult;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
-
-
 }
-
-

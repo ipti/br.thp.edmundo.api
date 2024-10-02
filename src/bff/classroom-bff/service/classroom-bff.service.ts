@@ -50,29 +50,33 @@ export class ClassroomBffService {
         where: {
           id: id,
         },
-        include: {
-          classroom_activities: {
-            include: {
-              activities: {
-                include: {
-                  user_activities: {
-                    include: {
-                      user_classroom: {
+        select: {
+          name: true,
+          id: true,
+          classroom_module: {
+            select: {
+              id: true, 
+              classroom: {
+                select: {
+                  classroom_activities: {
+                    select: {
+                      activities: {
                         select: {
-                          users: {
-                            select: {
-                              name: true,
-                              id: true
-                            }
-                          }
+                          name: true,
+                          id: true
                         }
                       }
                     }
                   }
                 }
+              },
+              module: {
+                select: {
+                  name: true,
+                }
               }
             }
-          }
+          },
         }
       });
 
