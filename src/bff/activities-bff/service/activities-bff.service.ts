@@ -40,8 +40,8 @@ export class ActivitiesBffService {
 
   async findActivitiesUser(id: number) {
     try {
-      const activities = await this.prismaService.classroom_activities.findUnique(
-        {
+      const activities =
+        await this.prismaService.classroom_activities.findUnique({
           where: {
             id: id,
           },
@@ -51,6 +51,11 @@ export class ActivitiesBffService {
               select: {
                 user_activities: {
                   select: {
+                    user_avaliation: {
+                      select: {
+                        total: true
+                      }
+                    },
                     id: true,
                     createdAt: true,
                     status: true,
