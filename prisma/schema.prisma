@@ -99,7 +99,6 @@ model classroom_module {
   classroom    classroom? @relation(fields: [classroom_fk], references: [id])
   classroom_fk Int?
   createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
 }
 
 model classes {
@@ -125,7 +124,6 @@ model classroom_classes {
   classroom    classroom? @relation(fields: [classroom_fk], references: [id])
   classroom_fk Int?
   createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
 }
 
 model activities {
@@ -152,7 +150,6 @@ model form {
   activitiesId Int        @unique
   question     question[]
   createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
 }
 
 model question {
@@ -165,7 +162,6 @@ model question {
   options              options[]
   user_activities_form user_activities_form[]
   createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
 }
 
 model response_question {
@@ -175,7 +171,6 @@ model response_question {
   question    question? @relation(fields: [question_fk], references: [id])
   question_fk Int?
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 }
 
 model options {
@@ -187,7 +182,6 @@ model options {
   questionId           Int?
   response_question    response_question?
   createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
 }
 
 model user_activities_form {
@@ -199,7 +193,6 @@ model user_activities_form {
   question          question       @relation(fields: [question_fk], references: [id])
   question_fk       Int
   createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
 }
 
 model classroom_activities {
@@ -210,7 +203,6 @@ model classroom_activities {
   classroom     classroom?  @relation(fields: [classroom_fk], references: [id])
   classroom_fk  Int?
   createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
 }
 
 model user_activities {
