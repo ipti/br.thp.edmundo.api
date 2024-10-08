@@ -203,6 +203,21 @@ model classroom_activities {
   classroom     classroom?  @relation(fields: [classroom_fk], references: [id])
   classroom_fk  Int?
   createdAt     DateTime    @default(now())
+  classroom_avaliation classroom_avaliation?
+}
+
+model classroom_avaliation {
+  id                                       Int                  @id @default(autoincrement())
+  createdAt                                DateTime             @default(now())
+  updatedAt                                DateTime             @updatedAt
+  classroom_activities_fk                  Int                  @unique
+  classroom_activities                     classroom_activities @relation(fields: [classroom_activities_fk], references: [id])
+  complete_the_activity_correctly          Float?
+  content_organization                     Float?
+  completion_within_the_indicated_deadline Float?
+  creativity_in_the_response               Float?
+  collaboration                            Float?
+  understanding_the_content                Float?
 }
 
 model user_activities {

@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateClassroomActivitiesDto } from '../dto/update-classrom-activities.dto';
 import { JwtPayload } from 'src/utils/jwt.interface';
 import { AzureProviderService } from 'src/utils/middleware/azure.provider';
+import { ClassroomAvaliationDto } from '../dto/classroom_avaliation';
 
 @Injectable()
 export class ActivitiesBffService {
@@ -233,6 +234,71 @@ export class ActivitiesBffService {
       return transactionResult;
     } catch (err) {
       console.log(err);
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async avaliationActivities(
+    id: number,
+    userActivitiesDto: ClassroomAvaliationDto,
+  ) {
+    try {
+      const user_activities =
+        await this.prismaService.classroom_avaliation.findFirst({
+          where: {
+            id: id,
+          },
+        });
+
+      if (!user_activities) {
+        throw new HttpException('activities not found', HttpStatus.NOT_FOUND);
+      }
+
+
+      const user_avaliation =
+        await this.prismaService.classroom_avaliation.create({
+          data: {
+            classroom_activities: { connect: { id: id } },
+            ...userActivitiesDto,
+          }
+        })
+
+      return user_avaliation
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updateavaliationActivities(
+    id: number,
+    userActivitiesDto: ClassroomAvaliationDto,
+  ) {
+    try {
+      const user_activities =
+        await this.prismaService.user_avaliation.findFirst({
+          where: {
+            id: id,
+          },
+        });
+
+      if (!user_activities) {
+        throw new HttpException('activities not found', HttpStatus.NOT_FOUND);
+      }
+
+
+      const user_avaliation = await this.prismaService.user_avaliation.update({
+        where: {
+          id: id
+        },
+        data: {
+          user_activities: { connect: { id: id } },
+          ...userActivitiesDto,
+          total: userActivitiesDto.total,
+        }
+      })
+
+      return user_avaliation
+    } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
