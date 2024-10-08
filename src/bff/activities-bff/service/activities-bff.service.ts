@@ -9,7 +9,7 @@ export class ActivitiesBffService {
   constructor(
     readonly prismaService: PrismaService,
     readonly azureService: AzureProviderService,
-  ) {}
+  ) { }
 
   async findActivities(id: number, user: JwtPayload) {
     try {
@@ -19,6 +19,13 @@ export class ActivitiesBffService {
         },
         include: {
           user_activities: {
+            include: {
+              user_avaliation: {
+                select: {
+                  total: true
+                }
+              },
+            },
             where: {
               user_classroom: {
                 usersId: user.id,
