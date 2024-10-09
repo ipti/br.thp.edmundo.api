@@ -5,6 +5,7 @@ import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateClassroomActivitiesDto } from './dto/update-classrom-activities.dto';
 import { ActivitiesBffService } from './service/activities-bff.service';
+import { ClassroomAvaliationDto } from './dto/classroom_avaliation';
 
 @ApiTags('Activities-bff')
 @Controller('activities-bff')
@@ -66,6 +67,22 @@ export class ActivitiesBffController {
     @Body() update: UpdateClassroomActivitiesDto,
   ) {
     return this.ActivitiesBffService.updateClassroomActivities(id, update);
+  }
+
+  @Post('classroom-avaliation')
+  async avaliationcreate(
+    @Query('id') id: number,
+    @Body() body: ClassroomAvaliationDto,
+  ) {
+    return this.ActivitiesBffService.avaliationActivities(id, body);
+  }
+
+  @Put('classroom-avaliation')
+  async avaliationupdate(
+    @Query('id') id: number,
+    @Body() body: ClassroomAvaliationDto,
+  ) {
+    return this.ActivitiesBffService.updateavaliationActivities(id, body);
   }
 
 }

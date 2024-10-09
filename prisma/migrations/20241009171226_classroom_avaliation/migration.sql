@@ -4,12 +4,12 @@ CREATE TABLE `classroom_avaliation` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `classroom_activities_fk` INTEGER NOT NULL,
-    `complete_the_activity_correctly` DOUBLE NULL,
-    `content_organization` DOUBLE NULL,
-    `completion_within_the_indicated_deadline` DOUBLE NULL,
-    `creativity_in_the_response` DOUBLE NULL,
-    `collaboration` DOUBLE NULL,
-    `understanding_the_content` DOUBLE NULL,
+    `complete_the_activity_correctly` BOOLEAN NULL,
+    `content_organization` BOOLEAN NULL,
+    `completion_within_the_indicated_deadline` BOOLEAN NULL,
+    `creativity_in_the_response` BOOLEAN NULL,
+    `collaboration` BOOLEAN NULL,
+    `understanding_the_content` BOOLEAN NULL,
 
     UNIQUE INDEX `classroom_avaliation_classroom_activities_fk_key`(`classroom_activities_fk`),
     PRIMARY KEY (`id`)

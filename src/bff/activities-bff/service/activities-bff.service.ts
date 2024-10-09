@@ -243,15 +243,18 @@ export class ActivitiesBffService {
     userActivitiesDto: ClassroomAvaliationDto,
   ) {
     try {
-      const user_activities =
-        await this.prismaService.classroom_avaliation.findFirst({
+      const classroom_activities =
+        await this.prismaService.classroom_activities.findFirst({
           where: {
             id: id,
           },
         });
 
-      if (!user_activities) {
-        throw new HttpException('activities not found', HttpStatus.NOT_FOUND);
+      if (!classroom_activities) {
+        throw new HttpException(
+          'classroom_activities not found',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
 
@@ -275,7 +278,7 @@ export class ActivitiesBffService {
   ) {
     try {
       const user_activities =
-        await this.prismaService.user_avaliation.findFirst({
+        await this.prismaService.classroom_avaliation.findFirst({
           where: {
             id: id,
           },
@@ -286,16 +289,16 @@ export class ActivitiesBffService {
       }
 
 
-      const user_avaliation = await this.prismaService.user_avaliation.update({
-        where: {
-          id: id
-        },
-        data: {
-          user_activities: { connect: { id: id } },
-          ...userActivitiesDto,
-          total: userActivitiesDto.total,
-        }
-      })
+      const user_avaliation =
+        await this.prismaService.classroom_avaliation.update({
+          where: {
+            id: id
+          },
+          data: {
+            classroom_activities: { connect: { id: id } },
+            ...userActivitiesDto,
+          }
+        })
 
       return user_avaliation
     } catch (err) {

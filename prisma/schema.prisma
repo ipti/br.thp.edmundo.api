@@ -212,12 +212,12 @@ model classroom_avaliation {
   updatedAt                                DateTime             @updatedAt
   classroom_activities_fk                  Int                  @unique
   classroom_activities                     classroom_activities @relation(fields: [classroom_activities_fk], references: [id])
-  complete_the_activity_correctly          Float?
-  content_organization                     Float?
-  completion_within_the_indicated_deadline Float?
-  creativity_in_the_response               Float?
-  collaboration                            Float?
-  understanding_the_content                Float?
+  complete_the_activity_correctly          Boolean?
+  content_organization                     Boolean?
+  completion_within_the_indicated_deadline Boolean?
+  creativity_in_the_response               Boolean?
+  collaboration                            Boolean?
+  understanding_the_content                Boolean?
 }
 
 model user_activities {
