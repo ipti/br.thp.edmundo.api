@@ -57,6 +57,12 @@ export class ActivitiesBffService {
             id: true,
             activities: {
               select: {
+                classroom_activities: {
+                  select: {
+                    id: true,
+                    classroom_avaliation: true,
+                  }
+                },
                 user_activities: {
                   select: {
                     user_avaliation: {
@@ -268,6 +274,7 @@ export class ActivitiesBffService {
 
       return user_avaliation
     } catch (err) {
+      console.log(err)
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
