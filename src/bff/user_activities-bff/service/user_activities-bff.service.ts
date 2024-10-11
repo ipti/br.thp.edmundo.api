@@ -28,6 +28,7 @@ export class UserActivitiesBffService {
               },
               name: true,
               points_activities: true,
+              time_activities: true
             },
           },
           user_activities_archives: true,

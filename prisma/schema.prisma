@@ -130,6 +130,7 @@ model activities {
   id                   Int                    @id @default(autoincrement())
   name                 String
   description          String?                @db.Text
+  expected_return      String?
   type_activities      Type_Activities
   points_activities    Int
   difficult            Difficulties
@@ -196,13 +197,13 @@ model user_activities_form {
 }
 
 model classroom_activities {
-  id            Int         @id @default(autoincrement())
-  active        Boolean
-  activities    activities? @relation(fields: [activities_fk], references: [id])
-  activities_fk Int?
-  classroom     classroom?  @relation(fields: [classroom_fk], references: [id])
-  classroom_fk  Int?
-  createdAt     DateTime    @default(now())
+  id                   Int                   @id @default(autoincrement())
+  active               Boolean
+  activities           activities?           @relation(fields: [activities_fk], references: [id])
+  activities_fk        Int?
+  classroom            classroom?            @relation(fields: [classroom_fk], references: [id])
+  classroom_fk         Int?
+  createdAt            DateTime              @default(now())
   classroom_avaliation classroom_avaliation?
 }
 
