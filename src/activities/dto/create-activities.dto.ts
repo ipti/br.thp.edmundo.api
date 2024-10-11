@@ -23,6 +23,10 @@ export class CreateActivitiesDto {
   @ApiProperty()
   type_activities: Type_Activities;
 
+  @IsOptional()
+  @ApiProperty()
+  expected_return: string
+
   @IsNotEmpty()
   @ApiProperty()
   points_activities: number;

@@ -21,8 +21,14 @@ export class UserActivitiesBffService {
           user_avaliation: true,
           activities: {
             select: {
+              classroom_activities: {
+                select: {
+                  classroom_avaliation: true
+                }
+              },
               name: true,
               points_activities: true,
+              time_activities: true
             },
           },
           user_activities_archives: true,

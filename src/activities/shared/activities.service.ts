@@ -23,6 +23,7 @@ export class ActivitiesService {
             time_activities: CreateActivitiesDto.time_activities,
             type_activities: CreateActivitiesDto.type_activities,
             description: CreateActivitiesDto.description,
+            expected_return: CreateActivitiesDto.expected_return,
             classes: { connect: { id: CreateActivitiesDto.id_classes } },
           },
         });
