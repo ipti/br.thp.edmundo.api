@@ -34,14 +34,12 @@ async function bootstrap() {
     }),
   );
 
-  app.use(bodyParser.json({ limit: '10mb' }));
-  app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+  app.use(bodyParser.json({ limit: '20mb' }));
+  app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
 
   const options = new DocumentBuilder()
     .setTitle('Tecnologia Edmundo')
-    .setDescription(
-      'API do sistema Edmundo desenvolvido pelo THP.',
-    )
+    .setDescription('API do sistema Edmundo desenvolvido pelo THP.')
     .setVersion(process.env.npm_package_version)
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
