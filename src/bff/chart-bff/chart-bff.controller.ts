@@ -23,5 +23,18 @@ export class ChartBffController {
     return this.ChartBffService.findChartClassroomUser(idClassroom, idUser);
   }
 
+  @Get('module-user')
+  async getUserModulo(
+    @Query('idClassroom') idClassroom: number,
+    @Query('idModule') idModule: number,
+    @Query('idUser') idUser: number,
+  ) {
+    return this.ChartBffService.findChartModuloClassroomUser(
+      idClassroom,
+      idUser,
+      idModule,
+    );
+  }
+
 
 }
