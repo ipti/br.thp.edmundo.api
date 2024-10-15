@@ -47,7 +47,7 @@ from classroom_activities ca
 
 
       return {
-        moduloActivities: parseInt(
+        completed_user_activities: parseInt(
           moduloActivities[0].completed_user_activities,
         ),
         activities_pending: parseInt(
@@ -64,7 +64,7 @@ from classroom_activities ca
 
   async findChartClassroomUser(id: number, idUser: number) {
     try {
-      const moduloActivities = await this.prismaService.$queryRaw`
+      const completed_user_activities = await this.prismaService.$queryRaw`
            SELECT COUNT(DISTINCT ua.id) as completed_user_activities
  	            from classroom_activities ca 
  	            join activities a ON ca.activities_fk  = a.id 
@@ -102,8 +102,8 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
 
 
       return {
-        moduloActivities: parseInt(
-          moduloActivities[0].completed_user_activities,
+        completed_user_activities: parseInt(
+          completed_user_activities[0].completed_user_activities,
         ),
         activities_pending: parseInt(
           activities_pending[0].pending_user_activities,
