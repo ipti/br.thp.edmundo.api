@@ -123,17 +123,16 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
   ) {
     try {
       const moduloActivities = await this.prismaService.$queryRaw`
-          SELECT a.name, ua2.total 
-            FROM classroom_activities ca 
-            JOIN classroom_module cm ON ca.classroom_fk = cm.classroom_fk 
-            JOIN activities a ON ca.activities_fk = a.id 
-            JOIN user_activities ua ON ua.activities_fk = a.id 
-            JOIN user_avaliation ua2 ON ua2.user_activities_fk = ua.id 
-            JOIN user_classroom uc ON ca.classroom_fk = uc.classroomId 
-            WHERE ca.classroom_fk = ${id} AND cm.module_fk = ${idModule} AND uc.usersId = ${idUser}
+          SELECT a.name, ua.total FROM user_avaliation ua 
+          JOIN user_activities ua2 ON ua.user_activities_fk = ua2.id  
+          JOIN activities a ON ua2.activities_fk = a.id 
+          JOIN classroom_activities ca ON ca.activities_fk = a.id 
+          JOIN user_classroom uc ON uc.id  = ua2.user_classroomId  
+          Join classes c on c.id = a.classesId 
+          JOIN module m ON c.moduleId = m.id 
+          WHERE ca.classroom_fk = ${id} AND uc.usersId = ${idUser} AND m.id = ${idModule}
         `;
 
-      console.log(moduloActivities)
 
       return {
         moduloActivities: moduloActivities,
