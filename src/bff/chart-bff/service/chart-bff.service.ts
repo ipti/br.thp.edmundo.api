@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ChartBffService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
   async findChartClassroom(id: number) {
     try {
       const moduloActivities = await this.prismaService.$queryRaw`
@@ -45,7 +45,6 @@ from classroom_activities ca
 	WHERE  ca.classroom_fk = ${id}
 `;
 
-
       return {
         completed_user_activities: parseInt(
           moduloActivities[0].completed_user_activities,
@@ -69,37 +68,34 @@ from classroom_activities ca
  	            from classroom_activities ca 
  	            join activities a ON ca.activities_fk  = a.id 
  	            join user_activities ua ON ua.activities_fk = a.id 
-               join user_classroom uc on ca.classroom_fk = uc.classroomId 
+               join user_classroom uc on ua.user_classroomId  = uc.id  
  	            WHERE  ca.classroom_fk = ${id} and ua.status = 'COMPLETED' and uc.usersId = ${idUser}
         `;
 
       const activities_pending = await this.prismaService.$queryRaw`
 
-SELECT COUNT(DISTINCT ua.id) as pending_user_activities
-    from classroom_activities ca 
-    join activities a ON ca.activities_fk  = a.id 
-    join user_activities ua ON ua.activities_fk = a.id 
-    join user_classroom uc on ca.classroom_fk = uc.classroomId 
-    WHERE  ca.classroom_fk = ${id} and ua.status = 'PENDING' and uc.usersId = ${idUser}
-`;
+        SELECT COUNT(DISTINCT ua.id) as pending_user_activities
+            from classroom_activities ca 
+            join activities a ON ca.activities_fk  = a.id 
+            join user_activities ua ON ua.activities_fk = a.id 
+            join user_classroom uc on ua.user_classroomId  = uc.id  
+            WHERE  ca.classroom_fk = ${id} and ua.status = 'PENDING' and uc.usersId = ${idUser}`;
 
       const code_activities = await this.prismaService.$queryRaw`
- SELECT COUNT(DISTINCT a.id) as code_activities
- 	from classroom_activities ca 
- 	join activities a ON ca.activities_fk = a.id 
-   join user_classroom uc on ca.classroom_fk = uc.classroomId 
- 	WHERE ca.classroom_fk = 1 and a.type_activities = 'CODE' and uc.usersId = ${idUser}
-`;
+          SELECT COUNT(DISTINCT a.id) as code_activities
+            from classroom_activities ca 
+            join activities a ON ca.activities_fk = a.id 
+            join user_activities ua ON ua.activities_fk = a.id 
+            join user_classroom uc on ua.user_classroomId  = uc.id  
+            WHERE ca.classroom_fk = ${id} and a.type_activities = 'CODE' and uc.usersId = ${idUser}`;
 
       const quiz_activities = await this.prismaService.$queryRaw`
- SELECT COUNT(DISTINCT a.id) as quiz_activities
- 	from classroom_activities ca 
- 	join activities a ON ca.activities_fk = a.id 
-   join user_classroom uc on ca.classroom_fk = uc.classroomId 
- 	WHERE ca.classroom_fk = ${id} and a.type_activities = 'QUIZ' and uc.usersId = ${idUser}
-`;
-
-
+          SELECT COUNT(DISTINCT a.id) as quiz_activities
+            from classroom_activities ca 
+            join activities a ON ca.activities_fk = a.id 
+            join user_activities ua ON ua.activities_fk = a.id 
+            join user_classroom uc on ua.user_classroomId  = uc.id  
+            WHERE ca.classroom_fk = ${id} and a.type_activities = 'QUIZ' and uc.usersId = ${idUser}`;
 
       return {
         completed_user_activities: parseInt(
@@ -112,6 +108,7 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
         quiz_activities: parseInt(quiz_activities[0].quiz_activities),
       };
     } catch (err) {
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -123,18 +120,15 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
   ) {
     try {
       const moduloActivities = await this.prismaService.$queryRaw`
-          SELECT a.name, ua2.total 
-            FROM classroom_activities ca 
-            JOIN classroom_module cm ON ca.classroom_fk = cm.classroom_fk 
-            JOIN activities a ON ca.activities_fk = a.id 
-            JOIN user_activities ua ON ua.activities_fk = a.id 
-            JOIN user_avaliation ua2 ON ua2.user_activities_fk = ua.id 
-            JOIN user_classroom uc ON ca.classroom_fk = uc.classroomId 
-            WHERE ca.classroom_fk = ${id} AND cm.module_fk = ${idModule} AND uc.usersId = ${idUser}
+           SELECT a.name, ua.total FROM user_avaliation ua 
+          JOIN user_activities ua2 ON ua.user_activities_fk = ua2.id  
+          JOIN activities a ON ua2.activities_fk = a.id 
+          JOIN classroom_activities ca ON ca.activities_fk = a.id 
+          JOIN user_classroom uc ON uc.id  = ua2.user_classroomId  
+          Join classes c on c.id = a.classesId 
+          JOIN module m ON c.moduleId = m.id 
+          WHERE ca.classroom_fk = ${id} AND uc.usersId = ${idUser} AND m.id = ${idModule}
         `;
-
-      console.log(moduloActivities)
-
       return {
         moduloActivities: moduloActivities,
       };
@@ -143,6 +137,33 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
     }
   }
 
+  // async findChartUser(id: number, idUser: number, idModule: number) {
+  //   try {
+  //     const moduloActivities =
+  //       await this.prismaService.classroom_module.findMany({
+  //         where: {
+  //           classroom_fk: id
+  //         },
+  //         select: {
+  //           module: {
+  //             select: {
+  //               name: true,
+  //             }
+  //           },
+  //           classroom: {
+  //             select: {
+
+  //             }
+  //           }
+  //         }
+  //       });
+  //     return {
+  //       moduloActivities: moduloActivities,
+  //     };
+  //   } catch (err) {
+  //     throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 }
 
 // SELECT COUNT(DISTINCT ua.id) as completed_user_activities
