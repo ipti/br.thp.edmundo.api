@@ -46,7 +46,7 @@ from classroom_activities ca
 `;
 
       return {
-        moduloActivities: parseInt(
+        completed_user_activities: parseInt(
           moduloActivities[0].completed_user_activities,
         ),
         activities_pending: parseInt(
@@ -99,7 +99,7 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
 `;
 
       return {
-        moduloActivities: parseInt(
+        completed_user_activities: parseInt(
           moduloActivities[0].completed_user_activities,
         ),
         activities_pending: parseInt(
