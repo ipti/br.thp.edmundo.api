@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ChartBffService {
-  constructor(private readonly prismaService: PrismaService) { }
+  constructor(private readonly prismaService: PrismaService) {}
   async findChartClassroom(id: number) {
     try {
       const moduloActivities = await this.prismaService.$queryRaw`
@@ -44,7 +44,6 @@ from classroom_activities ca
 	JOIN user_avaliation ua2 ON ua2.user_activities_fk = ua.id 
 	WHERE  ca.classroom_fk = ${id}
 `;
-
 
       return {
         moduloActivities: parseInt(
@@ -99,8 +98,6 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
  	WHERE ca.classroom_fk = ${id} and a.type_activities = 'QUIZ' and uc.usersId = ${idUser}
 `;
 
-
-
       return {
         moduloActivities: parseInt(
           moduloActivities[0].completed_user_activities,
@@ -133,6 +130,43 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
           WHERE ca.classroom_fk = ${id} AND uc.usersId = ${idUser} AND m.id = ${idModule}
         `;
 
+      return {
+        moduloActivities: moduloActivities,
+      };
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+
+
+
+  async findChartModuloMediaClassroomUser(id: number, idUser: number) {
+    try {
+      const moduloActivities = await this.prismaService.$queryRaw`
+        SELECT 
+              m.name AS module_name,
+              AVG(ua.total) AS media_avaliacao
+          FROM 
+              classroom_module cm
+          JOIN 
+              module m ON cm.module_fk  = m.id
+          JOIN 
+              classes c  ON m.id = c.moduleId 
+          JOIN 
+              activities a2 ON c.id = a2.classesId 
+          JOIN 
+              user_activities ua2 ON a2.id = ua2.activities_fk 
+          JOIN 
+              user_classroom uc ON ua2.user_classroomId  = uc.id
+              JOIN 
+              user_avaliation ua ON ua2.id = ua.user_activities_fk 
+          WHERE 
+              cm.classroom_fk = ${id} 
+              AND uc.usersId  = ${idUser}     
+            GROUP BY 
+                m.name;
+        `;
 
       return {
         moduloActivities: moduloActivities,
@@ -142,6 +176,40 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
     }
   }
 
+
+  async findChartMediaActivities(id: number) {
+    try {
+      const mediaActivitiesClassroom = await this.prismaService.$queryRaw`
+       SELECT 
+          a2.name AS activities_name,
+          AVG(ua.total) AS media_avaliacao
+      FROM 
+          classroom_module cm
+      JOIN 
+          module m ON cm.module_fk  = m.id
+      JOIN 
+          classes c  ON m.id = c.moduleId 
+      JOIN 
+          activities a2 ON c.id = a2.classesId 
+      JOIN 
+          user_activities ua2 ON a2.id = ua2.activities_fk 
+      JOIN 
+          user_classroom uc ON ua2.user_classroomId  = uc.id
+          JOIN 
+          user_avaliation ua ON ua2.id = ua.user_activities_fk 
+      WHERE 
+          cm.classroom_fk = ${id}     
+      GROUP BY 
+          a2.name;
+        `;
+
+      return {
+        mediaActivitiesClassroom: mediaActivitiesClassroom,
+      };
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }
 
 // SELECT COUNT(DISTINCT ua.id) as completed_user_activities

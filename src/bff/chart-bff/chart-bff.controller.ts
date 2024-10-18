@@ -36,5 +36,24 @@ export class ChartBffController {
     );
   }
 
+  @Get('module-user-media')
+  async getUserModuloMedia(
+    @Query('idClassroom') idClassroom: number,
+    @Query('idUser') idUser: number,
+  ) {
+    return this.ChartBffService.findChartModuloMediaClassroomUser(
+      idClassroom,
+      idUser
+    );
+  }
+
+  @Get('classroom-activities-media')
+  async getUserClassroomActivitiesMedia(
+    @Query('idClassroom') idClassroom: number
+  ) {
+    return this.ChartBffService.findChartMediaActivities(idClassroom);
+  }
+
+
 
 }
