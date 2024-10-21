@@ -20,6 +20,13 @@ export class ActivitiesBffController {
     return this.ActivitiesBffService.findActivities(id, req.user);
   }
 
+  @Get('one')
+  async getByIdOne(@Query('id') id: number
+  ) {
+    return this.ActivitiesBffService.findActivitiesOne(id);
+  }
+
+
 
   @Get('user-classroom')
   async getByIdUser(@Query('id') id: number

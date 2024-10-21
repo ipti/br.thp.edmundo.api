@@ -22,6 +22,8 @@ export class FormBffService {
       if (!form) {
         throw new HttpException('Form not found', HttpStatus.NOT_FOUND);
       }
+
+      console.log(body.questions)
   
 
       const transactionResult = this.prismaService.$transaction(async (tx) => {

@@ -46,6 +46,34 @@ export class ActivitiesBffService {
     }
   }
 
+  async findActivitiesOne(id: number) {
+    try {
+      const activities = await this.prismaService.activities.findUnique({
+        where: { id: +id },
+        include: {
+          form: {
+            include: {
+              question: {
+                include: {
+                  options: true,
+                  response_question: true
+                }
+              }
+            }
+          }
+        }
+      });
+
+      if (!activities) {
+        throw new HttpException('activities not found', HttpStatus.NOT_FOUND);
+      }
+
+      return activities;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async findActivitiesUser(id: number) {
     try {
       const activities =
