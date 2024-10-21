@@ -60,6 +60,7 @@ export class ClassroomBffService {
                 select: {
                   classroom_activities: {
                     select: {
+                      id: true,
                       activities: {
                         select: {
                           name: true,
