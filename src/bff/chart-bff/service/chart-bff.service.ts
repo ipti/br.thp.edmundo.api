@@ -26,7 +26,7 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
  SELECT COUNT(DISTINCT a.id) as code_activities
  	from classroom_activities ca 
  	join activities a ON ca.activities_fk = a.id 
- 	WHERE ca.classroom_fk = 1 and a.type_activities = 'CODE'
+ 	WHERE ca.classroom_fk = ${id} and a.type_activities = 'CODE'
 `;
 
       const quiz_activities = await this.prismaService.$queryRaw`
@@ -87,7 +87,7 @@ SELECT COUNT(DISTINCT ua.id) as pending_user_activities
  	from classroom_activities ca 
  	join activities a ON ca.activities_fk = a.id 
    join user_classroom uc on ca.classroom_fk = uc.classroomId 
- 	WHERE ca.classroom_fk = 1 and a.type_activities = 'CODE' and uc.usersId = ${idUser}
+ 	WHERE ca.classroom_fk = ${id} and a.type_activities = 'CODE' and uc.usersId = ${idUser}
 `;
 
       const quiz_activities = await this.prismaService.$queryRaw`
