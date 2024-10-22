@@ -19,6 +19,16 @@ export class ActivitiesBffService {
           id: +id,
         },
         include: {
+          form: {
+            include: {
+              question: {
+                include: {
+                  options: true,
+                  response_question: true
+                }
+              }
+            }
+          },
           user_activities: {
             include: {
               user_avaliation: {

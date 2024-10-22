@@ -23,9 +23,6 @@ export class FormBffService {
         throw new HttpException('Form not found', HttpStatus.NOT_FOUND);
       }
 
-      console.log(body.questions)
-  
-
       const transactionResult = this.prismaService.$transaction(async (tx) => {
         for (const i of body.questions) {
           const question = await tx.question.create({
@@ -54,8 +51,8 @@ export class FormBffService {
             }
           }
 
-          return { message: 'Atividade adicionada com sucesso' };
         }
+        return { message: 'Atividade adicionada com sucesso' };
       });
 
       return transactionResult;
