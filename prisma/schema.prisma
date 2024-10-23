@@ -146,6 +146,8 @@ model activities {
   form                 form?
 }
 
+
+
 model form {
   id           Int           @id @default(autoincrement())
   activities   activities    @relation(fields: [activitiesId], references: [id])
@@ -268,6 +270,14 @@ model user_activities {
   user_classroomId         Int?
   user_activities_archives user_activities_archives[]
   user_avaliation          user_avaliation?
+  user_activities_rating   user_activities_rating?
+}
+
+model user_activities_rating {
+  id                 Int              @id @default(autoincrement())
+  rating             Int
+  user_activities_fk Int? @unique
+  user_activities    user_activities? @relation(fields: [user_activities_fk], references: [id])
 }
 
 model user_avaliation {

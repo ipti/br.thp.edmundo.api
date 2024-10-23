@@ -3,13 +3,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtPayload } from 'src/utils/jwt.interface';
 import { AzureProviderService } from 'src/utils/middleware/azure.provider';
 import { UserActivitiesDto } from '../dto/user_activities.dto';
+import { UserActivitiesRatingDto } from '../dto/user_activities_rating.dto';
 
 @Injectable()
 export class UserActivitiesBffService {
   constructor(
     readonly prismaService: PrismaService,
     readonly azureService: AzureProviderService,
-  ) { }
+  ) {}
 
   async findUserActivities(id: number, user: JwtPayload) {
     try {
@@ -31,24 +32,24 @@ export class UserActivitiesBffService {
                             select: {
                               content: true,
                               options: true,
-                              response_question: true
-                            }
+                              response_question: true,
+                            },
                           },
-                          answer_option: true
-                        }
-                      }
-                    }
-                  }
-                }
+                          answer_option: true,
+                        },
+                      },
+                    },
+                  },
+                },
               },
               classroom_activities: {
                 select: {
-                  classroom_avaliation: true
-                }
+                  classroom_avaliation: true,
+                },
               },
               name: true,
               points_activities: true,
-              time_activities: true
+              time_activities: true,
             },
           },
           user_activities_archives: true,
@@ -88,16 +89,15 @@ export class UserActivitiesBffService {
         throw new HttpException('activities not found', HttpStatus.NOT_FOUND);
       }
 
-
       const user_avaliation = await this.prismaService.user_avaliation.create({
         data: {
           user_activities: { connect: { id: id } },
           ...userActivitiesDto,
           total: userActivitiesDto.total,
-        }
-      })
+        },
+      });
 
-      return user_avaliation
+      return user_avaliation;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
@@ -119,19 +119,33 @@ export class UserActivitiesBffService {
         throw new HttpException('activities not found', HttpStatus.NOT_FOUND);
       }
 
-
       const user_avaliation = await this.prismaService.user_avaliation.update({
         where: {
-          id: id
+          id: id,
         },
         data: {
           user_activities: { connect: { id: id } },
           ...userActivitiesDto,
           total: userActivitiesDto.total,
-        }
-      })
+        },
+      });
 
-      return user_avaliation
+      return user_avaliation;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async ratingUser(id: number, body: UserActivitiesRatingDto) {
+    try {
+      const user_activities_rating =
+        await this.prismaService.user_activities_rating.create({
+          data: {
+            rating: body.rating,
+            user_activities: { connect: { id: id } },
+          },
+        });
+      return user_activities_rating;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
