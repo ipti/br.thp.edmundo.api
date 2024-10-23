@@ -95,6 +95,16 @@ export class FormBffService {
 
         }
 
+        await tx.user_activities.update({
+          where: {
+            id: body.user_activities_id
+          },
+          data: {
+            status: 'COMPLETED',
+          }
+
+        })
+
         return { message: 'Resposta enviada' };
       })
 

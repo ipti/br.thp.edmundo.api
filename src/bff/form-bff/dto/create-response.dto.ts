@@ -2,16 +2,12 @@ import { IsInt, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class OptionDto {
-  @IsInt()
-  answer_question_fk: number;
 
   @IsInt()
   options_fk: number;
 }
 
 class QuestionDto {
-  @IsInt()
-  answer_form_fk: number;
 
   @IsInt()
   question_fk: number;
@@ -25,6 +21,9 @@ class QuestionDto {
 export class CreateResponseDto {
   @IsInt()
   form_fk: number;
+
+  @IsInt()
+  user_activities_id: number;
 
   @IsArray()
   @ValidateNested({ each: true })

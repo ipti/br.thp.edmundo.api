@@ -21,6 +21,26 @@ export class UserActivitiesBffService {
           user_avaliation: true,
           activities: {
             select: {
+              form: {
+                select: {
+                  answer_form: {
+                    select: {
+                      answer_question: {
+                        select: {
+                          question: {
+                            select: {
+                              content: true,
+                              options: true,
+                              response_question: true
+                            }
+                          },
+                          answer_option: true
+                        }
+                      }
+                    }
+                  }
+                }
+              },
               classroom_activities: {
                 select: {
                   classroom_avaliation: true

@@ -24,7 +24,6 @@ export class ActivitiesBffService {
               question: {
                 include: {
                   options: true,
-                  response_question: true
                 }
               }
             }
