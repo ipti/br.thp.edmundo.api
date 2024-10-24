@@ -19,6 +19,11 @@ export class UserActivitiesBffService {
           id: +id,
         },
         include: {
+          user_activities_rating: {
+            select: {
+              rating: true,
+            }
+          },
           user_avaliation: true,
           activities: {
             select: {
