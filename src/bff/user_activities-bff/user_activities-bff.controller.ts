@@ -14,9 +14,8 @@ export class UserActivitiesBffController {
   constructor(private UserActivitiesBffService: UserActivitiesBffService) { }
 
   @Get('')
-  async getById(@Query('id') id: number, @Req() req: Request
-  ) {
-    return this.UserActivitiesBffService.findUserActivities(id, req.user);
+  async getById(@Query('id') id: number) {
+    return this.UserActivitiesBffService.findUserActivities(id);
   }
 
   @Post('user-avaliation')

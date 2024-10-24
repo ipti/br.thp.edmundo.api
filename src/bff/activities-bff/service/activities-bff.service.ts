@@ -25,7 +25,26 @@ export class ActivitiesBffService {
                 include: {
                   options: true,
                 }
-              }
+              },
+              answer_form: {
+                where: {
+                  users_fk: user.id
+                },
+                select: {
+                  answer_question: {
+                    select: {
+                      question: {
+                        select: {
+                          type: true,
+                          content: true,
+                          options: true,
+                        },
+                      },
+                      answer_option: true,
+                    },
+                  },
+                },
+              },
             }
           },
           user_activities: {
@@ -94,6 +113,7 @@ export class ActivitiesBffService {
             id: true,
             activities: {
               select: {
+                type_activities: true,
                 classroom_activities: {
                   select: {
                     id: true,
