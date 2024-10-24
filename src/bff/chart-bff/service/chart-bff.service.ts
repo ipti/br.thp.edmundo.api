@@ -66,9 +66,9 @@ from classroom_activities ca
       const moduloActivities = await this.prismaService.$queryRaw`
            SELECT COUNT(DISTINCT ua.id) as completed_user_activities
  	            from classroom_activities ca 
- 	            join activities a ON ca.activities_fk  = a.id 
- 	            join user_activities ua ON ua.activities_fk = a.id 
                join user_classroom uc on ca.classroom_fk = uc.classroomId 
+ 	            join activities a ON ca.activities_fk  = a.id 
+ 	            join user_activities ua ON ua.user_classroomId  = uc.id 
  	            WHERE  ca.classroom_fk = ${id} and ua.status = 'COMPLETED' and uc.usersId = ${idUser}
         `;
 
@@ -76,13 +76,14 @@ from classroom_activities ca
 
 SELECT COUNT(DISTINCT ua.id) as pending_user_activities
     from classroom_activities ca 
-    join activities a ON ca.activities_fk  = a.id 
-    join user_activities ua ON ua.activities_fk = a.id 
     join user_classroom uc on ca.classroom_fk = uc.classroomId 
+    join activities a ON ca.activities_fk  = a.id 
+    join user_activities ua ON ua.user_classroomId  = uc.id 
     WHERE  ca.classroom_fk = ${id} and ua.status = 'PENDING' and uc.usersId = ${idUser}
 `;
 
       const code_activities = await this.prismaService.$queryRaw`
+      
  SELECT COUNT(DISTINCT a.id) as code_activities
  	from classroom_activities ca 
  	join activities a ON ca.activities_fk = a.id 
