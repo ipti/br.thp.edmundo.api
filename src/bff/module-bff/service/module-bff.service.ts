@@ -27,13 +27,13 @@ export class ModuleBffService {
                       classroom_fk: idClassroom
                     }
                   },
-                  user_activities: {
-                    where: {
-                      user_classroom: {
-                        usersId: idUser
-                      }
-                    }
-                  }
+                  // user_activities: {
+                  //   where: {
+                  //     user_classroom: {
+                  //       usersId: idUser
+                  //     }
+                  //   }
+                  // }
                 }
               },
             }

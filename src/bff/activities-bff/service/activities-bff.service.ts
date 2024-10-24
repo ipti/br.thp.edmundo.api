@@ -19,6 +19,34 @@ export class ActivitiesBffService {
           id: +id,
         },
         include: {
+          form: {
+            include: {
+              question: {
+                include: {
+                  options: true,
+                }
+              },
+              answer_form: {
+                where: {
+                  users_fk: user.id
+                },
+                select: {
+                  answer_question: {
+                    select: {
+                      question: {
+                        select: {
+                          type: true,
+                          content: true,
+                          options: true,
+                        },
+                      },
+                      answer_option: true,
+                    },
+                  },
+                },
+              },
+            }
+          },
           user_activities: {
             include: {
               user_avaliation: {
@@ -46,6 +74,34 @@ export class ActivitiesBffService {
     }
   }
 
+  async findActivitiesOne(id: number) {
+    try {
+      const activities = await this.prismaService.activities.findUnique({
+        where: { id: +id },
+        include: {
+          form: {
+            include: {
+              question: {
+                include: {
+                  options: true,
+                  response_question: true
+                }
+              }
+            }
+          }
+        }
+      });
+
+      if (!activities) {
+        throw new HttpException('activities not found', HttpStatus.NOT_FOUND);
+      }
+
+      return activities;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async findActivitiesUser(id: number) {
     try {
       const activities =
@@ -57,6 +113,7 @@ export class ActivitiesBffService {
             id: true,
             activities: {
               select: {
+                type_activities: true,
                 classroom_activities: {
                   select: {
                     id: true,

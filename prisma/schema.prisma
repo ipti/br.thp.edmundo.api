@@ -22,6 +22,7 @@ model users {
   user_reapplication user_reapplication[]
   activities         activities?          @relation(fields: [activities_fk], references: [id])
   activities_fk      Int?
+  answer_form        answer_form[]
 }
 
 model registration {
@@ -145,12 +146,15 @@ model activities {
   form                 form?
 }
 
+
+
 model form {
-  id           Int        @id @default(autoincrement())
-  activities   activities @relation(fields: [activitiesId], references: [id])
-  activitiesId Int        @unique
+  id           Int           @id @default(autoincrement())
+  activities   activities    @relation(fields: [activitiesId], references: [id])
+  activitiesId Int           @unique
   question     question[]
-  createdAt    DateTime   @default(now())
+  answer_form  answer_form[]
+  createdAt    DateTime      @default(now())
 }
 
 model question {
@@ -162,6 +166,7 @@ model question {
   formId               Int
   options              options[]
   user_activities_form user_activities_form[]
+  answer_question      answer_question[]
   createdAt            DateTime               @default(now())
 }
 
@@ -174,6 +179,38 @@ model response_question {
   createdAt   DateTime  @default(now())
 }
 
+model answer_form {
+  id              Int               @id @default(autoincrement())
+  users_fk        Int?
+  users           users?            @relation(fields: [users_fk], references: [id])
+  form_fk         Int?
+  form            form?             @relation(fields: [form_fk], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  answer_question answer_question[]
+}
+
+model answer_question {
+  id             Int             @id @default(autoincrement())
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  answer_form_fk Int
+  answer_form    answer_form     @relation(fields: [answer_form_fk], references: [id])
+  question_fk    Int
+  question       question        @relation(fields: [question_fk], references: [id])
+  answer_option  answer_option[]
+}
+
+model answer_option {
+  id                 Int             @id @default(autoincrement())
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  answer_question_fk Int
+  answer_question    answer_question @relation(fields: [answer_question_fk], references: [id])
+  options_fk         Int
+  options            options         @relation(fields: [options_fk], references: [id])
+}
+
 model options {
   id                   Int                    @id @default(autoincrement())
   content              String                 @db.Text
@@ -183,13 +220,14 @@ model options {
   questionId           Int?
   response_question    response_question?
   createdAt            DateTime               @default(now())
+  answer_option        answer_option[]
 }
 
 model user_activities_form {
   id                Int            @id @default(autoincrement())
   user_classroom    user_classroom @relation(fields: [user_classroom_fk], references: [id])
   user_classroom_fk Int
-  options           options        @relation(fields: [options_fk], references: [id])
+  options           options[]
   options_fk        Int
   question          question       @relation(fields: [question_fk], references: [id])
   question_fk       Int
@@ -232,6 +270,14 @@ model user_activities {
   user_classroomId         Int?
   user_activities_archives user_activities_archives[]
   user_avaliation          user_avaliation?
+  user_activities_rating   user_activities_rating?
+}
+
+model user_activities_rating {
+  id                 Int              @id @default(autoincrement())
+  rating             Int
+  user_activities_fk Int? @unique
+  user_activities    user_activities? @relation(fields: [user_activities_fk], references: [id])
 }
 
 model user_avaliation {

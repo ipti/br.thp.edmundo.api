@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UserActivitiesBffService } from './service/user_activities-bff.service';
 import { UserActivitiesDto } from './dto/user_activities.dto';
+import { UserActivitiesRatingDto } from './dto/user_activities_rating.dto';
 
 @ApiTags('User-Activities-bff')
 @Controller('user-activities-bff')
@@ -13,9 +14,8 @@ export class UserActivitiesBffController {
   constructor(private UserActivitiesBffService: UserActivitiesBffService) { }
 
   @Get('')
-  async getById(@Query('id') id: number, @Req() req: Request
-  ) {
-    return this.UserActivitiesBffService.findUserActivities(id, req.user);
+  async getById(@Query('id') id: number) {
+    return this.UserActivitiesBffService.findUserActivities(id);
   }
 
   @Post('user-avaliation')
@@ -26,6 +26,14 @@ export class UserActivitiesBffController {
   @Put('user-avaliation')
   async update(@Query('id') id: number, @Body() body: UserActivitiesDto) {
     return this.UserActivitiesBffService.updateavaliationActivities(id, body);
+  }
+
+  @Post('user-activities-rating')
+  async createRating(
+    @Query('id') id: number,
+    @Body() body: UserActivitiesRatingDto,
+  ) {
+    return this.UserActivitiesBffService.ratingUser(id, body);
   }
 
 
