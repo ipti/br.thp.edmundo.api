@@ -121,6 +121,17 @@ export class ActivitiesBffService {
                   }
                 },
                 user_activities: {
+                  where: {
+                    user_classroom: {
+                      classroom: {
+                        classroom_activities: {
+                          some: {
+                            id: id
+                          }
+                        }
+                      }
+                    }
+                  },
                   select: {
                     user_avaliation: {
                       select: {
