@@ -207,7 +207,12 @@ export class ClassroomBffService {
               users: {
                 select: {
                   name: true,
-                  role: true
+                  role: true,
+                  registration: {
+                    select: {
+                      avatar_url: true
+                    }
+                  }
                 }
               }
             }
