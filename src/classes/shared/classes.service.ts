@@ -80,6 +80,33 @@ export class ClassesService {
 
       await this.findOne(id);
 
+      const classroom_classes = await this.prisma.classroom_classes.findMany({
+        where: {
+          classes_fk: +id
+        }
+      })
+
+      if (classroom_classes.length > 0) {
+        throw new HttpException(
+          'Não foi possivel excluir aula por ter turmas vinculadas!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+
+      const activities = await this.prisma.activities.findMany({
+        where: {
+          classesId: +id
+        }
+      })
+
+      if (activities.length > 0) {
+        throw new HttpException(
+          'Não foi possivel excluir aula por ter atividades vinculadas!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       await this.prisma.classes.delete({
         where: { id: +id },
         include: {

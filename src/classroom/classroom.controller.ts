@@ -54,6 +54,6 @@ export class ClassroomController {
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    this.ClassroomService.remove(id);
+    return this.ClassroomService.remove(id);
   }
 }

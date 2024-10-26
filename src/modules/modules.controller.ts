@@ -57,6 +57,6 @@ export class ModulesController {
 
   @Delete(':id')
   async delete(@Req() req: Request, @Param('id') id: string) {
-    this.ModulesService.remove(req.user, id);
+    return this.ModulesService.remove(req.user, id);
   }
 }

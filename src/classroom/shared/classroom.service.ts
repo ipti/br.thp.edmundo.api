@@ -92,14 +92,38 @@ export class ClassroomService {
       await this.findOne(id);
 
       const user_classroom = await this.prisma.user_classroom.findMany({
-        where: { usersId: +id },
+        where: { classroomId: +id },
       })
+
+
+
+
+
+      if (user_classroom.length > 1) {
+
+        throw new HttpException(
+          'Não foi possivel excluir turma por ter usuários vinculados!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const classroom_module = await this.prisma.classroom_module.findMany({
+        where: { classroom_fk: +id },
+      })
+
+
+      if (classroom_module.length > 0) {
+
+        throw new HttpException(
+          'Não foi possivel excluir turma por ter módulos vinculados!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
 
 
       if (user_classroom.length > 0) {
 
         for (const i of user_classroom) {
-
           await this.prisma.user_classroom.delete({
             where: { id: i.id },
           })

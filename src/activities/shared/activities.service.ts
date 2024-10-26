@@ -7,13 +7,10 @@ import { verifyAdmin } from 'src/utils/verifyFunc';
 
 @Injectable()
 export class ActivitiesService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(user: JwtPayload, CreateActivitiesDto: CreateActivitiesDto) {
-
-
     try {
-
       const transactionResult = this.prisma.$transaction(async (tx) => {
         const createdactivities = await tx.activities.create({
           data: {
@@ -31,23 +28,20 @@ export class ActivitiesService {
         if (createdactivities.type_activities === 'QUIZ') {
           await tx.form.create({
             data: {
-              activities: { connect: { id: createdactivities.id } }
-            }
-          })
+              activities: { connect: { id: createdactivities.id } },
+            },
+          });
         }
-
-
 
         return {
           message: 'Atividade criada com sucesso!',
           id: createdactivities.id,
         };
-      })
-
+      });
 
       return transactionResult;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
@@ -83,7 +77,6 @@ export class ActivitiesService {
     UpdateActivitiesDto: UpdateActivitiesDto,
   ) {
     try {
-
       this.findOne(id);
 
       const updatedActivities = await this.prisma.activities.update({
@@ -99,9 +92,59 @@ export class ActivitiesService {
 
   async remove(user: JwtPayload, id: string) {
     try {
-      verifyAdmin(user);
+      // verifyAdmin(user);
 
       await this.findOne(id);
+
+      const classroom_activities =
+        await this.prisma.classroom_activities.findMany({
+          where: {
+            activities_fk: +id,
+          },
+        });
+
+      if (classroom_activities.length > 0) {
+        throw new HttpException(
+          'Não foi possivel excluir atividades por ter turmas vinculadas!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const user_activities = await this.prisma.user_activities.findMany({
+        where: {
+          activities_fk: +id,
+        },
+      });
+
+      if (user_activities.length > 0) {
+        throw new HttpException(
+          'Não foi possivel excluir atividade por ter alunos vinculados!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const form = await this.prisma.form.findFirst({
+        where: {
+          activitiesId: +id,
+        },
+        select: {
+          question: true,
+          id: true,
+        },
+      });
+
+      if (form.question.length > 0) {
+        throw new HttpException(
+          'Não foi possivel excluir atividade por possuir um formulário vinculado!',
+          HttpStatus.NOT_FOUND,
+        );
+      } else {
+        await this.prisma.form.delete({
+          where: {
+            id: form.id,
+          },
+        });
+      }
 
       await this.prisma.activities.delete({
         where: { id: +id },

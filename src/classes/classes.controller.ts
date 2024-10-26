@@ -57,6 +57,6 @@ export class ClassesController {
 
   @Delete(':id')
   async delete(@Req() req: Request, @Param('id') id: string) {
-    this.ClassesService.remove(req.user, id);
+   return this.ClassesService.remove(req.user, id);
   }
 }
