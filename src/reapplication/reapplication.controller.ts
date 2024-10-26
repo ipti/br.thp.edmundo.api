@@ -57,6 +57,6 @@ export class ReapplicationController {
 
   @Delete(':id')
   async delete(@Req() req: Request, @Param('id') id: string) {
-    this.ReapplicationService.remove(req.user, id);
+    return this.ReapplicationService.remove(req.user, id);
   }
 }

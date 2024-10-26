@@ -98,13 +98,10 @@ export class ModulesService {
       })
 
       if (classes.length > 0) {
-        for (const i of classes) {
-          await this.prisma.classes.delete({
-            where: {
-              id: i.id
-            }
-          })
-        }
+        throw new HttpException(
+          'Não foi possivel exclui Aulas e atividades vinculadas a esse modulo',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       await this.prisma.module.delete({

@@ -106,7 +106,7 @@ export class ReapplicationService {
 
       if (classroom.length > 0) {
         throw new HttpException(
-          'Não foi possivel exclui replicação por ter turmas vinculadas a ela',
+          'Não foi possivel exclui replicação por ter turmas vinculadas!',
           HttpStatus.NOT_FOUND,
         );
       }

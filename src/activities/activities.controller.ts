@@ -57,6 +57,6 @@ export class ActivitiesController {
 
   @Delete(':id')
   async delete(@Req() req: Request, @Param('id') id: string) {
-    this.ActivitiesService.remove(req.user, id);
+    return this.ActivitiesService.remove(req.user, id);
   }
 }
