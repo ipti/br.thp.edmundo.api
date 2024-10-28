@@ -13,6 +13,7 @@ import { BFFModule } from './bff/bff.module';
 import { ModulesModule } from './modules/modules.module';
 import { ClassesModule } from './classes/classes.module';
 import { ActivitiesModule } from './activities/activities.module';
+import { TagsModule } from './tag_activities/tag.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ActivitiesModule } from './activities/activities.module';
     ModulesModule,
     ClassesModule,
     ActivitiesModule,
+    TagsModule,
     BFFModule
   ],
   controllers: [AppController],

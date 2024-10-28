@@ -23,6 +23,7 @@ model users {
   activities         activities?          @relation(fields: [activities_fk], references: [id])
   activities_fk      Int?
   answer_form        answer_form[]
+  tags_users         tags_users[]
 }
 
 model registration {
@@ -144,9 +145,8 @@ model activities {
   classes              classes?               @relation(fields: [classesId], references: [id])
   classesId            Int?
   form                 form?
+  tags_activities       tags_activities[]
 }
-
-
 
 model form {
   id           Int           @id @default(autoincrement())
@@ -276,7 +276,7 @@ model user_activities {
 model user_activities_rating {
   id                 Int              @id @default(autoincrement())
   rating             Int
-  user_activities_fk Int? @unique
+  user_activities_fk Int?             @unique
   user_activities    user_activities? @relation(fields: [user_activities_fk], references: [id])
 }
 
@@ -316,6 +316,29 @@ model user_classroom {
   usersId              Int?
   user_activities      user_activities[]
   user_activities_form user_activities_form[]
+}
+
+model tags {
+  id             Int              @id @default(autoincrement())
+  content        String
+  tags_activities tags_activities[]
+  tags_users      tags_users[]
+}
+
+model tags_activities {
+  id            Int         @id @default(autoincrement())
+  activities_fk Int?
+  activities    activities? @relation(fields: [activities_fk], references: [id])
+  tag           tags?        @relation(fields: [tag_fk], references: [id])
+  tag_fk        Int?
+}
+
+model tags_users {
+  id      Int    @id @default(autoincrement())
+  user_fk Int?
+  users   users? @relation(fields: [user_fk], references: [id])
+  tag           tags?        @relation(fields: [tag_fk], references: [id])
+  tag_fk        Int?
 }
 
 enum Role {
