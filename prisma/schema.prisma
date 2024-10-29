@@ -145,7 +145,7 @@ model activities {
   classes              classes?               @relation(fields: [classesId], references: [id])
   classesId            Int?
   form                 form?
-  tags_activities       tags_activities[]
+  tags_activities      tags_activities[]
 }
 
 model form {
@@ -319,8 +319,9 @@ model user_classroom {
 }
 
 model tags {
-  id             Int              @id @default(autoincrement())
-  content        String
+  id              Int               @id @default(autoincrement())
+  content         String
+  type            Type_Tags
   tags_activities tags_activities[]
   tags_users      tags_users[]
 }
@@ -329,7 +330,7 @@ model tags_activities {
   id            Int         @id @default(autoincrement())
   activities_fk Int?
   activities    activities? @relation(fields: [activities_fk], references: [id])
-  tag           tags?        @relation(fields: [tag_fk], references: [id])
+  tag           tags?       @relation(fields: [tag_fk], references: [id])
   tag_fk        Int?
 }
 
@@ -337,8 +338,8 @@ model tags_users {
   id      Int    @id @default(autoincrement())
   user_fk Int?
   users   users? @relation(fields: [user_fk], references: [id])
-  tag           tags?        @relation(fields: [tag_fk], references: [id])
-  tag_fk        Int?
+  tag     tags?  @relation(fields: [tag_fk], references: [id])
+  tag_fk  Int?
 }
 
 enum Role {
@@ -374,6 +375,11 @@ enum Type_Activities {
 enum Type_Question {
   MULTIPLE_CHOICE
   SELECTION_BOX
+}
+
+enum Type_Tags {
+  ACTIVITIES
+  USERS
 }
 
 enum Status_Activities {

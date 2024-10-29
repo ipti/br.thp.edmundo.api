@@ -24,8 +24,8 @@ import { TagsService } from './shared/tags.service';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
-@Controller('tag')
-@ApiTags('Tag')
+@Controller('tags')
+@ApiTags('Tags')
 export class TagController {
   constructor(private TagsService: TagsService) { }
 

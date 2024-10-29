@@ -13,7 +13,7 @@ import { BFFModule } from './bff/bff.module';
 import { ModulesModule } from './modules/modules.module';
 import { ClassesModule } from './classes/classes.module';
 import { ActivitiesModule } from './activities/activities.module';
-import { TagsModule } from './tag_activities/tag.module';
+import { TagsModule } from './tags/tag.module';
 
 @Module({
   imports: [
