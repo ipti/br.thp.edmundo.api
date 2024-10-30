@@ -21,6 +21,7 @@ export class TagsService {
       const tags = await this.prisma.tags.create({
         data: {
           content: CreateTagsDto.content,
+          type: CreateTagsDto.type
         },
       });
 

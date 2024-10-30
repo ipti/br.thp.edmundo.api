@@ -1,62 +1,63 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
   Param,
   Post,
-  Put,
+  Query,
   Req,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { TagResponse } from './doc/tags-bff.response';
-import { CreateTagsDto } from './dto/create-tags-bff.dto';
-import { UpdateTagsDto } from './dto/update-tags-bff.dto';
-import { TagsService } from './shared/tags-bff.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { TagResponse } from './doc/tags-bff.response';
+import { TagsBffService } from './shared/tags-bff.service';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
-@Controller('tags')
-@ApiTags('Tags')
-export class TagController {
-  constructor(private TagsService: TagsService) { }
+@Controller('tags-bff')
+@ApiTags('TagsBff')
+export class TagBffController {
+  constructor(private TagsBffService: TagsBffService) {}
 
-  @Post()
+  @Post('users')
   @ApiCreatedResponse({ type: TagResponse })
-  async create(@Req() req: Request, @Body() project: CreateTagsDto) {
-    return this.TagsService.create(req.user, project);
+  async createTagUser(@Req() req: Request, @Query('idTag') idTag: number) {
+    return this.TagsBffService.createTagUser(req.user, idTag);
   }
 
-  @Get()
-  async getAll() {
-    return this.TagsService.findAll();
-  }
-
-  @Get(':id')
-  @ApiOkResponse({ type: TagResponse })
-  async getById(@Param('id') id: string) {
-    return this.TagsService.findOne(id);
-  }
-
-  @Put(':id')
-  async update(
-    @Req() req: Request,
-    @Param('id') id: string,
-    @Body() project: UpdateTagsDto,
+  @Post('activities')
+  @ApiCreatedResponse({ type: TagResponse })
+  async createTagActivities(
+    @Query('idActivities') idActivities: number,
+    @Query('idTag') idTag: number,
   ) {
-    return this.TagsService.update(req.user, id, project);
+    return this.TagsBffService.createTagActivities(idActivities, idTag);
   }
 
-  @Delete(':id')
-  async delete(@Req() req: Request, @Param('id') id: string) {
-    return this.TagsService.remove(req.user, id);
+  @Get('users-all')
+  async findAllUser() {
+    return this.TagsBffService.findAllUser();
+  }
+
+  @Get('activities-all')
+  async findAllActivities() {
+    return this.TagsBffService.findAllActivities();
+  }
+
+ 
+  @Delete('activities/:id')
+  async removeTagActivities(@Param('id') id: string) {
+    return this.TagsBffService.removeTagActivities(id);
+  }
+
+  @Delete('users/:id')
+  async delete(@Param('id') id: string) {
+    return this.TagsBffService.removeTagUser(id);
   }
 }

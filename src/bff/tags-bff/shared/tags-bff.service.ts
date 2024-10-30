@@ -1,122 +1,142 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { JwtPayload } from 'src/utils/jwt.interface';
-import { CreateTagsDto } from '../dto/create-tags-bff.dto';
-import { UpdateTagsDto } from '../dto/update-tags-bff.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { JwtPayload } from 'src/utils/jwt.interface';
 
 @Injectable()
-export class TagsService {
-  constructor(private readonly prisma: PrismaService) {}
+export class TagsBffService {
+  constructor(private readonly prisma: PrismaService) { }
 
-  async create(user: JwtPayload, CreateTagsDto: CreateTagsDto) {
-    const tags = await this.prisma.tags.findMany({
-      where: { content: CreateTagsDto.content },
+  async createTagUser(user: JwtPayload, idTag: number) {
+    const tags = await this.prisma.tags.findUnique({
+      where: { id: idTag },
     });
 
-    if (tags.length > 0) {
-      throw new HttpException('Name already exists', HttpStatus.BAD_REQUEST);
+    if (!tags) {
+      throw new HttpException('Tag Not Found', HttpStatus.BAD_REQUEST);
     }
 
     try {
-      const tags = await this.prisma.tags.create({
+      const tags_users = await this.prisma.tags_users.create({
         data: {
-          content: CreateTagsDto.content,
+          users: { connect: { id: user.id } },
+          tag: { connect: { id: idTag } },
         },
       });
 
-      return tags;
+      return tags_users;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async findAll() {
-    try {
-      const tags = await this.prisma.tags.findMany();
-      return tags;
-    } catch (err) {
-      throw new HttpException(err, HttpStatus.BAD_REQUEST);
-    }
-  }
+  async createTagActivities(idActivities: number, idTag: number) {
+    const tags = await this.prisma.tags.findUnique({
+      where: { id: idTag },
+    });
 
-  async findOne(id: string) {
+    if (!tags) {
+      throw new HttpException('Tag Not Found', HttpStatus.BAD_REQUEST);
+    }
+
     try {
-      const tags = await this.prisma.tags.findUnique({
-        where: { id: +id },
+      const tags_activities = await this.prisma.tags_activities.create({
+        data: {
+          activities: { connect: { id: idActivities } },
+          tag: { connect: { id: idTag } },
+        },
       });
 
-      if (!tags) {
-        throw new HttpException('Tags not found', HttpStatus.NOT_FOUND);
-      }
-
-      return tags;
+      return tags_activities;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async update(user: JwtPayload, id: string, UpdateTagsDto: UpdateTagsDto) {
+  async findAllUser() {
     try {
-      this.findOne(id);
-
-      const tags = await this.prisma.tags.update({
-        where: { id: +id },
-        data: { ...UpdateTagsDto },
-      });
-
-      return tags;
-    } catch (err) {
-      throw new HttpException(err, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  async remove(user: JwtPayload, id: string) {
-    try {
-      // verifyAdmin(user);
-
-      await this.findOne(id);
-
-      const activities = await this.prisma.activities.findMany({
+      const tags = await this.prisma.tags.findMany({
         where: {
-          tags_activities: {
-            some: {
-              activities_fk: +id
-            }
-          }
+          type: 'USERS',
+        },
+      });
+      return tags;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findAllActivities() {
+    try {
+      const tags = await this.prisma.tags.findMany({
+        where: {
+          type: 'ACTIVITIES',
+        },
+      });
+      return tags;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+
+  async removeTagUser(id: string) {
+    try {
+
+      const tags_users = await this.prisma.tags_users.findUnique({
+        where: {
+          id: +id,
         },
       });
 
-      if (activities.length > 0) {
+      if (!tags_users) {
         throw new HttpException(
           'Não foi possivel exclui replicação por ter turmas vinculadas!',
           HttpStatus.NOT_FOUND,
         );
       }
 
-      const users = await this.prisma.users.findMany({
-        where: {
-          tags_users: {
-            some: {
-              user_fk: +id
-            }
-          }
-        },
+
+      await this.prisma.tags_users.delete({
+        where: { id: +id },
       });
 
-      if (users.length > 0) {
+
+
+      return { message: 'Tags User deleted successfully' };
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async removeTagActivities(id: string) {
+    try {
+  
+      const tags_users = await this.prisma.tags_users.findUnique({
+        where: {
+          id: +id,
+        },
+      });
+  
+      if (!tags_users) {
         throw new HttpException(
           'Não foi possivel exclui replicação por ter turmas vinculadas!',
           HttpStatus.NOT_FOUND,
         );
       }
-
-      await this.prisma.tags.delete({
+  
+  
+      await this.prisma.tags_users.delete({
         where: { id: +id },
       });
-
-      return { message: 'Tags deleted successfully' };
+  
+  
+  
+      return { message: 'Tags User deleted successfully' };
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
 }
+
+
+

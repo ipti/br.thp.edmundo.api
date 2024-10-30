@@ -8,6 +8,7 @@ import { UserRegistrationBffModule } from './user_registration-bff/user-registra
 import { UserActivitiesBffModule } from './user_activities-bff/user_activities-bff.module';
 import { FormBffModule } from './form-bff/form-bff.module';
 import { ChartBffModule } from './chart-bff/chart-bff.module';
+import { TagsBffModule } from './tags-bff/tag-bff.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { ChartBffModule } from './chart-bff/chart-bff.module';
     ClasseBffModule,
     UserActivitiesBffModule,
     FormBffModule,
-    ChartBffModule
+    ChartBffModule,
+    TagsBffModule
   ],
 })
 export class BFFModule { }
