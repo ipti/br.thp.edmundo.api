@@ -79,6 +79,11 @@ export class ActivitiesBffService {
       const activities = await this.prismaService.activities.findUnique({
         where: { id: +id },
         include: {
+          tags_activities: {
+            include: {
+              tag: true
+            }
+          },
           form: {
             include: {
               question: {

@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -6,17 +7,14 @@ import {
   Post,
   Query,
   Req,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiTags
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { TagResponse } from './doc/tags-bff.response';
 import { TagsBffService } from './shared/tags-bff.service';
+import { CreateActivitiesTagsDto, CreateUserTagsDto } from './dto/create-tags-bff.dto';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -27,17 +25,19 @@ export class TagBffController {
 
   @Post('users')
   @ApiCreatedResponse({ type: TagResponse })
-  async createTagUser(@Req() req: Request, @Query('idTag') idTag: number) {
-    return this.TagsBffService.createTagUser(req.user, idTag);
+  async createTagUser(
+    @Req() req: Request,
+    @Body('idTag') usertag: CreateUserTagsDto,
+  ) {
+    return this.TagsBffService.createTagUser(usertag, req.user);
   }
 
   @Post('activities')
   @ApiCreatedResponse({ type: TagResponse })
   async createTagActivities(
-    @Query('idActivities') idActivities: number,
-    @Query('idTag') idTag: number,
+    @Body('idTag') activitiestag: CreateActivitiesTagsDto,
   ) {
-    return this.TagsBffService.createTagActivities(idActivities, idTag);
+    return this.TagsBffService.createTagActivities(activitiestag);
   }
 
   @Get('users-all')
@@ -50,7 +50,6 @@ export class TagBffController {
     return this.TagsBffService.findAllActivities();
   }
 
- 
   @Delete('activities/:id')
   async removeTagActivities(@Param('id') id: string) {
     return this.TagsBffService.removeTagActivities(id);
