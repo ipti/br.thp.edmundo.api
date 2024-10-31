@@ -191,6 +191,11 @@ export class UserRegistrationBffService {
         email: true,
         active: true,
         password: false,
+        tags_users: {
+          include: {
+            tag: true
+          }
+        },
         role: true,
         registration: {
           where: { user_fk: id }
