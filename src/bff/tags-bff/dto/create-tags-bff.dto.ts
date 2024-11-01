@@ -8,23 +8,21 @@ class TagDto {
   @ApiProperty()
   idTag: number;
 }
+
 export class CreateUserTagsDto {
-  @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => TagDto)
-  @ApiProperty({ type: [TagDto] })
+  @ApiProperty({ type: [TagDto], required: false })
   items: TagDto[];
 }
 
 export class CreateActivitiesTagsDto {
-  @IsNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => TagDto)
-  @ApiProperty({ type: [TagDto] })
+  @ApiProperty({ type: [TagDto], required: false })
   items: TagDto[];
 
   @IsNotEmpty()
-  @IsInt()
   @ApiProperty()
   idActivitie: number;
 }
