@@ -3,37 +3,49 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ClassroomBffService {
-  constructor(private readonly prismaService: PrismaService) { }
-
-
+  constructor(private readonly prismaService: PrismaService) {}
 
   async findClassroomUser(idUser: number) {
     try {
-
-
       const classroom = await this.prismaService.classroom.findMany({
         where: {
           user: {
             some: {
-              usersId: idUser
-            }
-          }
+              usersId: idUser,
+            },
+          },
         },
         include: {
+          user: {
+            include: {
+              users: {
+                select: {
+                  name: true,
+                  registration: {
+                    select: {
+                      avatar_url: true,
+                    },
+                  },
+                },
+              },
+            },
+            where: {
+              users: {
+                role: 'STUDENT',
+              },
+            },
+          },
           classroom_module: {
             select: {
               module: true,
-              active: true
-            }
-          }
-        }
+              active: true,
+            },
+          },
+        },
       });
 
       if (!classroom) {
-        throw new HttpException(
-          'Classroom not found',
-          HttpStatus.NOT_FOUND,
-        );
+        throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
       }
 
       return classroom;
@@ -44,8 +56,6 @@ export class ClassroomBffService {
 
   async findClassroomActivitiesUser(id: number) {
     try {
-
-
       const classroom = await this.prismaService.classroom.findUnique({
         where: {
           id: id,
@@ -55,7 +65,7 @@ export class ClassroomBffService {
           id: true,
           classroom_module: {
             select: {
-              id: true, 
+              id: true,
               classroom: {
                 select: {
                   classroom_activities: {
@@ -64,21 +74,21 @@ export class ClassroomBffService {
                       activities: {
                         select: {
                           name: true,
-                          id: true
-                        }
-                      }
-                    }
-                  }
-                }
+                          id: true,
+                        },
+                      },
+                    },
+                  },
+                },
               },
               module: {
                 select: {
                   name: true,
-                }
-              }
-            }
+                },
+              },
+            },
           },
-        }
+        },
       });
 
       if (!classroom) {
@@ -97,26 +107,26 @@ export class ClassroomBffService {
 
       const whereCondition = idReapplication
         ? {
-          reapplication_fk: idReapplication,
-          user: {
-            some: { usersId: +idUser },
+            reapplication_fk: idReapplication,
+            user: {
+              some: { usersId: +idUser },
+            },
           }
-        }
         : {
-          user: {
-            some: { usersId: +idUser },
-          }
-        };
+            user: {
+              some: { usersId: +idUser },
+            },
+          };
 
       const reapplication = await this.prismaService.classroom.findMany({
         where: whereCondition,
         include: {
           _count: {
             select: {
-              user: true
-            }
-          }
-        }
+              user: true,
+            },
+          },
+        },
       });
 
       if (!reapplication) {
@@ -132,17 +142,14 @@ export class ClassroomBffService {
     }
   }
 
-
   async jointheClassroom(idUser: number, idClassroom: number) {
     try {
-
-
       const user_classroom = await this.prismaService.user_classroom.findMany({
         where: {
           classroomId: idClassroom,
-          usersId: idUser
-        }
-      })
+          usersId: idUser,
+        },
+      });
 
       if (user_classroom.length > 0) {
         throw new HttpException(
@@ -154,19 +161,15 @@ export class ClassroomBffService {
       await this.prismaService.user_classroom.create({
         data: {
           classroom: { connect: { id: idClassroom } },
-          users: { connect: { id: idUser } }
-        }
-      })
-
+          users: { connect: { id: idUser } },
+        },
+      });
 
       return { message: 'Usuário adicionado com sucesso!' };
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
-
-
   }
-
 
   async findOne(id: string) {
     try {
@@ -175,17 +178,16 @@ export class ClassroomBffService {
         include: {
           _count: {
             select: {
-              user: true
-            }
-          }
-        }
+              user: true,
+            },
+          },
+        },
       });
-
 
       const owner = await this.prismaService.users.findUnique({
         where: { id: classroom.owner_user_fk },
-        select: { id: true, name: true, email: true }
-      })
+        select: { id: true, name: true, email: true },
+      });
 
       if (!classroom) {
         throw new HttpException('Turma não encontrada', HttpStatus.NOT_FOUND);
@@ -210,21 +212,20 @@ export class ClassroomBffService {
                   role: true,
                   registration: {
                     select: {
-                      avatar_url: true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                      avatar_url: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
-
 
       const owner = await this.prismaService.users.findUnique({
         where: { id: classroom.owner_user_fk },
-        select: { id: true, name: true, email: true }
-      })
+        select: { id: true, name: true, email: true },
+      });
 
       if (!classroom) {
         throw new HttpException('Classroom not found', HttpStatus.NOT_FOUND);
