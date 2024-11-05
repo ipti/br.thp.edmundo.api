@@ -12,7 +12,6 @@ export class TagsBffService {
 
   async createTagUser(CreateUserTagsDto: CreateUserTagsDto, user: JwtPayload) {
     try {
-      console.log(CreateUserTagsDto.items)
       const transactionResult = this.prisma.$transaction(async (tx) => {
         await tx.tags_users.deleteMany({
           where: {

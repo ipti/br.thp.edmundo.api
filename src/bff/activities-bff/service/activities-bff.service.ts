@@ -19,6 +19,11 @@ export class ActivitiesBffService {
           id: +id,
         },
         include: {
+          tags_activities: {
+            include: {
+              tag: true
+            }
+          },
           form: {
             include: {
               question: {
