@@ -24,6 +24,7 @@ model users {
   activities_fk      Int?
   answer_form        answer_form[]
   tags_users         tags_users[]
+  stamps_user        stamps_user[]
 }
 
 model registration {
@@ -319,7 +320,9 @@ model user_classroom {
 }
 
 model tags {
-  id              Int               @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
   content         String
   type            Type_Tags
   tags_activities tags_activities[]
@@ -327,7 +330,9 @@ model tags {
 }
 
 model tags_activities {
-  id            Int         @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
   activities_fk Int?
   activities    activities? @relation(fields: [activities_fk], references: [id])
   tag           tags?       @relation(fields: [tag_fk], references: [id])
@@ -335,11 +340,31 @@ model tags_activities {
 }
 
 model tags_users {
-  id      Int    @id @default(autoincrement())
-  user_fk Int?
-  users   users? @relation(fields: [user_fk], references: [id])
-  tag     tags?  @relation(fields: [tag_fk], references: [id])
-  tag_fk  Int?
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  user_fk   Int?
+  users     users?   @relation(fields: [user_fk], references: [id])
+  tag       tags?    @relation(fields: [tag_fk], references: [id])
+  tag_fk    Int?
+}
+
+model stamps {
+  id          Int           @id @default(autoincrement())
+  name        String
+  img_url     String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  stamps_user stamps_user[]
+}
+
+model stamps_user {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user_fk   Int?
+  users     users?   @relation(fields: [user_fk], references: [id])
+  stamps    stamps?  @relation(fields: [stamps_fk], references: [id])
+  stamps_fk Int?
 }
 
 enum Role {
