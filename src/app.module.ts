@@ -14,6 +14,7 @@ import { ModulesModule } from './modules/modules.module';
 import { ClassesModule } from './classes/classes.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { TagsModule } from './tags/tag.module';
+import { StampsModule } from './stamps/stamp.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TagsModule } from './tags/tag.module';
     ClassesModule,
     ActivitiesModule,
     TagsModule,
+    StampsModule,
     BFFModule
   ],
   controllers: [AppController],
