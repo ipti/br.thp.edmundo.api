@@ -1,5 +1,17 @@
-import { Body, Controller, Get, Post, Put, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Query,
+  Req,
+  UploadedFile,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -12,30 +24,28 @@ import { ClassroomAvaliationDto } from './dto/classroom_avaliation';
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
 export class ActivitiesBffController {
-  constructor(private ActivitiesBffService: ActivitiesBffService) { }
+  constructor(private ActivitiesBffService: ActivitiesBffService) {}
+
+  @Post('editor-image')
+  @UseInterceptors(FileInterceptor('file'))
+  async createArchives(@UploadedFile() file: any) {
+    return this.ActivitiesBffService.addImageEditor(file);
+  }
 
   @Get('')
-  async getById(@Query('id') id: number, @Req() req: Request
-  ) {
+  async getById(@Query('id') id: number, @Req() req: Request) {
     return this.ActivitiesBffService.findActivities(id, req.user);
   }
 
   @Get('one')
-  async getByIdOne(@Query('id') id: number
-  ) {
+  async getByIdOne(@Query('id') id: number) {
     return this.ActivitiesBffService.findActivitiesOne(id);
   }
 
-
-
   @Get('user-classroom')
-  async getByIdUser(@Query('id') id: number
-  ) {
+  async getByIdUser(@Query('id') id: number) {
     return this.ActivitiesBffService.findActivitiesUser(id);
   }
-
-
-
 
   @Post('add-activities-classroom')
   async create(
@@ -49,7 +59,7 @@ export class ActivitiesBffController {
   async createuseractivities(
     @Query('idClassroom') idClassroom: number,
     @Query('idActivities') idActivities: number,
-    @Req() req: Request
+    @Req() req: Request,
   ) {
     return this.ActivitiesBffService.addUserActivities(
       idActivities,
@@ -59,14 +69,13 @@ export class ActivitiesBffController {
   }
 
   @Put('finish-activities-classroom-user')
-  @UseInterceptors(FilesInterceptor('files', 10)) 
+  @UseInterceptors(FilesInterceptor('files', 10))
   async finishuseractivities(
     @Query('id') id: number,
-    @UploadedFile('files') files: any, 
+    @UploadedFile('files') files: any,
   ) {
     return this.ActivitiesBffService.FinishUserActivities(id, files);
   }
-
 
   @Put('edit-activities-classroom')
   async update(
@@ -91,5 +100,4 @@ export class ActivitiesBffController {
   ) {
     return this.ActivitiesBffService.updateavaliationActivities(id, body);
   }
-
 }

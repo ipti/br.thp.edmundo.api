@@ -21,19 +21,19 @@ export class ActivitiesBffService {
         include: {
           tags_activities: {
             include: {
-              tag: true
-            }
+              tag: true,
+            },
           },
           form: {
             include: {
               question: {
                 include: {
                   options: true,
-                }
+                },
               },
               answer_form: {
                 where: {
-                  users_fk: user.id
+                  users_fk: user.id,
                 },
                 select: {
                   answer_question: {
@@ -50,14 +50,14 @@ export class ActivitiesBffService {
                   },
                 },
               },
-            }
+            },
           },
           user_activities: {
             include: {
               user_avaliation: {
                 select: {
-                  total: true
-                }
+                  total: true,
+                },
               },
             },
             where: {
@@ -86,20 +86,20 @@ export class ActivitiesBffService {
         include: {
           tags_activities: {
             include: {
-              tag: true
-            }
+              tag: true,
+            },
           },
           form: {
             include: {
               question: {
                 include: {
                   options: true,
-                  response_question: true
-                }
-              }
-            }
-          }
-        }
+                  response_question: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       if (!activities) {
@@ -128,7 +128,7 @@ export class ActivitiesBffService {
                   select: {
                     id: true,
                     classroom_avaliation: true,
-                  }
+                  },
                 },
                 user_activities: {
                   where: {
@@ -136,17 +136,17 @@ export class ActivitiesBffService {
                       classroom: {
                         classroom_activities: {
                           some: {
-                            id: id
-                          }
-                        }
-                      }
-                    }
+                            id: id,
+                          },
+                        },
+                      },
+                    },
                   },
                   select: {
                     user_avaliation: {
                       select: {
-                        total: true
-                      }
+                        total: true,
+                      },
                     },
                     id: true,
                     createdAt: true,
@@ -156,12 +156,12 @@ export class ActivitiesBffService {
                       select: {
                         users: {
                           select: {
-                            name: true
-                          }
-                        }
-                      }
-                    }
-                  }
+                            name: true,
+                          },
+                        },
+                      },
+                    },
+                  },
                 },
                 name: true,
               },
@@ -175,7 +175,7 @@ export class ActivitiesBffService {
 
       return activities;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -341,18 +341,17 @@ export class ActivitiesBffService {
         );
       }
 
-
       const user_avaliation =
         await this.prismaService.classroom_avaliation.create({
           data: {
             classroom_activities: { connect: { id: id } },
             ...userActivitiesDto,
-          }
-        })
+          },
+        });
 
-      return user_avaliation
+      return user_avaliation;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -373,21 +372,38 @@ export class ActivitiesBffService {
         throw new HttpException('activities not found', HttpStatus.NOT_FOUND);
       }
 
-
       const user_avaliation =
         await this.prismaService.classroom_avaliation.update({
           where: {
-            id: id
+            id: id,
           },
           data: {
             classroom_activities: { connect: { id: id } },
             ...userActivitiesDto,
-          }
-        })
+          },
+        });
 
-      return user_avaliation
+      return user_avaliation;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async addImageEditor(file: any) {
+    let img_link;
+
+    try {
+      if (file) {
+        const fileAzure = await this.azureService.uploadFile(
+          file,
+          'editor-activities',
+        );
+        img_link = fileAzure;
+      }
+      console.log(img_link)
+      return img_link;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
 }
