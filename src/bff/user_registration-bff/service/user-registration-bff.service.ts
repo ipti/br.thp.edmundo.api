@@ -196,6 +196,11 @@ export class UserRegistrationBffService {
             tag: true
           }
         },
+        stamps_user:{
+          include: {
+            stamps: true
+          }
+        },
         role: true,
         registration: {
           where: { user_fk: id }
