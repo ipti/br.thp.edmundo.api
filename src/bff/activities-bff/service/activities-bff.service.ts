@@ -400,7 +400,6 @@ export class ActivitiesBffService {
         );
         img_link = fileAzure;
       }
-      console.log(img_link)
       return img_link;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);

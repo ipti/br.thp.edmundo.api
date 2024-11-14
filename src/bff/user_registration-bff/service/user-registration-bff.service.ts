@@ -46,6 +46,7 @@ export class UserRegistrationBffService {
           sex: createUserDto.sex,
           cpf: createUserDto.cpf,
           deficiency: createUserDto.deficiency,
+          description: createUserDto.description,
           responsable_telephone: createUserDto.responsable_telephone,
           responsable_name: createUserDto.responsable_name,
           responsable_cpf: createUserDto.responsable_cpf,
@@ -133,6 +134,7 @@ export class UserRegistrationBffService {
             where: { id: register.id },
             data: {
               birthday: CreateUserDto.birthday,
+              description: CreateUserDto.description,
               responsable_telephone: CreateUserDto.responsable_telephone,
             }
           })
@@ -196,7 +198,7 @@ export class UserRegistrationBffService {
             tag: true
           }
         },
-        stamps_user:{
+        stamps_user: {
           include: {
             stamps: true
           }

@@ -56,6 +56,11 @@ export class CreateUserRegistrationDto {
   @IsString()
   deficiency_description?: string;
 
+  
+  @IsOptional()
+  @IsString()
+  description?: string;
+
   @IsOptional()
   @IsString()
   responsable_name?: string;

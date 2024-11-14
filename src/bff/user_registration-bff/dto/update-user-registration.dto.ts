@@ -34,6 +34,10 @@ export class UpdateUserRegistrationDto {
   birthday: Date;
 
   @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
   @ApiProperty()
   email: string;
 

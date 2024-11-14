@@ -12,6 +12,19 @@ export class StampsBffService {
   async createStampUser(CreateUserStampsDto: CreateUserStampsDto) {
     try {
       const transactionResult = this.prisma.$transaction(async (tx) => {
+        const stamps_user = await tx.stamps_user.findFirst({
+          where: {
+            stamps_fk: CreateUserStampsDto.idStamp,
+            user_fk: CreateUserStampsDto.idUser,
+          },
+        });
+
+        if (stamps_user) {
+          throw new HttpException(
+            'Selo já pertence ao usuário!',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
         await tx.stamps_user.create({
           data: {
             stamps: {
