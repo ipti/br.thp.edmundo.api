@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ClassroomBffService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) { }
 
   async findClassroomUser(idUser: number) {
     try {
@@ -54,7 +54,7 @@ export class ClassroomBffService {
     }
   }
 
-  async findClassroomActivitiesUser(id: number) {
+  async findClassroomActivitiesUser(id: number, idModule: number) {
     try {
       const classroom = await this.prismaService.classroom.findUnique({
         where: {
@@ -64,6 +64,7 @@ export class ClassroomBffService {
           name: true,
           id: true,
           classroom_module: {
+         
             select: {
               id: true,
               classroom: {
@@ -82,8 +83,12 @@ export class ClassroomBffService {
                 },
               },
               module: {
+                where: {
+                  id: idModule,
+                },
                 select: {
                   name: true,
+                  id: true
                 },
               },
             },
@@ -107,16 +112,16 @@ export class ClassroomBffService {
 
       const whereCondition = idReapplication
         ? {
-            reapplication_fk: idReapplication,
-            user: {
-              some: { usersId: +idUser },
-            },
-          }
+          reapplication_fk: idReapplication,
+          user: {
+            some: { usersId: +idUser },
+          },
+        }
         : {
-            user: {
-              some: { usersId: +idUser },
-            },
-          };
+          user: {
+            some: { usersId: +idUser },
+          },
+        };
 
       const reapplication = await this.prismaService.classroom.findMany({
         where: whereCondition,
