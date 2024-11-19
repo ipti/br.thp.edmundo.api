@@ -8,6 +8,9 @@ export class TagResponse {
   @ApiProperty()
   name: string;
 
+  @ApiProperty()
+  description: string;
+
 
   @ApiProperty()
   img_url: string;

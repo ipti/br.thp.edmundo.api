@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateStrampsDto {
     @IsNotEmpty()
@@ -7,5 +7,11 @@ export class CreateStrampsDto {
     @MaxLength(150)
     @ApiProperty({ description: 'Name of the tag', type: String })
     name: string;
+
+    @IsOptional()
+    @IsString()
+    @MaxLength(150)
+    @ApiProperty({ description: 'Description of the tag', type: String })
+    description: string;
   
 }

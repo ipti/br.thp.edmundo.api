@@ -33,7 +33,8 @@ export class StampsService {
       const stamp = await this.prisma.stamps.create({
         data: {
           name: CreateStrampsDto.name,
-          img_url: img_link
+          img_url: img_link,
+          description: CreateStrampsDto.description
         },
       });
 
@@ -101,7 +102,7 @@ export class StampsService {
 
       if (stamps_user.length > 0) {
         throw new HttpException(
-          'Não foi possivel exclui replicação por ter usuários vinculadas!',
+          'Não foi possivel exclui selo por ter usuários vinculadas!',
           HttpStatus.NOT_FOUND,
         );
       }
