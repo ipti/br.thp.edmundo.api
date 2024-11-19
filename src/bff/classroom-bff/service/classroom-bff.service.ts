@@ -75,6 +75,11 @@ export class ClassroomBffService {
                         select: {
                           name: true,
                           id: true,
+                          classes: {
+                            select: {
+                              moduleId: true
+                            }
+                          }
                         },
                       },
                     },
@@ -84,6 +89,7 @@ export class ClassroomBffService {
               module: {
                 select: {
                   name: true,
+                  id: true
                 },
               },
             },

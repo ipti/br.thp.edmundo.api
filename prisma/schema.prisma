@@ -354,6 +354,7 @@ model stamps {
   name        String
   img_url     String?
   description String?
+  type        Type_Stamps   @default(STANDARD)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   stamps_user stamps_user[]
@@ -412,4 +413,9 @@ enum Type_Tags {
 enum Status_Activities {
   PENDING
   COMPLETED
+}
+
+enum Type_Stamps {
+  GOLD
+  STANDARD
 }

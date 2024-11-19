@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type_Stamps } from '@prisma/client';
 
 export class TagResponse {
   @ApiProperty({ description: "Reapplication's id" })
@@ -14,5 +15,8 @@ export class TagResponse {
 
   @ApiProperty()
   img_url: string;
+
+  @ApiProperty()
+  type: Type_Stamps;
 
 }
