@@ -10,6 +10,7 @@ import { FormBffModule } from './form-bff/form-bff.module';
 import { ChartBffModule } from './chart-bff/chart-bff.module';
 import { TagsBffModule } from './tags-bff/tag-bff.module';
 import { StampsBffModule } from './stamps-bff/stamps-bff.module';
+import { MigrationBffModule } from './migration-bff/migration-bff.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { StampsBffModule } from './stamps-bff/stamps-bff.module';
     FormBffModule,
     ChartBffModule,
     TagsBffModule,
-    StampsBffModule
+    StampsBffModule,
+    MigrationBffModule
   ],
 })
 export class BFFModule { }
