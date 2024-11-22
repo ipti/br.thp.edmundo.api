@@ -21,7 +21,7 @@ export interface RegistrationDto {
 
 @Injectable()
 export class MigrationBffService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async migrationMeuBen(MigrationDto: MigrationDto) {
     try {
@@ -39,7 +39,6 @@ export class MigrationBffService {
             },
           },
         });
-
 
         const body: any = registration.map((item) => {
           const registrationOne = item.users.registration[0];
@@ -60,7 +59,7 @@ export class MigrationBffService {
           };
         });
 
-        await axios.post(process.env.BACKEND_URL + '/aviste-bff', body);
+        await axios.post(process.env.BACKEND_URL + '/migration-bff', body);
 
         return { message: 'Migração feita com sucesso!' };
       });
@@ -71,6 +70,14 @@ export class MigrationBffService {
     }
   }
 
-
-
+  async findTsAll() {
+    try {
+      const stamps = await axios.get(
+        process.env.BACKEND_URL + '/migration-bff'
+      );
+      return stamps;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
 }
