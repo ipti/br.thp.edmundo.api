@@ -9,3 +9,8 @@ export function verifyAdmin(user: JwtPayload) {
     );
   }
 }
+
+
+export function verifyAdminBoolean(user: any) {
+  return user.role === 'ADMIN' ? true : false;
+}
