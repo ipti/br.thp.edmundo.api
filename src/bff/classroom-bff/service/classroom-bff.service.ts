@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { verifyAdminBoolean } from 'src/utils/verifyFunc';
 
 @Injectable()
 export class ClassroomBffService {
@@ -77,9 +78,9 @@ export class ClassroomBffService {
                           id: true,
                           classes: {
                             select: {
-                              moduleId: true
-                            }
-                          }
+                              moduleId: true,
+                            },
+                          },
                         },
                       },
                     },
@@ -89,7 +90,7 @@ export class ClassroomBffService {
               module: {
                 select: {
                   name: true,
-                  id: true
+                  id: true,
                 },
               },
             },
@@ -111,6 +112,12 @@ export class ClassroomBffService {
     try {
       // Condição para verificar se idReapplication foi fornecido
 
+      const user = await this.prismaService.users.findUnique({
+        where: {
+          id: idUser,
+        },
+      });
+
       const whereCondition = idReapplication
         ? {
             reapplication_fk: idReapplication,
@@ -124,8 +131,12 @@ export class ClassroomBffService {
             },
           };
 
+      const whereConditionAdmin = {
+        reapplication_fk: idReapplication,
+      };
+
       const reapplication = await this.prismaService.classroom.findMany({
-        where: whereCondition,
+        where: verifyAdminBoolean(user) ? whereConditionAdmin : whereCondition,
         include: {
           _count: {
             select: {
