@@ -59,7 +59,10 @@ export class MigrationBffService {
           };
         });
 
-        await axios.post(process.env.BACKEND_URL + '/migration-bff', body);
+        await axios.post(
+          process.env.BACKEND_URL + '/migration-bff?token=' + process.env.TOKEN,
+          body,
+        );
 
         return { message: 'Migração feita com sucesso!' };
       });
@@ -73,9 +76,9 @@ export class MigrationBffService {
   async findTsAll() {
     try {
       const stamps = await axios.get(
-        process.env.BACKEND_URL + '/migration-bff'
+        process.env.BACKEND_URL + '/migration-bff?token=' + process.env.TOKEN,
       );
-      return stamps;
+      return stamps.data;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
