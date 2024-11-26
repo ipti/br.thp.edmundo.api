@@ -29,6 +29,9 @@ export class MigrationBffService {
         const registration = await tx.user_classroom.findMany({
           where: {
             classroomId: MigrationDto.idClassroom,
+            users: {
+              role: 'STUDENT',
+            },
           },
           select: {
             users: {
@@ -59,10 +62,23 @@ export class MigrationBffService {
           };
         });
 
-        await axios.post(
-          process.env.BACKEND_URL + '/migration-bff?token=' + process.env.TOKEN,
-          body,
-        );
+        console.log(body);
+
+        await axios
+          .post(
+            process.env.BACKEND_URL +
+              '/migration-bff?token=' +
+              process.env.TOKEN,
+            {
+              project: MigrationDto.project,
+              year: MigrationDto.year,
+              name: MigrationDto.name,
+              registration: body,
+            },
+          )
+          .catch((erro) => {
+            console.log(erro);
+          });
 
         return { message: 'Migração feita com sucesso!' };
       });
