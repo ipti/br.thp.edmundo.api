@@ -48,7 +48,7 @@ export class MigrationBffService {
           return {
             name: item.users.name,
             cpf: registrationOne.cpf,
-            birthday: registrationOne.birthday,
+            birthday: registrationOne.birthday.toISOString().split('T')[0],
             sex: registrationOne.sex,
             color_race: registrationOne.color_race,
             deficiency: registrationOne.deficiency,
