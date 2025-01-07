@@ -89,6 +89,11 @@ export class ActivitiesBffService {
               tag: true,
             },
           },
+          activities_group: {
+            include: {
+              groups: true
+            }
+          },
           form: {
             include: {
               question: {

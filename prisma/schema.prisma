@@ -148,7 +148,8 @@ model activities {
   classesId            Int?
   form                 form?
   tags_activities      tags_activities[]
-  group                group[]
+
+  activities_group activities_group[]
 }
 
 model form {
@@ -371,14 +372,22 @@ model stamps_user {
   stamps_fk Int?
 }
 
+model activities_group {
+  id            Int            @id @default(autoincrement())
+  activitie_fk   Int?
+  activities     activities?   @relation(fields: [activitie_fk], references: [id])
+  group_fk   Int?
+  groups     group?   @relation(fields: [group_fk], references: [id])
+}
+
 model group {
   id            Int            @id @default(autoincrement())
   name          String         @db.Text()
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   metric_group  metric_group[]
-  activities_fk Int?
-  activities    activities?    @relation(fields: [activities_fk], references: [id])
+
+  activities_group activities_group[]
 }
 
 model metric_group {

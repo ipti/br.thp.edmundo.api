@@ -7,7 +7,7 @@ import { verifyAdmin } from 'src/utils/verifyFunc';
 
 @Injectable()
 export class ActivitiesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(user: JwtPayload, CreateActivitiesDto: CreateActivitiesDto) {
     try {
@@ -31,6 +31,21 @@ export class ActivitiesService {
               activities: { connect: { id: createdactivities.id } },
             },
           });
+        }
+
+        for (const groups of CreateActivitiesDto.groups) {
+          await tx.activities_group.create({
+            data: {
+              activities: {
+                connect: { id: createdactivities.id }
+              },
+              groups: {
+                connect: {
+                  id: groups.idGroup
+                }
+              }
+            }
+          })
         }
 
         return {
