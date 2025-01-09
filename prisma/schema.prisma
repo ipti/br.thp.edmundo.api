@@ -373,21 +373,24 @@ model stamps_user {
 }
 
 model activities_group {
-  id            Int            @id @default(autoincrement())
-  activitie_fk   Int?
-  activities     activities?   @relation(fields: [activitie_fk], references: [id])
-  group_fk   Int?
-  groups     group?   @relation(fields: [group_fk], references: [id])
+  id           Int         @id @default(autoincrement())
+  activitie_fk Int?
+  activities   activities? @relation(fields: [activitie_fk], references: [id])
+  group_fk     Int?
+  groups       group?      @relation(fields: [group_fk], references: [id])
 }
 
 model group {
-  id            Int            @id @default(autoincrement())
-  name          String         @db.Text()
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  metric_group  metric_group[]
+  id           Int            @id @default(autoincrement())
+  name         String         @db.Text()
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  metric_group metric_group[]
 
   activities_group activities_group[]
+
+  type_group_fk Int?        @unique
+  type_group    type_group? @relation(fields: [type_group_fk], references: [id])
 }
 
 model metric_group {
@@ -396,6 +399,13 @@ model metric_group {
   metric_percentange Int
   group_fk           Int?
   group              group? @relation(fields: [group_fk], references: [id])
+}
+
+model type_group {
+  id       Int    @id @default(autoincrement())
+  name     String @db.Text()
+  value    String @db.Text()
+  group group[]
 }
 
 enum Role {
