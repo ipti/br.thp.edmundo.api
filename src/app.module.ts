@@ -17,6 +17,7 @@ import { TagsModule } from './tags/tag.module';
 import { StampsModule } from './stamps/stamp.module';
 import { GroupModule } from './group/group.module';
 import { MetricGroupModule } from './metric_group/metric_group.module';
+import { TypeGroupModule } from './type_group/type_group.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MetricGroupModule } from './metric_group/metric_group.module';
     StampsModule,
     GroupModule,
     MetricGroupModule,
+    TypeGroupModule,
     BFFModule
   ],
   controllers: [AppController],

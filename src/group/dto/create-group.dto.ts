@@ -10,5 +10,10 @@ export class CreateGroupDTO {
   @ApiProperty()
   name: string;
 
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty()
+  idTypeGroup: number;
+
 
 }

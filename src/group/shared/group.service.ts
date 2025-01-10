@@ -21,9 +21,9 @@ export class GroupService {
       const group = await this.prisma.group.create({
         data: {
           name: CreateGroupDTO.name,
+          type_group: { connect: { id: CreateGroupDTO.idTypeGroup } },
         },
       });
-
 
       return group;
     } catch (err) {
@@ -49,8 +49,8 @@ export class GroupService {
       const group = await this.prisma.group.findUnique({
         where: { id: +id },
         include: {
-          metric_group: true
-        }
+          metric_group: true,
+        },
       });
 
       if (!group) {
@@ -83,7 +83,6 @@ export class GroupService {
       // verifyAdmin(user);
 
       await this.findOne(id);
-
 
       await this.prisma.group.delete({
         where: { id: +id },
