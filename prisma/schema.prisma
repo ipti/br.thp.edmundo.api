@@ -391,6 +391,8 @@ model group {
 
   type_group_fk Int?        @unique
   type_group    type_group? @relation(fields: [type_group_fk], references: [id])
+
+  answer_activities_user_group answer_activities_user_group[]
 }
 
 model metric_group {
@@ -402,10 +404,31 @@ model metric_group {
 }
 
 model type_group {
-  id       Int    @id @default(autoincrement())
-  name     String @db.Text()
-  value    String @db.Text()
+  id    Int     @id @default(autoincrement())
+  name  String  @db.Text()
+  value String  @db.Text()
   group group[]
+}
+
+model answer_activities_user {
+  id Int @id @default(autoincrement())
+
+  answer_activities_user_group answer_activities_user_group[]
+}
+
+model answer_activities_user_ia {
+  id               Int    @id @default(autoincrement())
+  analyzerFeedback String @db.Text()
+  
+}
+
+model answer_activities_user_group {
+  id                        Int                     @id @default(autoincrement())
+  answer                    String                  @db.MediumText()
+  group_fk                  Int?
+  group                     group?                  @relation(fields: [group_fk], references: [id])
+  answer_activities_user_fk Int?
+  answer_activities_user    answer_activities_user? @relation(fields: [answer_activities_user_fk], references: [id])
 }
 
 enum Role {
