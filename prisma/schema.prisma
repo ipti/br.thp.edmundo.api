@@ -273,6 +273,7 @@ model user_activities {
   user_classroom           user_classroom?            @relation(fields: [user_classroomId], references: [id])
   user_classroomId         Int?
   user_activities_archives user_activities_archives[]
+  answer_user_activities answer_user_activities[]
   user_avaliation          user_avaliation?
   user_activities_rating   user_activities_rating?
 }
@@ -392,7 +393,9 @@ model group {
   type_group_fk Int?        @unique
   type_group    type_group? @relation(fields: [type_group_fk], references: [id])
 
-  answer_activities_user_group answer_activities_user_group[]
+  answer_user_activities_group answer_user_activities_group[]
+
+  answer_user_activities_ia_group answer_user_activities_ia_group[]
 }
 
 model metric_group {
@@ -401,6 +404,8 @@ model metric_group {
   metric_percentange Int
   group_fk           Int?
   group              group? @relation(fields: [group_fk], references: [id])
+
+  answer_user_activities_ia_group_metrics answer_user_activities_ia_group_metrics[]
 }
 
 model type_group {
@@ -410,25 +415,45 @@ model type_group {
   group group[]
 }
 
-model answer_activities_user {
-  id Int @id @default(autoincrement())
+model answer_user_activities {
+  id                           Int                            @id @default(autoincrement())
+  answer_user_activities_group answer_user_activities_group[]
+  answer_user_activities_ia    answer_user_activities_ia[]
 
-  answer_activities_user_group answer_activities_user_group[]
+  user_activities user_activities[]
 }
 
-model answer_activities_user_ia {
+model answer_user_activities_ia {
   id               Int    @id @default(autoincrement())
   analyzerFeedback String @db.Text()
-  
+  answer_user_activities_ia_group answer_user_activities_ia_group[]
+  answer_user_activities answer_user_activities[]
 }
 
-model answer_activities_user_group {
+model answer_user_activities_ia_group {
+  id       Int    @id @default(autoincrement())
+  group_fk Int?
+  group    group? @relation(fields: [group_fk], references: [id])
+  answer_user_activities_ia_fk            Int?
+  answer_user_activities_ia               answer_user_activities_ia?                @relation(fields: [answer_user_activities_ia_fk], references: [id])
+  answer_user_activities_ia_group_metrics answer_user_activities_ia_group_metrics[]
+}
+
+model answer_user_activities_ia_group_metrics {
+  id                                 Int                              @id @default(autoincrement())
+  metric_group_fk                    Int?
+  metric_group                       metric_group?                    @relation(fields: [metric_group_fk], references: [id])
+  answer_user_activities_ia_group_fk Int?
+  answer_user_activities_ia_group    answer_user_activities_ia_group? @relation(fields: [answer_user_activities_ia_group_fk], references: [id])
+}
+
+model answer_user_activities_group {
   id                        Int                     @id @default(autoincrement())
   answer                    String                  @db.MediumText()
   group_fk                  Int?
   group                     group?                  @relation(fields: [group_fk], references: [id])
-  answer_activities_user_fk Int?
-  answer_activities_user    answer_activities_user? @relation(fields: [answer_activities_user_fk], references: [id])
+  answer_user_activities_fk Int?
+  answer_user_activities    answer_user_activities? @relation(fields: [answer_user_activities_fk], references: [id])
 }
 
 enum Role {
