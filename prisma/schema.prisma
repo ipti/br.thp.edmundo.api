@@ -149,7 +149,7 @@ model activities {
   form                 form?
   tags_activities      tags_activities[]
 
-  activities_group activities_group[]
+  activities_group_avaliation activities_group_avaliation[]
 }
 
 model form {
@@ -273,7 +273,7 @@ model user_activities {
   user_classroom           user_classroom?            @relation(fields: [user_classroomId], references: [id])
   user_classroomId         Int?
   user_activities_archives user_activities_archives[]
-  answer_user_activities answer_user_activities[]
+  answer_user_activities   answer_user_activities[]
   user_avaliation          user_avaliation?
   user_activities_rating   user_activities_rating?
 }
@@ -373,85 +373,84 @@ model stamps_user {
   stamps_fk Int?
 }
 
-model activities_group {
-  id           Int         @id @default(autoincrement())
-  activitie_fk Int?
-  activities   activities? @relation(fields: [activitie_fk], references: [id])
-  group_fk     Int?
-  groups       group?      @relation(fields: [group_fk], references: [id])
+model activities_group_avaliation {
+  id                  Int               @id @default(autoincrement())
+  activitie_fk        Int?
+  activities          activities?       @relation(fields: [activitie_fk], references: [id])
+  group_avaliation_fk Int?
+  group_avaliations   group_avaliation? @relation(fields: [group_avaliation_fk], references: [id])
 }
 
-model group {
-  id           Int            @id @default(autoincrement())
-  name         String         @db.Text()
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  metric_group metric_group[]
+model group_avaliation {
+  id                      Int                       @id @default(autoincrement())
+  name                    String                    @db.Text()
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  metric_group_avaliation metric_group_avaliation[]
 
-  activities_group activities_group[]
+  activities_group_avaliation activities_group_avaliation[]
 
-  type_group_fk Int?        @unique
-  type_group    type_group? @relation(fields: [type_group_fk], references: [id])
+  type_group_avaliation_fk Int?                   @unique
+  type_group_avaliation    type_group_avaliation? @relation(fields: [type_group_avaliation_fk], references: [id])
 
-  answer_user_activities_group answer_user_activities_group[]
+  answer_user_activities_group_avaliation answer_user_activities_group_avaliation[]
 
-  answer_user_activities_ia_group answer_user_activities_ia_group[]
+  answer_user_activities_ia_group_avaliation answer_user_activities_ia_group_avaliation[]
 }
 
-model metric_group {
-  id                 Int    @id @default(autoincrement())
-  description        String @db.Text()
-  metric_percentange Int
-  group_fk           Int?
-  group              group? @relation(fields: [group_fk], references: [id])
-
-  answer_user_activities_ia_group_metrics answer_user_activities_ia_group_metrics[]
+model metric_group_avaliation {
+  id                  Int               @id @default(autoincrement())
+  description         String            @db.Text()
+  metric_percentange  Int
+  group_avaliation_fk Int?
+  group_avaliation    group_avaliation? @relation(fields: [group_avaliation_fk], references: [id])
+  answer_user_activities_ia_group_avaliation_metrics answer_user_activities_ia_group_avaliation_metrics[]
 }
 
-model type_group {
-  id    Int     @id @default(autoincrement())
-  name  String  @db.Text()
-  value String  @db.Text()
-  group group[]
+model type_group_avaliation {
+  id               Int                @id @default(autoincrement())
+  name             String             @db.Text()
+  value            String             @db.Text()
+  group_avaliation group_avaliation[]
 }
 
 model answer_user_activities {
-  id                           Int                            @id @default(autoincrement())
-  answer_user_activities_group answer_user_activities_group[]
-  answer_user_activities_ia    answer_user_activities_ia[]
-
+  id                                      Int                                       @id @default(autoincrement())
+  answer_user_activities_group_avaliation answer_user_activities_group_avaliation[]
+  answer_user_activities_ia               answer_user_activities_ia[]
   user_activities user_activities[]
 }
 
 model answer_user_activities_ia {
-  id               Int    @id @default(autoincrement())
-  analyzerFeedback String @db.Text()
-  answer_user_activities_ia_group answer_user_activities_ia_group[]
-  answer_user_activities answer_user_activities[]
+  id                                         Int                                          @id @default(autoincrement())
+  analyzerFeedback                           String                                       @db.Text()
+  answer_user_activities_ia_group_avaliation answer_user_activities_ia_group_avaliation[]
+  answer_user_activities                     answer_user_activities[]
 }
 
-model answer_user_activities_ia_group {
-  id       Int    @id @default(autoincrement())
-  group_fk Int?
-  group    group? @relation(fields: [group_fk], references: [id])
-  answer_user_activities_ia_fk            Int?
-  answer_user_activities_ia               answer_user_activities_ia?                @relation(fields: [answer_user_activities_ia_fk], references: [id])
-  answer_user_activities_ia_group_metrics answer_user_activities_ia_group_metrics[]
+model answer_user_activities_ia_group_avaliation {
+  id                                                 Int                                                  @id @default(autoincrement())
+  group_avaliation_fk                                Int?
+  group_avaliation                                   group_avaliation?                                    @relation(fields: [group_avaliation_fk], references: [id])
+  answer_user_activities_ia_fk                       Int?
+  answer_user_activities_ia                          answer_user_activities_ia?                           @relation(fields: [answer_user_activities_ia_fk], references: [id])
+  answer_user_activities_ia_group_avaliation_metrics answer_user_activities_ia_group_avaliation_metrics[]
 }
 
-model answer_user_activities_ia_group_metrics {
-  id                                 Int                              @id @default(autoincrement())
-  metric_group_fk                    Int?
-  metric_group                       metric_group?                    @relation(fields: [metric_group_fk], references: [id])
-  answer_user_activities_ia_group_fk Int?
-  answer_user_activities_ia_group    answer_user_activities_ia_group? @relation(fields: [answer_user_activities_ia_group_fk], references: [id])
+model answer_user_activities_ia_group_avaliation_metrics {
+  id                                            Int                                         @id @default(autoincrement())
+  grade                                         Int
+  metric_group_avaliation_fk                    Int?
+  metric_group_avaliation                       metric_group_avaliation?                    @relation(fields: [metric_group_avaliation_fk], references: [id])
+  answer_user_activities_ia_group_avaliation_fk Int?
+  answer_user_activities_ia_group_avaliation    answer_user_activities_ia_group_avaliation? @relation(fields: [answer_user_activities_ia_group_avaliation_fk], references: [id])
 }
 
-model answer_user_activities_group {
+model answer_user_activities_group_avaliation {
   id                        Int                     @id @default(autoincrement())
   answer                    String                  @db.MediumText()
-  group_fk                  Int?
-  group                     group?                  @relation(fields: [group_fk], references: [id])
+  group_avaliation_fk       Int?
+  group_avaliation          group_avaliation?       @relation(fields: [group_avaliation_fk], references: [id])
   answer_user_activities_fk Int?
   answer_user_activities    answer_user_activities? @relation(fields: [answer_user_activities_fk], references: [id])
 }
