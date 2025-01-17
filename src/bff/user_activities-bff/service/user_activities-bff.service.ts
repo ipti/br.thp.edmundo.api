@@ -4,6 +4,12 @@ import { JwtPayload } from 'src/utils/jwt.interface';
 import { AzureProviderService } from 'src/utils/middleware/azure.provider';
 import { UserActivitiesDto } from '../dto/user_activities.dto';
 import { UserActivitiesRatingDto } from '../dto/user_activities_rating.dto';
+import {
+  CreateAnswerIADto,
+  StudentAnswerDto,
+} from '../dto/answer_user_activities.dto';
+import { SendIADto } from '../dto/send_ia.dto';
+import { CreateAnswerDto, ResponseAnswerDto } from '../dto/answer_ia.dto';
 
 @Injectable()
 export class UserActivitiesBffService {
@@ -22,7 +28,7 @@ export class UserActivitiesBffService {
           user_activities_rating: {
             select: {
               rating: true,
-            }
+            },
           },
           user_avaliation: true,
           activities: {
@@ -37,11 +43,11 @@ export class UserActivitiesBffService {
                           some: {
                             user_activities: {
                               some: {
-                                id: id
-                              }
-                            }
-                          }
-                        }
+                                id: id,
+                              },
+                            },
+                          },
+                        },
                       },
                     },
                     select: {
@@ -166,6 +172,118 @@ export class UserActivitiesBffService {
           },
         });
       return user_activities_rating;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async sendAnswerIA(body: CreateAnswerIADto) {
+    try {
+      const transaction = await this.prismaService.$transaction(async (tx) => {
+        const user_activities = await tx.user_activities.update({
+          data: {
+            status: 'AWAITING_RESPONSE',
+          },
+          where: {
+            id: body.id_user_activities,
+          },
+        });
+
+        for (const answer_user_activities_group_avaliation of body.student_answer) {
+          const answer_user_activities_group =
+            await tx.answer_user_activities_group_avaliation.create({
+              data: {
+                answer: answer_user_activities_group_avaliation.answer,
+                user_activities: { connect: { id: body.id_user_activities } },
+                group_avaliation: {
+                  connect: {
+                    id: answer_user_activities_group_avaliation.idGroup,
+                  },
+                },
+              },
+            });
+        }
+
+        const convertStudentAnswer = (students: StudentAnswerDto[]) => {
+          let concac;
+          students.map((item) => {
+            return concac + `<${item.name}>${item.answer}</${item.name}>`;
+          });
+          return concac;
+        };
+
+        const send_ia: SendIADto = {
+          id_response: body.id_user_activities,
+          performanceMetrics: body.performanceMetrics,
+          correctAnswer: body.correctAnswer,
+          tasksDescription: body.tasksDescription,
+          student_answer: convertStudentAnswer(body.student_answer),
+        };
+
+        return send_ia;
+      });
+
+      return transaction;
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async answerIA(body: ResponseAnswerDto) {
+    try {
+      const transaction = await this.prismaService.$transaction(async (tx) => {
+        const user_activities = await tx.user_activities.update({
+          data: {
+            status: 'COMPLETED',
+          },
+          where: {
+            id: body.id_response,
+          },
+        });
+
+        const answer_user_activities_ia =
+          await tx.answer_user_activities_ia.create({
+            data: {
+              analyzerFeedback: body.analyzerFeedback,
+              user_activities: { connect: { id: body.id_response } },
+            },
+          });
+
+        for (const performanceEvaluation of body.performanceEvaluation) {
+          const answer_user_activities_ia_group_avaliation =
+            await tx.answer_user_activities_ia_group_avaliation.create({
+              data: {
+                answer_user_activities_ia: {
+                  connect: { id: answer_user_activities_ia.id },
+                },
+                group_avaliation: {
+                  connect: {
+                    id: performanceEvaluation.idGroup,
+                  },
+                },
+              },
+            });
+
+          for (const metrics of performanceEvaluation.metrics) {
+            await tx.answer_user_activities_ia_group_avaliation_metrics.create({
+              data: {
+                grade: metrics.grade,
+                answer_user_activities_ia_group_avaliation: {
+                  connect: {
+                    id: answer_user_activities_ia_group_avaliation.id,
+                  },
+                },
+                metric_group_avaliation: {
+                  connect: { id: metrics.idMetric },
+                },
+              },
+            });
+          }
+        }
+
+        return user_activities;
+      });
+      return transaction;
     } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }

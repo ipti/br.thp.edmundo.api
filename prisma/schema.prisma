@@ -273,9 +273,10 @@ model user_activities {
   user_classroom           user_classroom?            @relation(fields: [user_classroomId], references: [id])
   user_classroomId         Int?
   user_activities_archives user_activities_archives[]
-  answer_user_activities   answer_user_activities[]
   user_avaliation          user_avaliation?
   user_activities_rating   user_activities_rating?
+  answer_user_activities_group_avaliation answer_user_activities_group_avaliation[]
+  answer_user_activities_ia               answer_user_activities_ia[]
 }
 
 model user_activities_rating {
@@ -387,14 +388,10 @@ model group_avaliation {
   createdAt               DateTime                  @default(now())
   updatedAt               DateTime                  @updatedAt
   metric_group_avaliation metric_group_avaliation[]
-
   activities_group_avaliation activities_group_avaliation[]
-
   type_group_avaliation_fk Int?                   @unique
   type_group_avaliation    type_group_avaliation? @relation(fields: [type_group_avaliation_fk], references: [id])
-
   answer_user_activities_group_avaliation answer_user_activities_group_avaliation[]
-
   answer_user_activities_ia_group_avaliation answer_user_activities_ia_group_avaliation[]
 }
 
@@ -414,18 +411,13 @@ model type_group_avaliation {
   group_avaliation group_avaliation[]
 }
 
-model answer_user_activities {
-  id                                      Int                                       @id @default(autoincrement())
-  answer_user_activities_group_avaliation answer_user_activities_group_avaliation[]
-  answer_user_activities_ia               answer_user_activities_ia[]
-  user_activities user_activities[]
-}
 
 model answer_user_activities_ia {
   id                                         Int                                          @id @default(autoincrement())
   analyzerFeedback                           String                                       @db.Text()
   answer_user_activities_ia_group_avaliation answer_user_activities_ia_group_avaliation[]
-  answer_user_activities                     answer_user_activities[]
+  user_activities                          user_activities?                           @relation(fields: [user_activities_fk], references: [id])
+  user_activities_fk Int?
 }
 
 model answer_user_activities_ia_group_avaliation {
@@ -451,8 +443,8 @@ model answer_user_activities_group_avaliation {
   answer                    String                  @db.MediumText()
   group_avaliation_fk       Int?
   group_avaliation          group_avaliation?       @relation(fields: [group_avaliation_fk], references: [id])
-  answer_user_activities_fk Int?
-  answer_user_activities    answer_user_activities? @relation(fields: [answer_user_activities_fk], references: [id])
+  user_activities                          user_activities?                           @relation(fields: [user_activities_fk], references: [id])
+  user_activities_fk Int?
 }
 
 enum Role {
@@ -497,6 +489,7 @@ enum Type_Tags {
 }
 
 enum Status_Activities {
+  AWAITING_RESPONSE
   PENDING
   COMPLETED
 }
