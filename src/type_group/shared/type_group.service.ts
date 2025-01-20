@@ -10,7 +10,7 @@ export class TypeGroupService {
 
   async create(CreateTypeGroupDto: CreateTypeGroupDto) {
     try {
-      const stamp = await this.prisma.type_group.create({
+      const stamp = await this.prisma.type_group_avaliation.create({
         data: {
           name: CreateTypeGroupDto.name,
           value: CreateTypeGroupDto.value,
@@ -25,7 +25,7 @@ export class TypeGroupService {
 
   async findAll() {
     try {
-      const type_group = await this.prisma.type_group.findMany();
+      const type_group = await this.prisma.type_group_avaliation.findMany();
       return type_group;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
@@ -34,7 +34,7 @@ export class TypeGroupService {
 
   async findOne(id: string) {
     try {
-      const type_group = await this.prisma.type_group.findUnique({
+      const type_group = await this.prisma.type_group_avaliation.findUnique({
         where: { id: +id },
       });
 
@@ -56,7 +56,7 @@ export class TypeGroupService {
     try {
       this.findOne(id);
 
-      const tags = await this.prisma.type_group.update({
+      const tags = await this.prisma.type_group_avaliation.update({
         where: { id: +id },
         data: { ...UpdateTypeGroupDto },
       });
@@ -73,7 +73,7 @@ export class TypeGroupService {
 
       await this.findOne(id);
 
-      await this.prisma.type_group.delete({
+      await this.prisma.type_group_avaliation.delete({
         where: { id: +id },
       });
 

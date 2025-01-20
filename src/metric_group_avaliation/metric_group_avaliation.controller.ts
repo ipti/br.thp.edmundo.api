@@ -18,14 +18,14 @@ import {
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GroupResponse } from './doc/group.response';
-import { CreateMetricGroupDTO } from './dto/create-group.dto';
-import { UpdateMetricGroupDto } from './dto/update-group.dto';
-import { MetricGroupService } from './shared/metric_group.service';
+import { CreateMetricGroupDTO } from './dto/create-metric_group_avaliation.dto';
+import { UpdateMetricGroupDto } from './dto/update-metric_group_avaliation.dto';
+import { MetricGroupService } from './shared/metric_group_avaliation.service';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
 @Controller('metricgroup')
-@ApiTags('MetricGroup')
+@ApiTags('MetricGroupAvaliation')
 export class MetricGroupController {
   constructor(private MetricGroupService: MetricGroupService) { }
 

@@ -1,15 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { JwtPayload } from 'src/utils/jwt.interface';
 import { AzureProviderService } from 'src/utils/middleware/azure.provider';
-import { UserActivitiesDto } from '../dto/user_activities.dto';
-import { UserActivitiesRatingDto } from '../dto/user_activities_rating.dto';
+import { ResponseAnswerDto } from '../dto/answer_ia.dto';
 import {
   CreateAnswerIADto,
   StudentAnswerDto,
 } from '../dto/answer_user_activities.dto';
 import { SendIADto } from '../dto/send_ia.dto';
-import { CreateAnswerDto, ResponseAnswerDto } from '../dto/answer_ia.dto';
+import { UserActivitiesDto } from '../dto/user_activities.dto';
+import { UserActivitiesRatingDto } from '../dto/user_activities_rating.dto';
 
 @Injectable()
 export class UserActivitiesBffService {

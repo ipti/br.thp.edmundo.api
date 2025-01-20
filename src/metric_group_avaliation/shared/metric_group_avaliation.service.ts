@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtPayload } from 'src/utils/jwt.interface';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateMetricGroupDTO } from '../dto/create-group.dto';
-import { UpdateMetricGroupDto } from '../dto/update-group.dto';
+import { CreateMetricGroupDTO } from '../dto/create-metric_group_avaliation.dto';
+import { UpdateMetricGroupDto } from '../dto/update-metric_group_avaliation.dto';
 
 @Injectable()
 export class MetricGroupService {
@@ -10,11 +10,11 @@ export class MetricGroupService {
 
   async create(user: JwtPayload, CreateMetricGroupDTO: CreateMetricGroupDTO) {
     try {
-      const metric_group = await this.prisma.metric_group.create({
+      const metric_group = await this.prisma.metric_group_avaliation.create({
         data: {
           description: CreateMetricGroupDTO.description,
           metric_percentange: CreateMetricGroupDTO.metric_percentange,
-          group: { connect: { id: CreateMetricGroupDTO.idGroup } },
+          group_avaliation: { connect: { id: CreateMetricGroupDTO.idGroup } },
         },
       });
 
@@ -26,7 +26,7 @@ export class MetricGroupService {
 
   async findAll() {
     try {
-      const metric_group = await this.prisma.metric_group.findMany();
+      const metric_group = await this.prisma.metric_group_avaliation.findMany();
       return metric_group;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
@@ -35,7 +35,7 @@ export class MetricGroupService {
 
   async findOne(id: string) {
     try {
-      const metric_group = await this.prisma.metric_group.findUnique({
+      const metric_group = await this.prisma.metric_group_avaliation.findUnique({
         where: { id: +id },
       });
 
@@ -57,7 +57,7 @@ export class MetricGroupService {
     try {
       this.findOne(id);
 
-      const metric_group = await this.prisma.metric_group.update({
+      const metric_group = await this.prisma.metric_group_avaliation.update({
         where: { id: +id },
         data: { ...UpdateMetricGroupDto },
       });
@@ -74,7 +74,7 @@ export class MetricGroupService {
 
       await this.findOne(id);
 
-      await this.prisma.metric_group.delete({
+      await this.prisma.metric_group_avaliation.delete({
         where: { id: +id },
       });
 

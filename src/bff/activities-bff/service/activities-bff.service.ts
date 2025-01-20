@@ -20,12 +20,12 @@ export class ActivitiesBffService {
         },
         include: {
 
-          activities_group: {
+          activities_group_avaliation: {
             include: {
-              groups: {
+              group_avaliations: {
                 include: {
-                  metric_group: true,
-                  type_group: true
+                  metric_group_avaliation: true,
+                  type_group_avaliation: true
                 },
 
               }
@@ -101,9 +101,9 @@ export class ActivitiesBffService {
               tag: true,
             },
           },
-          activities_group: {
+          activities_group_avaliation: {
             include: {
-              groups: true
+              group_avaliations: true
             }
           },
           form: {
