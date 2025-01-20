@@ -53,7 +53,10 @@ export class UserActivitiesBffController {
   }
 
   @Post('answer-user-activities-response')
-  async answerIA(@Body() body: ResponseAnswerDto) {
-    return this.UserActivitiesBffService.answerIA(body);
+  async answerIA(
+    @Body() body: ResponseAnswerDto,
+    @Query('token') token: string,
+  ) {
+    return this.UserActivitiesBffService.answerIA(body, token);
   }
 }

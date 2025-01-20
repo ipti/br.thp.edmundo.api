@@ -229,8 +229,31 @@ export class UserActivitiesBffService {
     }
   }
 
-  async answerIA(body: ResponseAnswerDto) {
+  async getToken(token: string) {
     try {
+      if (!token) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+      const key_token = await this.prismaService.key_token.findFirst({
+        where: {
+          token: token,
+        },
+      });
+
+      if (!key_token) {
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+
+      return key_token;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async answerIA(body: ResponseAnswerDto, token: string) {
+    try {
+
+      await this.getToken(token);
       const transaction = await this.prismaService.$transaction(async (tx) => {
         const user_activities = await tx.user_activities.update({
           data: {

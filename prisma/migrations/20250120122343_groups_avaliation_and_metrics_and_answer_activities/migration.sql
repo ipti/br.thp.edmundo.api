@@ -1,6 +1,9 @@
 -- AlterTable
 ALTER TABLE `activities` MODIFY `type_activities` ENUM('QUIZ', 'CODE', 'IA') NOT NULL;
 
+-- AlterTable
+ALTER TABLE `user_activities` MODIFY `status` ENUM('AWAITING_RESPONSE', 'PENDING', 'COMPLETED') NOT NULL DEFAULT 'PENDING';
+
 -- CreateTable
 CREATE TABLE `activities_group_avaliation` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
@@ -27,6 +30,8 @@ CREATE TABLE `metric_group_avaliation` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `description` TEXT NOT NULL,
     `metric_percentange` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
     `group_avaliation_fk` INTEGER NULL,
 
     PRIMARY KEY (`id`)
@@ -37,6 +42,8 @@ CREATE TABLE `type_group_avaliation` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` TEXT NOT NULL,
     `value` TEXT NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -45,6 +52,8 @@ CREATE TABLE `type_group_avaliation` (
 CREATE TABLE `answer_user_activities_ia` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `analyzerFeedback` TEXT NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
     `user_activities_fk` INTEGER NULL,
 
     PRIMARY KEY (`id`)
@@ -53,6 +62,8 @@ CREATE TABLE `answer_user_activities_ia` (
 -- CreateTable
 CREATE TABLE `answer_user_activities_ia_group_avaliation` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
     `group_avaliation_fk` INTEGER NULL,
     `answer_user_activities_ia_fk` INTEGER NULL,
 
@@ -62,6 +73,8 @@ CREATE TABLE `answer_user_activities_ia_group_avaliation` (
 -- CreateTable
 CREATE TABLE `answer_user_activities_ia_group_avaliation_metrics` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
     `grade` INTEGER NOT NULL,
     `metric_group_avaliation_fk` INTEGER NULL,
     `answer_user_activities_ia_group_avaliation_fk` INTEGER NULL,
@@ -73,8 +86,20 @@ CREATE TABLE `answer_user_activities_ia_group_avaliation_metrics` (
 CREATE TABLE `answer_user_activities_group_avaliation` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `answer` MEDIUMTEXT NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
     `group_avaliation_fk` INTEGER NULL,
     `user_activities_fk` INTEGER NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `key_token` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `token` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
