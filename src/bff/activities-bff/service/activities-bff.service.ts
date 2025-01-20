@@ -19,6 +19,18 @@ export class ActivitiesBffService {
           id: +id,
         },
         include: {
+
+          activities_group: {
+            include: {
+              groups: {
+                include: {
+                  metric_group: true,
+                  type_group: true
+                },
+
+              }
+            },
+          },
           tags_activities: {
             include: {
               tag: true,
@@ -88,6 +100,11 @@ export class ActivitiesBffService {
             include: {
               tag: true,
             },
+          },
+          activities_group: {
+            include: {
+              groups: true
+            }
           },
           form: {
             include: {

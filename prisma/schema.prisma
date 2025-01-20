@@ -148,6 +148,8 @@ model activities {
   classesId            Int?
   form                 form?
   tags_activities      tags_activities[]
+
+  activities_group_avaliation activities_group_avaliation[]
 }
 
 model form {
@@ -262,17 +264,19 @@ model classroom_avaliation {
 }
 
 model user_activities {
-  id                       Int                        @id @default(autoincrement())
-  status                   Status_Activities          @default(PENDING)
-  createdAt                DateTime                   @default(now())
-  updatedAt                DateTime                   @updatedAt
-  activities               activities?                @relation(fields: [activities_fk], references: [id])
-  activities_fk            Int?
-  user_classroom           user_classroom?            @relation(fields: [user_classroomId], references: [id])
-  user_classroomId         Int?
-  user_activities_archives user_activities_archives[]
-  user_avaliation          user_avaliation?
-  user_activities_rating   user_activities_rating?
+  id                                      Int                                       @id @default(autoincrement())
+  status                                  Status_Activities                         @default(PENDING)
+  createdAt                               DateTime                                  @default(now())
+  updatedAt                               DateTime                                  @updatedAt
+  activities                              activities?                               @relation(fields: [activities_fk], references: [id])
+  activities_fk                           Int?
+  user_classroom                          user_classroom?                           @relation(fields: [user_classroomId], references: [id])
+  user_classroomId                        Int?
+  user_activities_archives                user_activities_archives[]
+  user_avaliation                         user_avaliation?
+  user_activities_rating                  user_activities_rating?
+  answer_user_activities_group_avaliation answer_user_activities_group_avaliation[]
+  answer_user_activities_ia               answer_user_activities_ia[]
 }
 
 model user_activities_rating {
@@ -370,6 +374,97 @@ model stamps_user {
   stamps_fk Int?
 }
 
+model activities_group_avaliation {
+  id                  Int               @id @default(autoincrement())
+  activitie_fk        Int?
+  activities          activities?       @relation(fields: [activitie_fk], references: [id])
+  group_avaliation_fk Int?
+  group_avaliations   group_avaliation? @relation(fields: [group_avaliation_fk], references: [id])
+}
+
+model group_avaliation {
+  id                                         Int                                          @id @default(autoincrement())
+  name                                       String                                       @db.Text()
+  createdAt                                  DateTime                                     @default(now())
+  updatedAt                                  DateTime                                     @updatedAt
+  metric_group_avaliation                    metric_group_avaliation[]
+  activities_group_avaliation                activities_group_avaliation[]
+  type_group_avaliation_fk                   Int?                                         @unique
+  type_group_avaliation                      type_group_avaliation?                       @relation(fields: [type_group_avaliation_fk], references: [id])
+  answer_user_activities_group_avaliation    answer_user_activities_group_avaliation[]
+  answer_user_activities_ia_group_avaliation answer_user_activities_ia_group_avaliation[]
+}
+
+model metric_group_avaliation {
+  id                                                 Int                                                  @id @default(autoincrement())
+  description                                        String                                               @db.Text()
+  metric_percentange                                 Int
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  group_avaliation_fk                                Int?
+  group_avaliation                                   group_avaliation?                                    @relation(fields: [group_avaliation_fk], references: [id])
+  answer_user_activities_ia_group_avaliation_metrics answer_user_activities_ia_group_avaliation_metrics[]
+}
+
+model type_group_avaliation {
+  id               Int                @id @default(autoincrement())
+  name             String             @db.Text()
+  value            String             @db.Text()
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  group_avaliation group_avaliation[]
+}
+
+model answer_user_activities_ia {
+  id                                         Int                                          @id @default(autoincrement())
+  analyzerFeedback                           String                                       @db.Text()
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  answer_user_activities_ia_group_avaliation answer_user_activities_ia_group_avaliation[]
+  user_activities                            user_activities?                             @relation(fields: [user_activities_fk], references: [id])
+  user_activities_fk                         Int?
+}
+
+model answer_user_activities_ia_group_avaliation {
+  id                                                 Int                                                  @id @default(autoincrement())
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  group_avaliation_fk                                Int?
+  group_avaliation                                   group_avaliation?                                    @relation(fields: [group_avaliation_fk], references: [id])
+  answer_user_activities_ia_fk                       Int?
+  answer_user_activities_ia                          answer_user_activities_ia?                           @relation(fields: [answer_user_activities_ia_fk], references: [id])
+  answer_user_activities_ia_group_avaliation_metrics answer_user_activities_ia_group_avaliation_metrics[]
+}
+
+model answer_user_activities_ia_group_avaliation_metrics {
+  id                                            Int                                         @id @default(autoincrement())
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  grade                                         Int
+  metric_group_avaliation_fk                    Int?
+  metric_group_avaliation                       metric_group_avaliation?                    @relation(fields: [metric_group_avaliation_fk], references: [id])
+  answer_user_activities_ia_group_avaliation_fk Int?
+  answer_user_activities_ia_group_avaliation    answer_user_activities_ia_group_avaliation? @relation(fields: [answer_user_activities_ia_group_avaliation_fk], references: [id])
+}
+
+model answer_user_activities_group_avaliation {
+  id                  Int               @id @default(autoincrement())
+  answer              String            @db.MediumText()
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  group_avaliation_fk Int?
+  group_avaliation    group_avaliation? @relation(fields: [group_avaliation_fk], references: [id])
+  user_activities     user_activities?  @relation(fields: [user_activities_fk], references: [id])
+  user_activities_fk  Int?
+}
+
+model key_token {
+  id        Int      @id @default(autoincrement())
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum Role {
   ADMIN
   STUDENT
@@ -398,6 +493,7 @@ enum Difficulties {
 enum Type_Activities {
   QUIZ
   CODE
+  IA
 }
 
 enum Type_Question {
@@ -411,6 +507,7 @@ enum Type_Tags {
 }
 
 enum Status_Activities {
+  AWAITING_RESPONSE
   PENDING
   COMPLETED
 }

@@ -7,7 +7,7 @@ import { verifyAdmin } from 'src/utils/verifyFunc';
 
 @Injectable()
 export class ActivitiesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(user: JwtPayload, CreateActivitiesDto: CreateActivitiesDto) {
     try {
@@ -29,6 +29,21 @@ export class ActivitiesService {
           await tx.form.create({
             data: {
               activities: { connect: { id: createdactivities.id } },
+            },
+          });
+        }
+
+        for (const groups of CreateActivitiesDto.groups) {
+          await tx.activities_group.create({
+            data: {
+              activities: {
+                connect: { id: createdactivities.id },
+              },
+              groups: {
+                connect: {
+                  id: groups.idGroup,
+                },
+              },
             },
           });
         }
@@ -78,14 +93,51 @@ export class ActivitiesService {
   ) {
     try {
       this.findOne(id);
-
       const updatedActivities = await this.prisma.activities.update({
         where: { id: +id },
-        data: { ...UpdateActivitiesDto },
+        data: {
+          name: UpdateActivitiesDto.name,
+          description: UpdateActivitiesDto.description,
+          difficult: UpdateActivitiesDto.difficult,
+          expected_return: UpdateActivitiesDto.expected_return,
+          points_activities: UpdateActivitiesDto.points_activities,
+          time_activities: UpdateActivitiesDto.time_activities,
+          type_activities: UpdateActivitiesDto.type_activities
+        },
       });
+
+      const group_activities = await this.prisma.activities_group.findMany({
+        where: {
+          activitie_fk: +id,
+        },
+      });
+
+      for (const group_activities_index of group_activities) {
+        await this.prisma.activities_group.delete({
+          where: {
+            id: group_activities_index.id,
+          },
+        });
+      }
+
+      for (const groups of UpdateActivitiesDto.groups) {
+        await this.prisma.activities_group.create({
+          data: {
+            activities: {
+              connect: { id: +id },
+            },
+            groups: {
+              connect: {
+                id: groups.idGroup,
+              },
+            },
+          },
+        });
+      }
 
       return updatedActivities;
     } catch (err) {
+      console.log(err);
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
