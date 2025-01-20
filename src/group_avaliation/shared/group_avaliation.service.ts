@@ -1,15 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtPayload } from 'src/utils/jwt.interface';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateGroupDTO } from '../dto/create-group.dto';
-import { UpdateTagsDto } from '../dto/update-group.dto';
+import { CreateGroupDTO } from '../dto/create-group_avaliation.dto';
+import { UpdateTagsDto } from '../dto/update-group_avaliation.dto';
 
 @Injectable()
 export class GroupService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(user: JwtPayload, CreateGroupDTO: CreateGroupDTO) {
-    const group = await this.prisma.group.findMany({
+    const group = await this.prisma.group_avaliation.findMany({
       where: { name: CreateGroupDTO.name },
     });
 
@@ -18,10 +18,12 @@ export class GroupService {
     }
 
     try {
-      const group = await this.prisma.group.create({
+      const group = await this.prisma.group_avaliation.create({
         data: {
           name: CreateGroupDTO.name,
-          type_group: { connect: { id: CreateGroupDTO.idTypeGroup } },
+          type_group_avaliation: {
+            connect: { id: CreateGroupDTO.idTypeGroup },
+          },
         },
       });
 
@@ -33,9 +35,9 @@ export class GroupService {
 
   async findAll() {
     try {
-      const group = await this.prisma.group.findMany({
+      const group = await this.prisma.group_avaliation.findMany({
         include: {
-          metric_group: true,
+          metric_group_avaliation: true,
         },
       });
       return group;
@@ -46,10 +48,10 @@ export class GroupService {
 
   async findOne(id: string) {
     try {
-      const group = await this.prisma.group.findUnique({
+      const group = await this.prisma.group_avaliation.findUnique({
         where: { id: +id },
         include: {
-          metric_group: true,
+          metric_group_avaliation: true,
         },
       });
 
@@ -67,7 +69,7 @@ export class GroupService {
     try {
       this.findOne(id);
 
-      const group = await this.prisma.group.update({
+      const group = await this.prisma.group_avaliation.update({
         where: { id: +id },
         data: { name: UpdateTagsDto.name },
       });
@@ -84,7 +86,7 @@ export class GroupService {
 
       await this.findOne(id);
 
-      await this.prisma.group.delete({
+      await this.prisma.group_avaliation.delete({
         where: { id: +id },
       });
 

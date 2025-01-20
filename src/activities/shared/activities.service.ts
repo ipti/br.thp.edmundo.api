@@ -7,7 +7,7 @@ import { verifyAdmin } from 'src/utils/verifyFunc';
 
 @Injectable()
 export class ActivitiesService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(user: JwtPayload, CreateActivitiesDto: CreateActivitiesDto) {
     try {
@@ -34,12 +34,12 @@ export class ActivitiesService {
         }
 
         for (const groups of CreateActivitiesDto.groups) {
-          await tx.activities_group.create({
+          await tx.activities_group_avaliation.create({
             data: {
               activities: {
                 connect: { id: createdactivities.id },
               },
-              groups: {
+              group_avaliations: {
                 connect: {
                   id: groups.idGroup,
                 },
@@ -102,18 +102,19 @@ export class ActivitiesService {
           expected_return: UpdateActivitiesDto.expected_return,
           points_activities: UpdateActivitiesDto.points_activities,
           time_activities: UpdateActivitiesDto.time_activities,
-          type_activities: UpdateActivitiesDto.type_activities
+          type_activities: UpdateActivitiesDto.type_activities,
         },
       });
 
-      const group_activities = await this.prisma.activities_group.findMany({
-        where: {
-          activitie_fk: +id,
-        },
-      });
+      const group_activities =
+        await this.prisma.activities_group_avaliation.findMany({
+          where: {
+            activitie_fk: +id,
+          },
+        });
 
       for (const group_activities_index of group_activities) {
-        await this.prisma.activities_group.delete({
+        await this.prisma.activities_group_avaliation.delete({
           where: {
             id: group_activities_index.id,
           },
@@ -121,12 +122,12 @@ export class ActivitiesService {
       }
 
       for (const groups of UpdateActivitiesDto.groups) {
-        await this.prisma.activities_group.create({
+        await this.prisma.activities_group_avaliation.create({
           data: {
             activities: {
               connect: { id: +id },
             },
-            groups: {
+            group_avaliations: {
               connect: {
                 id: groups.idGroup,
               },

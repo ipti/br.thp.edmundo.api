@@ -15,8 +15,8 @@ import { ClassesModule } from './classes/classes.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { TagsModule } from './tags/tag.module';
 import { StampsModule } from './stamps/stamp.module';
-import { GroupModule } from './group/group.module';
-import { MetricGroupModule } from './metric_group/metric_group.module';
+import { GroupModule } from './group_avaliation/group_avaliation.module';
+import { MetricGroupModule } from './metric_group_avaliation/metric_group_avaliation.module';
 import { TypeGroupModule } from './type_group/type_group.module';
 
 @Module({

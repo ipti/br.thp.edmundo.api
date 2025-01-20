@@ -17,15 +17,15 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { GroupResponse } from './doc/group.response';
-import { CreateGroupDTO } from './dto/create-group.dto';
-import { UpdateTagsDto } from './dto/update-group.dto';
-import { GroupService } from './shared/group.service';
+import { GroupResponse } from './doc/group_avaliation.response';
+import { CreateGroupDTO } from './dto/create-group_avaliation.dto';
+import { UpdateTagsDto } from './dto/update-group_avaliation.dto';
+import { GroupService } from './shared/group_avaliation.service';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
 @Controller('group')
-@ApiTags('Group')
+@ApiTags('GroupAvaliation')
 export class GroupController {
   constructor(private GroupService: GroupService) { }
 

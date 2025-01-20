@@ -1,15 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { JwtPayload } from 'src/utils/jwt.interface';
 import { AzureProviderService } from 'src/utils/middleware/azure.provider';
-import { UserActivitiesDto } from '../dto/user_activities.dto';
-import { UserActivitiesRatingDto } from '../dto/user_activities_rating.dto';
+import { ResponseAnswerDto } from '../dto/answer_ia.dto';
 import {
   CreateAnswerIADto,
   StudentAnswerDto,
 } from '../dto/answer_user_activities.dto';
 import { SendIADto } from '../dto/send_ia.dto';
-import { CreateAnswerDto, ResponseAnswerDto } from '../dto/answer_ia.dto';
+import { UserActivitiesDto } from '../dto/user_activities.dto';
+import { UserActivitiesRatingDto } from '../dto/user_activities_rating.dto';
 
 @Injectable()
 export class UserActivitiesBffService {
@@ -180,7 +179,7 @@ export class UserActivitiesBffService {
   async sendAnswerIA(body: CreateAnswerIADto) {
     try {
       const transaction = await this.prismaService.$transaction(async (tx) => {
-        const user_activities = await tx.user_activities.update({
+        await tx.user_activities.update({
           data: {
             status: 'AWAITING_RESPONSE',
           },
@@ -190,18 +189,17 @@ export class UserActivitiesBffService {
         });
 
         for (const answer_user_activities_group_avaliation of body.student_answer) {
-          const answer_user_activities_group =
-            await tx.answer_user_activities_group_avaliation.create({
-              data: {
-                answer: answer_user_activities_group_avaliation.answer,
-                user_activities: { connect: { id: body.id_user_activities } },
-                group_avaliation: {
-                  connect: {
-                    id: answer_user_activities_group_avaliation.idGroup,
-                  },
+          await tx.answer_user_activities_group_avaliation.create({
+            data: {
+              answer: answer_user_activities_group_avaliation.answer,
+              user_activities: { connect: { id: body.id_user_activities } },
+              group_avaliation: {
+                connect: {
+                  id: answer_user_activities_group_avaliation.idGroup,
                 },
               },
-            });
+            },
+          });
         }
 
         const convertStudentAnswer = (students: StudentAnswerDto[]) => {
@@ -252,7 +250,6 @@ export class UserActivitiesBffService {
 
   async answerIA(body: ResponseAnswerDto, token: string) {
     try {
-
       await this.getToken(token);
       const transaction = await this.prismaService.$transaction(async (tx) => {
         const user_activities = await tx.user_activities.update({
