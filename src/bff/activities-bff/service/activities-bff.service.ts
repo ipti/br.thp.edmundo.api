@@ -103,7 +103,11 @@ export class ActivitiesBffService {
           },
           activities_group_avaliation: {
             include: {
-              group_avaliations: true
+              group_avaliations: {
+                include: {
+                  metric_group_avaliation: true
+                }
+              }
             }
           },
           form: {
