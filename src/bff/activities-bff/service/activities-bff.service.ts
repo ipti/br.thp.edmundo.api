@@ -4,6 +4,9 @@ import { UpdateClassroomActivitiesDto } from '../dto/update-classrom-activities.
 import { JwtPayload } from 'src/utils/jwt.interface';
 import { AzureProviderService } from 'src/utils/middleware/azure.provider';
 import { ClassroomAvaliationDto } from '../dto/classroom_avaliation';
+import {
+  CorrectAnswerMetricsDto,
+} from '../dto/correct-answer-activities.dto';
 
 @Injectable()
 export class ActivitiesBffService {
@@ -19,16 +22,14 @@ export class ActivitiesBffService {
           id: +id,
         },
         include: {
-
           activities_group_avaliation: {
             include: {
               group_avaliations: {
                 include: {
                   metric_group_avaliation: true,
-                  type_group_avaliation: true
+                  type_group_avaliation: true,
                 },
-
-              }
+              },
             },
           },
           tags_activities: {
@@ -105,10 +106,14 @@ export class ActivitiesBffService {
             include: {
               group_avaliations: {
                 include: {
-                  metric_group_avaliation: true
-                }
-              }
-            }
+                  metric_group_avaliation: {
+                    include: {
+                      metric_group_avaliation_correct_answer: true,
+                    },
+                  },
+                },
+              },
+            },
           },
           form: {
             include: {
@@ -424,6 +429,55 @@ export class ActivitiesBffService {
       return img_link;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async correctAnswerActivities(
+    id: number,
+    CorrectAnswerMetricsDto: CorrectAnswerMetricsDto,
+  ) {
+    try {
+      for (const correctAnswer of CorrectAnswerMetricsDto.metrics) {
+        const metric_group_avaliation_correct_answer =
+          await this.prismaService.metric_group_avaliation_correct_answer.findFirst(
+            {
+              where: {
+                activities_fk: id,
+                metric_group_avaliation_fk: correctAnswer.idMetric,
+              },
+            },
+          );
+
+        if (metric_group_avaliation_correct_answer) {
+          await this.prismaService.metric_group_avaliation_correct_answer.update(
+            {
+              data: {
+                correct_answer: correctAnswer.correctAnswer,
+              },
+              where: {
+                id: metric_group_avaliation_correct_answer.id,
+              },
+            },
+          );
+        } else {
+          await this.prismaService.metric_group_avaliation_correct_answer.create(
+            {
+              data: {
+                correct_answer: correctAnswer.correctAnswer,
+                metric_group_avaliation: {
+                  connect: { id: metric_group_avaliation_correct_answer.id },
+                },
+                activities: { connect: { id: id } },
+              },
+            },
+          );
+        }
+      }
+
+      return { message: 'Reposta correta alterada' };
+    } catch (err) {
+      console.log(err);
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 }
