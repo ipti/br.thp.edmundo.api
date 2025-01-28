@@ -149,7 +149,9 @@ export class UserActivitiesBffService {
           id: id,
         },
         data: {
-          user_activities: { connect: { id: id } },
+          user_activities: {
+            connect: { id: user_activities.user_activities_fk },
+          },
           ...userActivitiesDto,
           total: userActivitiesDto.total,
         },
