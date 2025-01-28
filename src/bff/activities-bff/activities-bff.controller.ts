@@ -18,6 +18,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateClassroomActivitiesDto } from './dto/update-classrom-activities.dto';
 import { ActivitiesBffService } from './service/activities-bff.service';
 import { ClassroomAvaliationDto } from './dto/classroom_avaliation';
+import { CorrectAnswerMetricsDto } from './dto/correct-answer-activities.dto';
 
 @ApiTags('Activities-bff')
 @Controller('activities-bff')
@@ -91,6 +92,14 @@ export class ActivitiesBffController {
     @Body() body: ClassroomAvaliationDto,
   ) {
     return this.ActivitiesBffService.avaliationActivities(id, body);
+  }
+
+  @Put('correct-answer-metric-activities')
+  async correctAnswerActivities(
+    @Query('id') id: number,
+    @Body() body: CorrectAnswerMetricsDto,
+  ) {
+    return this.ActivitiesBffService.correctAnswerActivities(id, body);
   }
 
   @Put('classroom-avaliation')
