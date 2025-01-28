@@ -410,6 +410,8 @@ model metric_group_avaliation {
 
 model metric_group_avaliation_correct_answer {
   id                         Int                      @id @default(autoincrement())
+  createdAt                  DateTime                 @default(now())
+  updatedAt                  DateTime                 @updatedAt
   correct_answer             String
   metric_group_avaliation_fk Int?
   metric_group_avaliation    metric_group_avaliation? @relation(fields: [metric_group_avaliation_fk], references: [id])
