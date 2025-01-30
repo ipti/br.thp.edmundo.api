@@ -24,7 +24,15 @@ export class ActivitiesBffService {
             include: {
               group_avaliations: {
                 include: {
-                  metric_group_avaliation: true,
+                  metric_group_avaliation: {
+                    include: {
+                      metric_group_avaliation_correct_answer: {
+                        where: {
+                          activities_fk: id
+                        }
+                      }
+                    }
+                  },
                   type_group_avaliation: true,
                 },
               },
