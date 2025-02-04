@@ -458,8 +458,6 @@ export class ActivitiesBffService {
             },
           );
 
-        console.log(metric_group_avaliation_correct_answer);
-
         if (metric_group_avaliation_correct_answer) {
           await this.prismaService.metric_group_avaliation_correct_answer.update(
             {

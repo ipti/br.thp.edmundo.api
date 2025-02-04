@@ -4,6 +4,7 @@ import { AzureProviderService } from 'src/utils/middleware/azure.provider';
 import { CreateFormDto } from '../dto/create-form.dto';
 import { CreateResponseDto } from '../dto/create-response.dto';
 import { JwtPayload } from 'src/utils/jwt.interface';
+import { UpdateQuestionDto } from '../dto/update-question.dto';
 
 @Injectable()
 export class FormBffService {
@@ -112,6 +113,39 @@ export class FormBffService {
 
     } catch (err) {
       console.log(err);
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updateQuestion(body: UpdateQuestionDto) {
+    try {
+
+      const transactionResult = this.prismaService.$transaction(async (tx) => {
+
+        const question = await tx.question.findUnique({
+          where: {
+            id: body.id
+          },
+        })
+
+        if (question) {
+          await tx.question.update({
+            where: {
+              id: body.id
+            },
+            data: {
+              content: body.content
+            }
+          })
+        }
+
+
+        return { message: 'Questão alterada com sucesso' };
+      })
+
+      return transactionResult
+
+    } catch (err) {
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
