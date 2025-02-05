@@ -139,6 +139,19 @@ export class FormBffService {
           })
         }
 
+        for (const option of body.options) {
+          const op = await tx.options.findUnique({
+            where: { id: option.id }
+          })
+
+          if (op) {
+            await tx.options.update({
+              where: { id: option.id },
+              data: { content: option.content }
+            })
+          }
+        }
+
 
         return { message: 'Questão alterada com sucesso' };
       })
