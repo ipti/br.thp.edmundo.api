@@ -49,9 +49,7 @@ export class CreateActivitiesDto {
   id_classes: number;
 
   @IsArray({ message: 'O campo ids deve ser um array.' })
-  @ArrayNotEmpty({
-    message: 'O array de ids deve conter pelo menos um elemento.',
-  })
+  @IsOptional()
   @ValidateNested({
     each: true,
     message: 'Cada elemento do array deve ser um objeto válido.',
