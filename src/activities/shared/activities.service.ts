@@ -33,21 +33,22 @@ export class ActivitiesService {
           });
         }
 
-        for (const groups of CreateActivitiesDto.groups) {
-          await tx.activities_group_avaliation.create({
-            data: {
-              activities: {
-                connect: { id: createdactivities.id },
-              },
-              group_avaliations: {
-                connect: {
-                  id: groups.idGroup,
+        if (CreateActivitiesDto.groups) {
+          for (const groups of CreateActivitiesDto.groups) {
+            await tx.activities_group_avaliation.create({
+              data: {
+                activities: {
+                  connect: { id: createdactivities.id },
+                },
+                group_avaliations: {
+                  connect: {
+                    id: groups.idGroup,
+                  },
                 },
               },
-            },
-          });
+            });
+          }
         }
-
         return {
           message: 'Atividade criada com sucesso!',
           id: createdactivities.id,
