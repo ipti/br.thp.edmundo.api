@@ -16,7 +16,7 @@ export class UserActivitiesBffService {
   constructor(
     readonly prismaService: PrismaService,
     readonly azureService: AzureProviderService,
-  ) {}
+  ) { }
 
   async findUserActivities(id: number) {
     try {
@@ -224,7 +224,9 @@ export class UserActivitiesBffService {
         const url =
           process.env.API_BASE_AI +
           '/api/process?token=' +
-          process.env.API_BASE_AI_TOKEN;
+          process.env.API_BASE_AI_TOKEN +
+          '&webhook=' +
+          process.env.URL_WEBHOOK;
 
         const gpt = await axios.post(url, send_ia);
 
@@ -233,7 +235,6 @@ export class UserActivitiesBffService {
 
       return transaction;
     } catch (err) {
-      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
