@@ -1,4 +1,11 @@
-import { IsArray, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class MetricDto {
@@ -7,6 +14,9 @@ class MetricDto {
 
   @IsNumber()
   metricPercentage: number;
+
+  @IsString()
+  correctAnswer: string;
 
   @IsNumber()
   idMetric: number;
@@ -31,9 +41,6 @@ export class SendIADto {
 
   @IsString()
   tasksDescription: string;
-
-  @IsString()
-  correctAnswer: string;
 
   @IsArray()
   @ValidateNested({ each: true })

@@ -41,5 +41,6 @@ export class ResponseAnswerDto {
   performanceEvaluation: PerformanceMetricDto[];
 
   @IsString()
+  @IsOptional()
   student_answer: string;
 }

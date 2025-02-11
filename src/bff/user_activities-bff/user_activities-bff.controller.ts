@@ -19,26 +19,32 @@ import { ResponseAnswerDto } from './dto/answer_ia.dto';
 
 @ApiTags('User-Activities-bff')
 @Controller('user-activities-bff')
-@ApiBearerAuth('access-token')
-@UseGuards(JwtAuthGuard)
 export class UserActivitiesBffController {
   constructor(private UserActivitiesBffService: UserActivitiesBffService) {}
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @Get('')
   async getById(@Query('id') id: number) {
     return this.UserActivitiesBffService.findUserActivities(id);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @Post('user-avaliation')
   async create(@Query('id') id: number, @Body() body: UserActivitiesDto) {
     return this.UserActivitiesBffService.avaliationActivities(id, body);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @Put('user-avaliation')
   async update(@Query('id') id: number, @Body() body: UserActivitiesDto) {
     return this.UserActivitiesBffService.updateavaliationActivities(id, body);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @Post('user-activities-rating')
   async createRating(
     @Query('id') id: number,
@@ -47,6 +53,8 @@ export class UserActivitiesBffController {
     return this.UserActivitiesBffService.ratingUser(id, body);
   }
 
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @Post('answer-user-activities-send')
   async sendAnswerIA(@Body() body: CreateAnswerIADto) {
     return this.UserActivitiesBffService.sendAnswerIA(body);

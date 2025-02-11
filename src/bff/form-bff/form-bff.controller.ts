@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import {
@@ -9,6 +9,7 @@ import { Request } from 'express';
 import { CreateFormDto } from './dto/create-form.dto';
 import { FormBffService } from './service/form-bff.service';
 import { CreateResponseDto } from './dto/create-response.dto';
+import { UpdateQuestionDto } from './dto/update-question.dto';
 
 @ApiTags('Form-bff')
 @Controller('form-bff')
@@ -28,5 +29,11 @@ export class FormBffController {
   @Post('response')
   async createResponse(@Body() form: CreateResponseDto, @Req() req: Request) {
     return this.FormBffService.createResponse(form, req.user);
+  }
+
+  @ApiCreatedResponse({ type: UpdateQuestionDto })
+  @Put('questions')
+  async createQuestion(@Body() body: UpdateQuestionDto) {
+    return this.FormBffService.updateQuestion(body);
   }
 }

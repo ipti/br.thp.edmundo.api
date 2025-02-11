@@ -2,6 +2,7 @@ import {
   IsArray,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -12,7 +13,7 @@ class correctAnswerDto {
   @IsInt()
   idMetric: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   correctAnswer: string;
 }

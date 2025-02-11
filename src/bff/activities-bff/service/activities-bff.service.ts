@@ -4,9 +4,7 @@ import { UpdateClassroomActivitiesDto } from '../dto/update-classrom-activities.
 import { JwtPayload } from 'src/utils/jwt.interface';
 import { AzureProviderService } from 'src/utils/middleware/azure.provider';
 import { ClassroomAvaliationDto } from '../dto/classroom_avaliation';
-import {
-  CorrectAnswerMetricsDto,
-} from '../dto/correct-answer-activities.dto';
+import { CorrectAnswerMetricsDto } from '../dto/correct-answer-activities.dto';
 
 @Injectable()
 export class ActivitiesBffService {
@@ -26,7 +24,15 @@ export class ActivitiesBffService {
             include: {
               group_avaliations: {
                 include: {
-                  metric_group_avaliation: true,
+                  metric_group_avaliation: {
+                    include: {
+                      metric_group_avaliation_correct_answer: {
+                        where: {
+                          activities_fk: id
+                        }
+                      }
+                    }
+                  },
                   type_group_avaliation: true,
                 },
               },
@@ -72,6 +78,8 @@ export class ActivitiesBffService {
                   total: true,
                 },
               },
+              answer_user_activities_ia: true,
+              answer_user_activities_group_avaliation: true
             },
             where: {
               user_classroom: {
@@ -108,7 +116,11 @@ export class ActivitiesBffService {
                 include: {
                   metric_group_avaliation: {
                     include: {
-                      metric_group_avaliation_correct_answer: true,
+                      metric_group_avaliation_correct_answer: {
+                        where: {
+                          activities_fk: id
+                        }
+                      },
                     },
                   },
                 },
@@ -460,17 +472,19 @@ export class ActivitiesBffService {
             },
           );
         } else {
-          await this.prismaService.metric_group_avaliation_correct_answer.create(
-            {
-              data: {
-                correct_answer: correctAnswer.correctAnswer,
-                metric_group_avaliation: {
-                  connect: { id: metric_group_avaliation_correct_answer.id },
+          if (correctAnswer.correctAnswer !== '') {
+            await this.prismaService.metric_group_avaliation_correct_answer.create(
+              {
+                data: {
+                  correct_answer: correctAnswer.correctAnswer,
+                  metric_group_avaliation: {
+                    connect: { id: correctAnswer.idMetric },
+                  },
+                  activities: { connect: { id: id } },
                 },
-                activities: { connect: { id: id } },
               },
-            },
-          );
+            );
+          }
         }
       }
 
