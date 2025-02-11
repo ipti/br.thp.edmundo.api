@@ -78,6 +78,8 @@ export class ActivitiesBffService {
                   total: true,
                 },
               },
+              answer_user_activities_ia: true,
+              answer_user_activities_group_avaliation: true
             },
             where: {
               user_classroom: {

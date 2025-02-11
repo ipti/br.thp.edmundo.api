@@ -9,6 +9,7 @@ import {
 import { SendIADto } from '../dto/send_ia.dto';
 import { UserActivitiesDto } from '../dto/user_activities.dto';
 import { UserActivitiesRatingDto } from '../dto/user_activities_rating.dto';
+import axios from 'axios';
 
 @Injectable()
 export class UserActivitiesBffService {
@@ -205,26 +206,34 @@ export class UserActivitiesBffService {
         }
 
         const convertStudentAnswer = (students: StudentAnswerDto[]) => {
-          let concac;
-          students.map((item) => {
-            return concac + `<${item.name}>${item.answer}</${item.name}>`;
+          let concac = '';
+          students.forEach((item) => {
+            concac = concac + `<${item.name}>${item.answer}</${item.name}>`;
           });
+
           return concac;
         };
 
         const send_ia: SendIADto = {
           id_response: body.id_user_activities,
           performanceMetrics: body.performanceMetrics,
-          correctAnswer: body.correctAnswer,
           tasksDescription: body.tasksDescription,
           student_answer: convertStudentAnswer(body.student_answer),
         };
 
-        return send_ia;
+        const url =
+          process.env.API_BASE_AI +
+          '/api/process?token=' +
+          process.env.API_BASE_AI_TOKEN;
+
+        const gpt = await axios.post(url, send_ia);
+
+        return gpt.data;
       });
 
       return transaction;
     } catch (err) {
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }

@@ -18,25 +18,25 @@ class MetricDto {
 
   @IsNumber()
   idMetric: number;
+
+  @IsString()
+  correctAnswer: string;
 }
 
-
 export class StudentAnswerDto {
-    @IsString()
-    answer: string;
-  
-    @IsNumber()
-    idGroup: number;
+  @IsString()
+  answer: string;
 
-    @IsString()
-    name: string;
-  
-  }
+  @IsNumber()
+  idGroup: number;
+
+  @IsString()
+  name: string;
+}
 
 class PerformanceMetricDto {
   @IsString()
   group: string;
-
 
   @IsNumber()
   idGroup: number;
@@ -67,8 +67,6 @@ export class CreateAnswerIADto {
   performanceMetrics: PerformanceMetricDto[];
 
   @IsArray()
-  @IsString({ each: true })
   @IsNotEmpty()
   student_answer: StudentAnswerDto[];
-  
 }
