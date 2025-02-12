@@ -11,7 +11,7 @@ export class ActivitiesBffService {
   constructor(
     readonly prismaService: PrismaService,
     readonly azureService: AzureProviderService,
-  ) { }
+  ) {}
 
   async findActivities(id: number, user: JwtPayload) {
     try {
@@ -28,10 +28,10 @@ export class ActivitiesBffService {
                     include: {
                       metric_group_avaliation_correct_answer: {
                         where: {
-                          activities_fk: id
-                        }
-                      }
-                    }
+                          activities_fk: id,
+                        },
+                      },
+                    },
                   },
                   type_group_avaliation: true,
                 },
@@ -78,8 +78,16 @@ export class ActivitiesBffService {
                   total: true,
                 },
               },
-              answer_user_activities_ia: true,
-              answer_user_activities_group_avaliation: true
+              answer_user_activities_ia: {
+                include: {
+                  answer_user_activities_ia_group_avaliation: {
+                    include: {
+                      answer_user_activities_ia_group_avaliation_metrics: true,
+                    },
+                  },
+                },
+              },
+              answer_user_activities_group_avaliation: true,
             },
             where: {
               user_classroom: {
@@ -118,8 +126,8 @@ export class ActivitiesBffService {
                     include: {
                       metric_group_avaliation_correct_answer: {
                         where: {
-                          activities_fk: id
-                        }
+                          activities_fk: id,
+                        },
                       },
                     },
                   },
