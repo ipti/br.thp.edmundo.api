@@ -16,7 +16,7 @@ export class UserActivitiesBffService {
   constructor(
     readonly prismaService: PrismaService,
     readonly azureService: AzureProviderService,
-  ) { }
+  ) {}
 
   async findUserActivities(id: number) {
     try {
@@ -281,6 +281,8 @@ export class UserActivitiesBffService {
             },
           });
 
+        let grade = 0;
+
         for (const performanceEvaluation of body.performanceEvaluation) {
           const answer_user_activities_ia_group_avaliation =
             await tx.answer_user_activities_ia_group_avaliation.create({
@@ -296,7 +298,10 @@ export class UserActivitiesBffService {
               },
             });
 
+          let metricGrade = 0;
           for (const metrics of performanceEvaluation.metrics) {
+            metricGrade = metricGrade + metrics.grade;
+
             await tx.answer_user_activities_ia_group_avaliation_metrics.create({
               data: {
                 grade: metrics.grade,
@@ -311,7 +316,16 @@ export class UserActivitiesBffService {
               },
             });
           }
+
+          grade = metricGrade / 10 + grade;
         }
+
+        await tx.user_avaliation.create({
+          data: {
+            user_activities: { connect: { id: body.id_response } },
+            total: grade,
+          },
+        });
 
         return user_activities;
       });
