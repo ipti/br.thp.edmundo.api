@@ -30,6 +30,11 @@ export class UserActivitiesBffService {
               rating: true,
             },
           },
+          answer_user_activities_ia: {
+            include: {
+              answer_user_activities_ia_group_avaliation: true
+            }
+          },
           user_avaliation: true,
           activities: {
             select: {
@@ -317,7 +322,9 @@ export class UserActivitiesBffService {
             });
           }
 
-          grade = metricGrade / 10 + grade;
+          //Converter centana para dezena
+          grade =
+            (metricGrade / 10 + grade) / body.performanceEvaluation.length;
         }
 
         await tx.user_avaliation.create({
