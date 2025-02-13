@@ -56,7 +56,7 @@ export class CreateAnswerIADto {
   @IsString()
   tasksDescription: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   correctAnswer: string;
 
