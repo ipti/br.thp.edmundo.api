@@ -34,8 +34,12 @@ export class ActivitiesBffController {
   }
 
   @Get('')
-  async getById(@Query('id') id: number, @Req() req: Request) {
-    return this.ActivitiesBffService.findActivities(id, req.user);
+  async getById(
+    @Query('id') id: number,
+    @Query('idClassroom') idClassroom: number,
+    @Req() req: Request,
+  ) {
+    return this.ActivitiesBffService.findActivities(id, idClassroom, req.user);
   }
 
   @Get('one')

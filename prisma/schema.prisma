@@ -83,6 +83,7 @@ model classroom {
   classroom_module     classroom_module[]
   user                 user_classroom[]
   reapplication        reapplication?         @relation(fields: [reapplication_fk], references: [id])
+  answer_form          answer_form[]
 }
 
 model module {
@@ -186,6 +187,8 @@ model response_question {
 
 model answer_form {
   id              Int               @id @default(autoincrement())
+  classroom_fk    Int?
+  classroom       classroom?        @relation(fields: [classroom_fk], references: [id])
   users_fk        Int?
   users           users?            @relation(fields: [users_fk], references: [id])
   form_fk         Int?

@@ -18,7 +18,7 @@ export class UserActivitiesBffService {
     readonly azureService: AzureProviderService,
   ) {}
 
-  async findUserActivities(id: number) {
+  async findUserActivities(id: number, idClassroom: number) {
     try {
       const activities = await this.prismaService.user_activities.findUnique({
         where: {
@@ -32,8 +32,8 @@ export class UserActivitiesBffService {
           },
           answer_user_activities_ia: {
             include: {
-              answer_user_activities_ia_group_avaliation: true
-            }
+              answer_user_activities_ia_group_avaliation: true,
+            },
           },
           user_avaliation: true,
           activities: {
@@ -43,6 +43,7 @@ export class UserActivitiesBffService {
                 select: {
                   answer_form: {
                     where: {
+                      classroom_fk: idClassroom,
                       users: {
                         user_classroom: {
                           some: {
@@ -130,6 +131,135 @@ export class UserActivitiesBffService {
 
       return user_avaliation;
     } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async avaliationActivitiesAll(idClassroomActivities: number) {
+    try {
+      const classroom_activities =
+        await this.prismaService.classroom_activities.findFirst({
+          where: {
+            id: idClassroomActivities,
+          },
+          include: {
+            activities: {
+              select: {
+                form: {
+                  include: {
+                    answer_form: {
+                      where: {
+                        classroom: {
+                          classroom_activities: {
+                            some: { id: idClassroomActivities },
+                          },
+                        },
+                      },
+                      include: {
+                        answer_question: {
+                          include: {
+                            answer_option: true,
+                            question: {
+                              select: {
+                                response_question: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                user_activities: {
+                  where: {
+                    user_classroom: {
+                      classroom: {
+                        classroom_activities: {
+                          some: {
+                            id: idClassroomActivities,
+                          },
+                        },
+                      },
+                    },
+                  },
+                  select: {
+                    user_avaliation: {
+                      select: {
+                        total: true,
+                        id: true,
+                      },
+                    },
+                    id: true,
+                    createdAt: true,
+                    status: true,
+                    user_activities_archives: true,
+                    user_classroom: {
+                      select: {
+                        users: {
+                          select: {
+                            name: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+
+      if (!classroom_activities) {
+        throw new HttpException(
+          'classroom_activities not found',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const handleNotaForm = (form: any) => {
+        const total = form.answer_form[0].answer_question.length;
+
+        let nota = 0;
+        for (const question of form.answer_form[0].answer_question) {
+          const totalQuestion = question?.question?.response_question?.length;
+
+          let notaQuestion = 0;
+
+          for (const i of question.question.response_question) {
+            if (
+              question.answer_option.find(
+                (props) => props.options_fk === i.option_fk,
+              )
+            ) {
+              notaQuestion++;
+            }
+          }
+          nota = nota + notaQuestion / totalQuestion;
+        }
+        return (nota / total) * 10;
+      };
+
+      for (const user_activities of classroom_activities.activities
+        .user_activities) {
+        if (user_activities?.user_avaliation) {
+          await this.prismaService.user_avaliation.update({
+            where: { id: user_activities.user_avaliation.id },
+            data: {
+              total: handleNotaForm(classroom_activities.activities.form),
+            },
+          });
+        } else {
+          await this.prismaService.user_avaliation.create({
+            data: {
+              user_activities: { connect: { id: user_activities.id } },
+              total: handleNotaForm(classroom_activities.activities.form),
+            },
+          });
+        }
+      }
+
+      return classroom_activities;
+    } catch (err) {
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }

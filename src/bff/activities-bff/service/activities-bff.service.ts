@@ -13,7 +13,7 @@ export class ActivitiesBffService {
     readonly azureService: AzureProviderService,
   ) {}
 
-  async findActivities(id: number, user: JwtPayload) {
+  async findActivities(id: number, idClassroom: number, user: JwtPayload) {
     try {
       const activities = await this.prismaService.activities.findUnique({
         where: {
@@ -53,6 +53,7 @@ export class ActivitiesBffService {
               answer_form: {
                 where: {
                   users_fk: user.id,
+                  classroom_fk: idClassroom,
                 },
                 select: {
                   answer_question: {
@@ -92,6 +93,7 @@ export class ActivitiesBffService {
             where: {
               user_classroom: {
                 usersId: user.id,
+                classroomId: idClassroom,
               },
             },
           },

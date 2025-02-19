@@ -23,6 +23,9 @@ export class CreateResponseDto {
   form_fk: number;
 
   @IsInt()
+  classroom_fk: number;
+
+  @IsInt()
   user_activities_id: number;
 
   @IsArray()

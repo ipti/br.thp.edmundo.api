@@ -25,8 +25,11 @@ export class UserActivitiesBffController {
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Get('')
-  async getById(@Query('id') id: number) {
-    return this.UserActivitiesBffService.findUserActivities(id);
+  async getById(
+    @Query('id') id: number,
+    @Query('idClassroom') idClassroom: number,
+  ) {
+    return this.UserActivitiesBffService.findUserActivities(id, idClassroom);
   }
 
   @ApiBearerAuth('access-token')
@@ -41,6 +44,17 @@ export class UserActivitiesBffController {
   @Put('user-avaliation')
   async update(@Query('id') id: number, @Body() body: UserActivitiesDto) {
     return this.UserActivitiesBffService.updateavaliationActivities(id, body);
+  }
+
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
+  @Put('user-avaliation-classroom')
+  async updateGrade(
+    @Query('idClassroomActivities') idClassroomActivities: number,
+  ) {
+    return this.UserActivitiesBffService.avaliationActivitiesAll(
+      idClassroomActivities,
+    );
   }
 
   @ApiBearerAuth('access-token')
