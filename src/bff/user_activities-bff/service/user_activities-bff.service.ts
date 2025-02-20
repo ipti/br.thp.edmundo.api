@@ -16,7 +16,7 @@ export class UserActivitiesBffService {
   constructor(
     readonly prismaService: PrismaService,
     readonly azureService: AzureProviderService,
-  ) {}
+  ) { }
 
   async findUserActivities(id: number, idClassroom: number) {
     try {
@@ -30,6 +30,11 @@ export class UserActivitiesBffService {
               rating: true,
             },
           },
+          answer_user_activities_group_avaliation: {
+            include: {
+              group_avaliation: true
+            }
+          },
           answer_user_activities_ia: {
             include: {
               answer_user_activities_ia_group_avaliation: true,
@@ -39,6 +44,7 @@ export class UserActivitiesBffService {
           activities: {
             select: {
               type_activities: true,
+              description: true,
               form: {
                 select: {
                   answer_form: {
