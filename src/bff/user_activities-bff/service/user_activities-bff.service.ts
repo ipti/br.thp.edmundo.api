@@ -482,18 +482,36 @@ export class UserActivitiesBffService {
             (metricGrade / 10 + grade) / body.performanceEvaluation.length;
         }
 
-        await tx.user_avaliation.create({
-          data: {
-            user_activities: { connect: { id: body.id_response } },
-            total: grade,
-          },
-        });
+        const user_avaliation = await tx.user_avaliation.findFirst({
+          where: {
+            user_activities_fk: body.id_response
+          }
+        })
+
+        if (user_avaliation) {
+          await tx.user_avaliation.update({
+            where: {
+              id: user_avaliation.id
+            },
+            data: {
+              total: grade,
+            },
+          });
+        } else {
+          await tx.user_avaliation.create({
+            data: {
+              user_activities: { connect: { id: body.id_response } },
+              total: grade,
+            },
+          });
+        }
+
+
 
         return user_activities;
       });
       return transaction;
     } catch (err) {
-      console.log(err)
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
