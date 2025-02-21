@@ -32,8 +32,8 @@ export class UserActivitiesBffService {
           },
           answer_user_activities_group_avaliation: {
             include: {
-              group_avaliation: true
-            }
+              group_avaliation: true,
+            },
           },
           answer_user_activities_ia: {
             include: {
@@ -332,18 +332,36 @@ export class UserActivitiesBffService {
           },
         });
 
-        for (const answer_user_activities_group_avaliation of body.student_answer) {
-          await tx.answer_user_activities_group_avaliation.create({
-            data: {
-              answer: answer_user_activities_group_avaliation.answer,
-              user_activities: { connect: { id: body.id_user_activities } },
-              group_avaliation: {
-                connect: {
-                  id: answer_user_activities_group_avaliation.idGroup,
+        for (const answer_user_activities_group_avaliation_table of body.student_answer) {
+          const answer_user_activities_group_avaliation =
+            await tx.answer_user_activities_group_avaliation.findFirst({
+              where: {
+                user_activities_fk: body.id_user_activities,
+                group_avaliation_fk:
+                  answer_user_activities_group_avaliation_table.idGroup,
+              },
+            });
+
+          if (answer_user_activities_group_avaliation) {
+            await tx.answer_user_activities_group_avaliation.update({
+              where: { id: answer_user_activities_group_avaliation.id },
+              data: {
+                answer: answer_user_activities_group_avaliation_table.answer,
+              },
+            });
+          } else {
+            await tx.answer_user_activities_group_avaliation.create({
+              data: {
+                answer: answer_user_activities_group_avaliation_table.answer,
+                user_activities: { connect: { id: body.id_user_activities } },
+                group_avaliation: {
+                  connect: {
+                    id: answer_user_activities_group_avaliation_table.idGroup,
+                  },
                 },
               },
-            },
-          });
+            });
+          }
         }
 
         const convertStudentAnswer = (students: StudentAnswerDto[]) => {
@@ -376,6 +394,7 @@ export class UserActivitiesBffService {
 
       return transaction;
     } catch (err) {
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -474,6 +493,7 @@ export class UserActivitiesBffService {
       });
       return transaction;
     } catch (err) {
+      console.log(err)
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
