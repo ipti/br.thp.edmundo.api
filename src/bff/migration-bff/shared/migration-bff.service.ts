@@ -2,7 +2,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Kinship } from '@prisma/client';
 import axios from 'axios';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { MigrationDto } from '../dto/migration-bff.dto';
+import {
+  MigrationDto,
+  MigrationMeubenToCodedDto,
+} from '../dto/migration-bff.dto';
+import { JwtPayload } from 'src/utils/jwt.interface';
 
 export interface RegistrationDto {
   name: string;
@@ -62,8 +66,6 @@ export class MigrationBffService {
           };
         });
 
-        console.log(body);
-
         await axios
           .post(
             process.env.BACKEND_URL +
@@ -89,6 +91,79 @@ export class MigrationBffService {
     }
   }
 
+  async migrationMeuBentocoded(
+    MigrationDto: MigrationMeubenToCodedDto,
+    user: JwtPayload,
+  ) {
+    try {
+      const transactionResult = this.prisma.$transaction(async (tx) => {
+        const classroom = await tx.classroom.create({
+          data: {
+            name: MigrationDto.name,
+            // user: { connect: { id: user.id } },
+            owner_user_fk: user.id,
+          },
+        });
+
+        for (const registration of MigrationDto.registration) {
+          const regi = await tx.registration.findFirst({
+            where: {
+              cpf: registration.cpf,
+            },
+          });
+
+          if (!regi) {
+            const user = await tx.users.create({
+              data: {
+                name: registration.name,
+                email: registration.email,
+                password: this.convertData(registration.birthday).toString(),
+                role: 'STUDENT',
+              },
+            });
+
+            await tx.registration.create({
+              data: {
+                birthday: registration.birthday,
+                color_race: registration.color_race,
+                deficiency: registration.deficiency,
+                sex: registration.sex,
+                zone: registration.zone,
+                cpf: registration.cpf,
+                responsable_name: registration.responsable_name,
+                responsable_telephone: registration.responsable_telephone,
+                kinship: registration.kinship,
+                responsable_cpf: registration.responsable_cpf,
+                user: { connect: { id: user.id } },
+              },
+            });
+
+            await tx.user_classroom.create({
+              data: {
+                classroom: {
+                  connect: {
+                    id: classroom.id,
+                  },
+                },
+                users: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
+              },
+            });
+          }
+        }
+
+        return { message: 'Migração feita com sucesso!' };
+      });
+
+      return transactionResult;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async findTsAll() {
     try {
       const stamps = await axios.get(
@@ -98,5 +173,12 @@ export class MigrationBffService {
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
+  }
+  async convertData(date: Date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
+    const year = date.getFullYear();
+
+    return `${day}${month}${year}`;
   }
 }
