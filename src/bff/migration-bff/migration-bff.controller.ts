@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { TagResponse } from './doc/migration-bff.response';
@@ -21,5 +21,10 @@ export class MigrationBffController {
   @Get('')
   async getAll() {
     return this.MigrationBffService.findTsAll();
+  }
+
+  @Get('classroom-list')
+  async getClassroomList(@Query('idProject') idProject: string) {
+    return this.MigrationBffService.findClassroomList(idProject);
   }
 }
