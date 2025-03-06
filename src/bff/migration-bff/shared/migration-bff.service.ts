@@ -166,10 +166,25 @@ export class MigrationBffService {
 
   async findTsAll() {
     try {
-      const stamps = await axios.get(
+      const ts = await axios.get(
         process.env.BACKEND_URL + '/migration-bff?token=' + process.env.TOKEN,
       );
-      return stamps.data;
+      return ts.data;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async findClassroomList(id: string) {
+    try {
+      const classroomList = await axios.get(
+        process.env.BACKEND_URL +
+          '/migration-bff/classroom-list?token=' +
+          process.env.TOKEN +
+          '&idProject=' +
+          id,
+      );
+      return classroomList.data;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
