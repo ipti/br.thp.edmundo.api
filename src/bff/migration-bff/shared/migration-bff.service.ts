@@ -7,6 +7,7 @@ import {
   MigrationMeubenToCodedDto,
 } from '../dto/migration-bff.dto';
 import { JwtPayload } from 'src/utils/jwt.interface';
+import { UsersService } from 'src/users/shared/users.service';
 
 export interface RegistrationDto {
   name: string;
@@ -25,7 +26,10 @@ export interface RegistrationDto {
 
 @Injectable()
 export class MigrationBffService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userServices: UsersService,
+  ) {}
 
   async migrationMeuBen(MigrationDto: MigrationDto) {
     try {
@@ -97,34 +101,94 @@ export class MigrationBffService {
   ) {
     try {
       const transactionResult = this.prisma.$transaction(async (tx) => {
+        const classroomOne = await this.findClassroomOne(
+          MigrationDto.idClassroom.toString(),
+        );
         const classroom = await tx.classroom.create({
           data: {
-            name: MigrationDto.name,
-            // user: { connect: { id: user.id } },
+            name: classroomOne.name,
             owner_user_fk: user.id,
+            reapplication: { connect: { id: MigrationDto.idReaplication } },
           },
         });
 
-        for (const registration of MigrationDto.registration) {
+        function convertData(date: Date) {
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
+          const year = date.getFullYear();
+
+          return `${day}${month}${year}`;
+        }
+
+        function parseDate(dateString) {
+          const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+          const match = dateString.match(regex);
+
+          if (!match) return new Date(dateString); // Retorna null se o formato estiver errado
+
+          let [, day, month, year] = match;
+          day = parseInt(day, 10);
+          month = parseInt(month, 10);
+          year = parseInt(year, 10);
+
+          // Ajustar mês inválido (se for maior que 12, coloca no máximo 12)
+          if (month > 12) month = 12;
+
+          // Ajustar o dia para que seja válido no mês ajustado
+          const lastDayOfMonth = new Date(year, month, 0).getDate(); // Último dia do mês
+          if (day > lastDayOfMonth) day = lastDayOfMonth;
+
+          // Garantir que o ano esteja dentro de um intervalo aceitável (exemplo: 1900-2100)
+          if (year < 1900) year = 1900;
+          if (year > 2100) year = 2100;
+
+          // Criar e retornar a nova data
+          return new Date(year, month - 1, day); // Retorna null se o formato não for válido
+        }
+
+        function getFirstName(fullName) {
+          return fullName
+            .trim()
+            .split(' ')[0]
+            .toLowerCase()
+            .normalize('NFD') // Separa os acentos dos caracteres
+            .replace(/[\u0300-\u036f]/g, '');
+        }
+
+        for (const register_classroom of classroomOne.register_classroom) {
+          var registration = register_classroom.registration;
           const regi = await tx.registration.findFirst({
             where: {
-              cpf: registration.cpf,
+              cpf: {
+                not: '',
+                equals: registration.cpf,
+              },
+            },
+            include: {
+              user: true,
             },
           });
 
           if (!regi) {
+            const hashedPassword = await this.userServices.hashPassword(
+              convertData(parseDate(registration.birthday)).toString(),
+            );
+
             const user = await tx.users.create({
               data: {
                 name: registration.name,
-                email: registration.email,
-                password: this.convertData(registration.birthday).toString(),
+                email:
+                  getFirstName(registration.name) +
+                  '#' +
+                  convertData(parseDate(registration.birthday)).toString(),
+                password: hashedPassword,
                 role: 'STUDENT',
               },
             });
 
             await tx.registration.create({
               data: {
-                birthday: registration.birthday,
+                birthday: parseDate(registration.birthday),
                 color_race: registration.color_race,
                 deficiency: registration.deficiency,
                 sex: registration.sex,
@@ -148,6 +212,21 @@ export class MigrationBffService {
                 users: {
                   connect: {
                     id: user.id,
+                  },
+                },
+              },
+            });
+          } else {
+            await tx.user_classroom.create({
+              data: {
+                classroom: {
+                  connect: {
+                    id: classroom.id,
+                  },
+                },
+                users: {
+                  connect: {
+                    id: regi.user.id,
                   },
                 },
               },
@@ -189,11 +268,19 @@ export class MigrationBffService {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
-  async convertData(date: Date) {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
-    const year = date.getFullYear();
 
-    return `${day}${month}${year}`;
+  async findClassroomOne(id: string) {
+    try {
+      const classroomOne = await axios.get(
+        process.env.BACKEND_URL +
+          '/migration-bff/classroom-one?token=' +
+          process.env.TOKEN +
+          '&idClassroom=' +
+          id,
+      );
+      return classroomOne.data;
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
   }
 }

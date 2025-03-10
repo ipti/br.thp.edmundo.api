@@ -91,22 +91,14 @@ export class RegistrationDto {
 }
 
 export class MigrationMeubenToCodedDto {
-  @ApiProperty({ example: 1, description: 'ID do projeto' })
-  @IsArray()
-  registration: RegistrationDto[];
-
-  @ApiProperty({ example: 'Nome Turma', description: 'Nome da turma' })
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-
-  @ApiProperty({ example: 2024, description: 'Ano da turma' })
-  @IsNotEmpty()
-  @IsNumber()
-  year: number;
 
   @ApiProperty({ example: 1, description: 'Classroom ID' })
   @IsNotEmpty()
   @IsNumber()
   idClassroom: number;
+
+  @ApiProperty({ example: 1, description: 'Classroom ID' })
+  @IsNotEmpty()
+  @IsNumber()
+  idReaplication: number;
 }
