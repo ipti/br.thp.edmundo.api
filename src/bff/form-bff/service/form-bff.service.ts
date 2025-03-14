@@ -132,6 +132,20 @@ export class FormBffService {
         }
 
         for (const option of body.options) {
+          const responde_question = await tx.response_question.findFirst({
+            where: {
+              option_fk: option.id,
+              question_fk: body.id,
+            },
+          });
+
+          if (responde_question) {
+            await tx.response_question.delete({
+              where: {
+                id: responde_question.id,
+              },
+            });
+          }
           const op = await tx.options.findUnique({
             where: { id: option.id },
           });
@@ -140,6 +154,15 @@ export class FormBffService {
             await tx.options.update({
               where: { id: option.id },
               data: { content: option.content },
+            });
+          }
+
+          if (option.response_question) {
+            await tx.response_question.create({
+              data: {
+                options: { connect: { id: option.id } },
+                question: { connect: { id: body.id } },
+              },
             });
           }
         }
