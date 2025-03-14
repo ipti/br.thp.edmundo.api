@@ -151,7 +151,7 @@ export class MigrationBffService {
             .trim()
             .split(' ')[0]
             .toLowerCase()
-            .normalize('NFD') // Separa os acentos dos caracteres
+            .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
         }
 
