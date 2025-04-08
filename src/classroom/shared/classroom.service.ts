@@ -8,14 +8,6 @@ export class ClassroomService {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(id: number, CreateClassroomDto: CreateClassroomDto) {
-    const classroomRegistered = await this.prisma.classroom.findMany({
-      where: { name: CreateClassroomDto.name },
-    });
-
-    if (classroomRegistered.length > 0) {
-      throw new HttpException('Name already exists', HttpStatus.BAD_REQUEST);
-    }
-
     try {
       const createdClassroom = await this.prisma.classroom.create({
         data: {
