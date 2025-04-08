@@ -1,9 +1,13 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { TagResponse } from './doc/migration-bff.response';
-import { MigrationDto } from './dto/migration-bff.dto';
+import {
+  MigrationDto,
+  MigrationMeubenToCodedDto,
+} from './dto/migration-bff.dto';
 import { MigrationBffService } from './shared/migration-bff.service';
+import { Request } from 'express';
 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
@@ -18,8 +22,25 @@ export class MigrationBffController {
     return this.MigrationBffService.migrationMeuBen(MigrationDto);
   }
 
+  @Post('meubentocoded')
+  @ApiCreatedResponse({ type: TagResponse })
+  async createMeuBenToCoded(
+    @Body() MigrationDto: MigrationMeubenToCodedDto,
+    @Req() req: Request,
+  ) {
+    return this.MigrationBffService.migrationMeuBentocoded(
+      MigrationDto,
+      req.user,
+    );
+  }
+
   @Get('')
   async getAll() {
     return this.MigrationBffService.findTsAll();
+  }
+
+  @Get('classroom-list')
+  async getClassroomList(@Query('idProject') idProject: string) {
+    return this.MigrationBffService.findClassroomList(idProject);
   }
 }

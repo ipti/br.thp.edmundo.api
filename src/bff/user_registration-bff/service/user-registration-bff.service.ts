@@ -11,7 +11,7 @@ export class UserRegistrationBffService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly azureService: AzureProviderService,
-  ) { }
+  ) {}
 
   async encryptedPassword(password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -38,7 +38,6 @@ export class UserRegistrationBffService {
         },
       });
 
-
       await this.prismaService.registration.create({
         data: {
           birthday: createUserDto.birthday,
@@ -53,9 +52,8 @@ export class UserRegistrationBffService {
           zone: createUserDto.zone,
           kinship: createUserDto.kinship,
           user: { connect: { id: createdUser.id } },
-
-        }
-      })
+        },
+      });
       return createdUser;
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
@@ -70,7 +68,6 @@ export class UserRegistrationBffService {
         where: { user_fk: +id },
       });
       if (file) {
-
         if (registration.avatar_url !== null) {
           await this.azureService.deleteFileByUrl(registration.avatar_url);
         }
@@ -82,7 +79,6 @@ export class UserRegistrationBffService {
 
         registrationObject['avatar_url'] = fileAzure;
       }
-
 
       await this.prismaService.registration.update({
         where: { id: registration.id },
@@ -104,15 +100,11 @@ export class UserRegistrationBffService {
       where: { id: +id },
     });
 
-
-
     if (userRegistered.length > 0 && CreateUserDto.email !== userR.email) {
       throw new HttpException('email already exists', HttpStatus.BAD_REQUEST);
     }
 
     try {
-
-
       const transactionResult = this.prismaService.$transaction(async (tx) => {
         await tx.users.update({
           where: { id: +id },
@@ -124,10 +116,9 @@ export class UserRegistrationBffService {
 
         const register = await tx.registration.findFirst({
           where: {
-            user_fk: +id
-          }
-        })
-
+            user_fk: +id,
+          },
+        });
 
         if (register) {
           await tx.registration.update({
@@ -136,8 +127,16 @@ export class UserRegistrationBffService {
               birthday: CreateUserDto.birthday,
               description: CreateUserDto.description,
               responsable_telephone: CreateUserDto.responsable_telephone,
-            }
-          })
+              color_race: CreateUserDto.color_race,
+              cpf: CreateUserDto.cpf,
+              sex: CreateUserDto.sex,
+              zone: CreateUserDto.zone,
+              responsable_name: CreateUserDto.responsable_name,
+              kinship: CreateUserDto.kinship,
+              responsable_cpf: CreateUserDto.responsable_cpf,
+              deficiency: CreateUserDto.deficiency
+            },
+          });
         }
 
         return { message: 'Perfil atualizado com sucesso!' };
@@ -195,17 +194,17 @@ export class UserRegistrationBffService {
         password: false,
         tags_users: {
           include: {
-            tag: true
-          }
+            tag: true,
+          },
         },
         stamps_user: {
           include: {
-            stamps: true
-          }
+            stamps: true,
+          },
         },
         role: true,
         registration: {
-          where: { user_fk: id }
+          where: { user_fk: id },
         },
       },
     });

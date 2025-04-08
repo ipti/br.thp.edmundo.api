@@ -393,7 +393,7 @@ model group_avaliation {
   updatedAt                                  DateTime                                     @updatedAt
   metric_group_avaliation                    metric_group_avaliation[]
   activities_group_avaliation                activities_group_avaliation[]
-  type_group_avaliation_fk                   Int?                                         @unique
+  type_group_avaliation_fk                   Int?                                         
   type_group_avaliation                      type_group_avaliation?                       @relation(fields: [type_group_avaliation_fk], references: [id])
   answer_user_activities_group_avaliation    answer_user_activities_group_avaliation[]
   answer_user_activities_ia_group_avaliation answer_user_activities_ia_group_avaliation[]

@@ -16,7 +16,7 @@ export class UserActivitiesBffService {
   constructor(
     readonly prismaService: PrismaService,
     readonly azureService: AzureProviderService,
-  ) {}
+  ) { }
 
   async findUserActivities(id: number, idClassroom: number) {
     try {
@@ -30,6 +30,11 @@ export class UserActivitiesBffService {
               rating: true,
             },
           },
+          answer_user_activities_group_avaliation: {
+            include: {
+              group_avaliation: true,
+            },
+          },
           answer_user_activities_ia: {
             include: {
               answer_user_activities_ia_group_avaliation: true,
@@ -39,6 +44,7 @@ export class UserActivitiesBffService {
           activities: {
             select: {
               type_activities: true,
+              description: true,
               form: {
                 select: {
                   answer_form: {
@@ -326,18 +332,36 @@ export class UserActivitiesBffService {
           },
         });
 
-        for (const answer_user_activities_group_avaliation of body.student_answer) {
-          await tx.answer_user_activities_group_avaliation.create({
-            data: {
-              answer: answer_user_activities_group_avaliation.answer,
-              user_activities: { connect: { id: body.id_user_activities } },
-              group_avaliation: {
-                connect: {
-                  id: answer_user_activities_group_avaliation.idGroup,
+        for (const answer_user_activities_group_avaliation_table of body.student_answer) {
+          const answer_user_activities_group_avaliation =
+            await tx.answer_user_activities_group_avaliation.findFirst({
+              where: {
+                user_activities_fk: body.id_user_activities,
+                group_avaliation_fk:
+                  answer_user_activities_group_avaliation_table.idGroup,
+              },
+            });
+
+          if (answer_user_activities_group_avaliation) {
+            await tx.answer_user_activities_group_avaliation.update({
+              where: { id: answer_user_activities_group_avaliation.id },
+              data: {
+                answer: answer_user_activities_group_avaliation_table.answer,
+              },
+            });
+          } else {
+            await tx.answer_user_activities_group_avaliation.create({
+              data: {
+                answer: answer_user_activities_group_avaliation_table.answer,
+                user_activities: { connect: { id: body.id_user_activities } },
+                group_avaliation: {
+                  connect: {
+                    id: answer_user_activities_group_avaliation_table.idGroup,
+                  },
                 },
               },
-            },
-          });
+            });
+          }
         }
 
         const convertStudentAnswer = (students: StudentAnswerDto[]) => {
@@ -370,6 +394,7 @@ export class UserActivitiesBffService {
 
       return transaction;
     } catch (err) {
+      console.log(err);
       throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
@@ -457,12 +482,31 @@ export class UserActivitiesBffService {
             (metricGrade / 10 + grade) / body.performanceEvaluation.length;
         }
 
-        await tx.user_avaliation.create({
-          data: {
-            user_activities: { connect: { id: body.id_response } },
-            total: grade,
-          },
-        });
+        const user_avaliation = await tx.user_avaliation.findFirst({
+          where: {
+            user_activities_fk: body.id_response
+          }
+        })
+
+        if (user_avaliation) {
+          await tx.user_avaliation.update({
+            where: {
+              id: user_avaliation.id
+            },
+            data: {
+              total: grade,
+            },
+          });
+        } else {
+          await tx.user_avaliation.create({
+            data: {
+              user_activities: { connect: { id: body.id_response } },
+              total: grade,
+            },
+          });
+        }
+
+
 
         return user_activities;
       });
