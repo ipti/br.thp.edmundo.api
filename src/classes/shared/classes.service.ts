@@ -19,6 +19,7 @@ export class ClassesService {
           objective: CreateClassesDto.objective,
           duration: CreateClassesDto.duration,
           necessary_material: CreateClassesDto.necessary_material,
+          content: CreateClassesDto.content,
           module: { connect: { id: CreateClassesDto.module_id } }
         },
       });

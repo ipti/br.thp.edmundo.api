@@ -25,6 +25,10 @@ export class CreateClassesDto {
   @ApiProperty()
   duration: number;
 
+  @IsOptional()
+  @ApiProperty()
+  content: string;
+
   @IsNotEmpty()
   @ApiProperty()
   module_id: number;
