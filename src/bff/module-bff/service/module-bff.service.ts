@@ -46,6 +46,14 @@ export class ModuleBffService {
             },
           },
           classes: {
+            where: {
+              classroom_classes: {
+                some: {
+                  classroom_fk: idClassroom,
+                  active: true
+                },
+              },
+            },
             select: {
               id: true,
               name: true,
@@ -56,6 +64,14 @@ export class ModuleBffService {
                     id: idUser
                   }}},
               activities: {
+                where: {
+                  classroom_activities: {
+                    some: {
+                      classroom_fk: idClassroom,
+                      active: true
+                    }
+                  }
+                },
                 include: {
                   user_activities: {
                     where: {

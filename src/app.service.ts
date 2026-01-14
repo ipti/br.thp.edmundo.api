@@ -10,6 +10,7 @@ export class AppService {
       'http://localhost:3000',
       'http://localhost:3001',
       'https://coded-edmundo.thp.org.br',
+      'http://localhost:52614'
     ];
   }
 }
