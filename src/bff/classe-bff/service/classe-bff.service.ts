@@ -137,7 +137,12 @@ export class ClasseBffService {
             usersId: dto.idUser
           },
           activities: {
-            classesId: dto.idClasse
+            classesId: dto.idClasse,
+            classroom_activities: {
+              some: {
+                active: true
+              }
+            }
           }
         }
       });

@@ -390,7 +390,7 @@ export class UserActivitiesBffService {
         const gpt = await axios.post(url, send_ia);
 
         return gpt.data;
-      });
+      }, { maxWait: 5000, timeout: 60000 });
 
       return transaction;
     } catch (err) {
