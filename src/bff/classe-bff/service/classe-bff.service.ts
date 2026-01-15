@@ -129,26 +129,28 @@ export class ClasseBffService {
 
       if (!users) {
         throw new HttpException('Users not found', HttpStatus.NOT_FOUND);
+        
       }
 
       const user_activities = await this.prismaService.user_activities.findMany({
         where: {
           user_classroom: {
-            usersId: dto.idUser
+            users: {id: dto.idUser},
+            classroom: {id: dto.idClassroom}
           },
-          activities: {
-            classesId: dto.idClasse,
-            classroom_activities: {
-              some: {
-                active: true
-              }
-            }
-          }
-        }
+         activities: { classes: { id: dto.idClasse } },
+        },
       });
 
-      
-      if (user_activities.some(activity => activity.status !== 'COMPLETED') || (user_activities.length === 0 && Classe.activities.length > 0)) {
+      const classroom_activities = await this.prismaService.classroom_activities.findMany({
+        where: {
+          active: true,
+          classroom: { id: dto.idClassroom },
+          activities: { classes: { id: dto.idClasse } },
+        }, 
+      });
+
+      if (classroom_activities.length > user_activities.length || user_activities.some(ua => ua.status !== 'COMPLETED')) {
         throw new HttpException('Conclua as atividades para finalizar a aula!', HttpStatus.NOT_MODIFIED);
       }
 

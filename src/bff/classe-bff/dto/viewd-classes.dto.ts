@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 
 export class UpdateViewdClassesDto {
- 
+
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty({ required: false, default: 1 })
@@ -15,4 +15,9 @@ export class UpdateViewdClassesDto {
   @IsNumber()
   @ApiProperty({ required: false, default: 1 })
   idUser?: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @ApiProperty({ required: false, default: 1 })
+  idClassroom?: number;
 }
