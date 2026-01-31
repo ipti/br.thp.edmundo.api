@@ -9,7 +9,6 @@ import * as bodyParser from 'body-parser';
 
 declare const module: any;
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -51,11 +50,10 @@ async function bootstrap() {
   SwaggerModule.setup('api-docs', app, document);
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
-  await app.listen(process.env.APP_PORT || 3000);
+  await app.listen(process.env.APP_PORT || 3001);
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
-
 }
 bootstrap();
