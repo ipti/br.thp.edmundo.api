@@ -29,25 +29,25 @@ model users {
 }
 
 model registration {
-  id                     Int      @id @default(autoincrement())
+  id                     Int            @id @default(autoincrement())
   avatar_url             String?
   description            String?
   birthday               DateTime
-  cpf                    String?  @db.VarChar(11)
-  sex                    Int      @db.SmallInt
-  color_race             Int      @db.SmallInt
+  cpf                    String?        @db.VarChar(11)
+  sex                    Int            @db.SmallInt
+  color_race             Int            @db.SmallInt
   deficiency             Boolean
-  deficiency_description String?  @db.Text
-  responsable_name       String?  @db.VarChar(90)
-  responsable_cpf        String?  @db.VarChar(11)
-  responsable_telephone  String?  @db.VarChar(11)
-  zone                   Int      @db.SmallInt
-  kinship                Kinship? @default(NAO_DEFINIDO)
-  kinship_description    String?  @db.Text
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  deficiency_description String?        @db.Text
+  responsable_name       String?        @db.VarChar(90)
+  responsable_cpf        String?        @db.VarChar(11)
+  responsable_telephone  String?        @db.VarChar(11)
+  zone                   Int            @db.SmallInt
+  kinship                Kinship?       @default(NAO_DEFINIDO)
+  kinship_description    String?        @db.Text
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
   user_fk                Int
-  user                   users    @relation(fields: [user_fk], references: [id])
+  user                   users          @relation(fields: [user_fk], references: [id])
 }
 
 model user_reapplication {
@@ -88,13 +88,11 @@ model classroom {
 }
 
 model module {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  order       Int?
-
+  id               Int                @id @default(autoincrement())
+  name             String
+  description      String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
   classes          classes[]
   classroom_module classroom_module[]
 }
@@ -127,14 +125,14 @@ model classes {
 }
 
 model user_classes {
-  id         Int      @id @default(autoincrement())
-  user_fk    Int
-  users      users    @relation(fields: [user_fk], references: [id])
-  classes_fk Int
-  classes    classes  @relation(fields: [classes_fk], references: [id])
-  viewed     Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id             Int           @id @default(autoincrement())
+  user_fk        Int
+  users          users         @relation(fields: [user_fk], references: [id])
+  classes_fk     Int
+  classes        classes       @relation(fields: [classes_fk], references: [id])
+  viewed         Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model classroom_classes {
