@@ -88,11 +88,13 @@ model classroom {
 }
 
 model module {
-  id               Int                @id @default(autoincrement())
-  name             String
-  description      String?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  order            Int?
   classes          classes[]
   classroom_module classroom_module[]
 }
